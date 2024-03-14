@@ -15,8 +15,10 @@ const NavigasiBar = () => {
     <div className="fixed top-0 w-full bg-white bg-opacity-20 backdrop-blur-sm text-black flex justify-between items-center p-4 z-10">
       {/* Logo dan judul */}
       <div className="flex flex-col items-center justify-center text-center">
+        <Link href="/">
         <div className="text-lg font-semibold">BKK SMKN</div>
         <div className="text-sm">NGARGOYOSO</div>
+        </Link>
       </div>
       {/* Menu items */}
       <div className="hidden sm:flex items-center space-x-4">
