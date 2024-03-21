@@ -1,0 +1,27 @@
+{
+    "karyawan": [
+      {
+        "nama": "John Doe",
+        "umur": 30,
+        "alamat": "Jl. Contoh No. 123",
+        "pekerjaan": "Insinyur",
+        "hobi": ["membaca", "mendaki"],
+        "kontak": {
+          "email": "johndoe@example.com",
+          "telepon": "123-456-7890"
+        }
+      },
+      {
+        "nama": "Jane Smith",
+        "umur": 25,
+        "alamat": "Jl. Percobaan No. 456",
+        "pekerjaan": "Desainer",
+        "hobi": ["menulis", "berkebun"],
+        "kontak": {
+          "email": "janesmith@example.com",
+          "telepon": "098-765-4321"
+        }
+      }
+    ]
+  }
+  

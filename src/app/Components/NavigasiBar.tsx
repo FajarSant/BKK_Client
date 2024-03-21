@@ -12,7 +12,7 @@ const NavigasiBar = () => {
   };
 
   return (
-    <div className="fixed top-0 w-full bg-white bg-opacity-20 backdrop-blur-sm text-black flex justify-between items-center p-4 z-10">
+    <div className="fixed top-0 w-full bg-slate-50 bg-opacity-90 backdrop-blur-sm text-black flex justify-between items-center p-4 z-10 shadow-xl border-b-2">
       {/* Logo dan judul */}
       <div className="flex flex-col items-center justify-center text-center">
         <Link href="/">

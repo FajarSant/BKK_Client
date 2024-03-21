@@ -37,28 +37,32 @@ const CardPost: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-cols-4 gap-4 grid-rows-auto mx-3 ">
+    <div className="container mx-auto grid grid-cols-2 lg:grid-cols-3 gap-4 grid-rows-auto  ">
       {posts.map((post) => (
-        <div key={post.id} className="border rounded overflow-hidden shadow-xl">
+        <div key={post.id} className=" border rounded overflow-hidden shadow-xl">
           <img
             src={post.image}
             alt={post.nama}
-            className="w-full h-48 object-cover"
+            className="w-full h-auto sm:h-48 object-cover"
           />
-          <div className="p-4">
+          <div className="text-justify p-2">
             <h3>
               {post.hashtag.map((tag, index) => (
-                <span key={index}>#{tag} </span>
+                <span key={index} className="hidden  text-xs text-opacity-50 ">#{tag} </span>
               ))}
             </h3>
-            <h2 className="text-lg font-semibold">{post.nama}</h2>
-            <p className="text-sm">
-              {truncateDescription(post.deskripsipanjang, 100)}
+            <h2 className="text-xs text-justify font-semibold mb-2">
+              {post.nama}
+            </h2>
+            <p className=" text-xs text-justify mb-2">
+              {truncateDescription(post.deskripsipanjang, 30)}
             </p>
           </div>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 mx-4">
-            Lihat Lebih Banyak
-          </button>
+          <div className="flex justify-center ">
+            <button className="bg-blue-500  text-xs  hover:bg-blue-700 text-white font-bold py-2 px-2 rounded mb-4 ">
+              Detail
+            </button>
+          </div>
         </div>
       ))}
     </div>

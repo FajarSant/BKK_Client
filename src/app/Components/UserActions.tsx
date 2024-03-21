@@ -17,8 +17,6 @@ const UserActions = () => {
           </AvatarFallback>
         </Avatar>
       </div>
-
-      {/* Dropdown menu */}
       {isOpen && (
         <div
           id="dropdownInformation"
