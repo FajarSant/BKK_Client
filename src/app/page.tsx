@@ -1,15 +1,20 @@
-import CardPost from "./Components/CardPost";
-import NavigasiBar from "./Components/NavigasiBar";
-import Search from "./Components/Search";
+import React from 'react'
+import NavigasiBar from './Components/NavigasiBar'
+import SearchBar from './Components/SearchBar'
+import CardPost from './Components/CardPost'
+import Header from './Components/Header'
 
-export default function Home() {
+const page = () => {
   return (
-    <div className="">
+    <div>
       <NavigasiBar />
-      <div className="">
-        <Search />
-        <CardPost />
+      <div className='mt-32'>
+      <SearchBar />
+      <Header/>
+      <CardPost />
       </div>
     </div>
-  );
+  )
 }
+
+export default page

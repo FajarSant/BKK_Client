@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { axiosInstance } from "@/lib/axios";
+import Link from "next/link";
 
 interface Post {
   id: number;
@@ -59,9 +60,11 @@ const CardPost: React.FC = () => {
             </p>
           </div>
           <div className="flex justify-center ">
-            <button className="bg-blue-500  text-xs  hover:bg-blue-700 text-white font-bold py-2 px-2 rounded mb-4 ">
-              Detail
-            </button>
+          <Link href={`/Postingan/${post.id}`}>
+              <span className="bg-gray-500 text-white rounded p-1 sm:p-2 ">
+                Detail
+              </span>
+            </Link>
           </div>
         </div>
       ))}

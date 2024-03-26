@@ -20,18 +20,6 @@ const NavigasiBar = () => {
         <div className="text-sm">NGARGOYOSO</div>
         </Link>
       </div>
-      {/* Menu items */}
-      <div className="hidden sm:flex items-center space-x-4">
-        <Link href="/about">
-          <span>About Page</span>
-        </Link>
-        <Link href="/about">
-          <span>About Page</span>
-        </Link>
-        <Link href="/about">
-          <span>About Page</span>
-        </Link>
-      </div>
       {/* User Avatar */}
       <div className=" flex items-center space-x-4">
         <div className="hidden sm:flex text-xl">
@@ -52,7 +40,6 @@ const NavigasiBar = () => {
         </div>
       </div>
       {/* Drawer */}
-
       <div
         id="drawer-navigation"
         className={`fixed top-0 left-0 z-40 h-screen p-4 overflow-y-auto transition-transform ${
