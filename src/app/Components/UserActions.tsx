@@ -28,13 +28,13 @@ const UserActions = () => {
           </div>
           <ul className="py-2 text-sm text-gray-700" aria-labelledby="dropdownInformationButton">
             <li>
-              <a href="#" className="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
+              <a href="/Dashboard" className="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
             </li>
             <li>
-              <a href="#" className="block px-4 py-2 hover:bg-gray-100">Settings</a>
+              <a href="/Profil" className="block px-4 py-2 hover:bg-gray-100">Profil</a>
             </li>
             <li>
-              <a href="#" className="block px-4 py-2 hover:bg-gray-100">Earnings</a>
+              <a href="/LamaranTersimpan" className="block px-4 py-2 hover:bg-gray-100">Lamaran Tersimpan</a>
             </li>
           </ul>
           <div className="py-2">
