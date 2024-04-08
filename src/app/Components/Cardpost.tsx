@@ -47,10 +47,10 @@ const CardPost: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="container px-4 py-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {posts.map((post, index) => (
         <div key={post.id} className="bg-slate-300 p-4 rounded-xl shadow-lg">
-          <div className="container">
+          <div className="">
             <div className="flex justify-between mb-4">
               <img
                 src={post.image}
