@@ -1,71 +1,42 @@
-"use client"
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface UserData {
-  nama: string;
-  email: string;
-  userRole: string; 
-  user: {
-    nama: string;
-    email: string;
-    user: string;
-    
-  }
-  
-}
+const UserIconWithDropdown = () => {
+  const [isOpen, setIsOpen] = useState(false); // State untuk menentukan apakah dropdown terbuka
 
-const UserActions = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [userData, setUserData] = useState<UserData | null>(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setUserData(null);
-          return;
-        }
-        const response = await fetch('http://localhost:2000/auth/profile', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-        const userData: UserData = await response.json();
-        console.log('User data:', userData);
-        setUserData(userData);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setUserData(null);
-  };
-
+  // Menangani toggle dropdown
   const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(!isOpen); // Membalikkan nilai state isOpen
   };
 
-  const isAdmin = userData && userData.user.user === 'Admin'; // Periksa apakah pengguna memiliki peran admin
+  // Contoh data user
+  const userData = {
+    user: {
+      nama: 'John Doe',
+      email: 'johndoe@example.com',
+    },
+  };
+
+  // Menangani logout
+  const handleLogout = () => {
+    // Implementasikan logika logout di sini
+    console.log('Logout');
+  };
+
+  // Menentukan apakah pengguna adalah admin
+  const isAdmin = true; // Ganti dengan logika yang sesuai
 
   return (
-    <div className="relative inline-block text-left">
+    <div className="flex justify-between bg-gray-800 text-white py-4 px-6">
+        <div></div>
       <div>
+        {/* Komponen Avatar */}
         <Avatar onClick={toggleDropdown}>
           <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>
-          </AvatarFallback>
+          <AvatarFallback />
         </Avatar>
       </div>
+      {/* Dropdown */}
       {isOpen && (
         <div
           id="dropdownInformation"
@@ -102,4 +73,4 @@ const UserActions = () => {
   );
 };
 
-export default UserActions;
+export default UserIconWithDropdown;

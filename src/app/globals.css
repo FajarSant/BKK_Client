@@ -3,3 +3,19 @@
 @tailwind utilities;
  
 
+/* globals.css */
+:root {
+    --background-color: white;
+    --text-color: black;
+  }
+  
+  [data-theme="dark"] {
+    --background-color: black;
+    --text-color: white;
+  }
+  
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+  

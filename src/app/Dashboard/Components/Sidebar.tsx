@@ -1,33 +1,28 @@
-import Link from "next/link";
-import React from "react";
-import { RiFileUserLine, RiBarChart2Line, RiLogoutBoxRLine } from "react-icons/ri";
+// Sidebar.tsx
+
+import React from 'react';
 
 interface SidebarProps {
   setActiveItem: (item: string) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ setActiveItem }) => {
+  const menuItems = ['Dashboard', 'Profile', 'Settings'];
+
   return (
-    <div className="bg-gray-800 text-white h-screen w-64">
-      <div className="p-4">
-        <h2 className="text-2xl font-semibold mb-4">Menu</h2>
-        <ul>
-          <li className="flex items-center mb-4">
-            <RiFileUserLine className="mr-2" />
-            <a onClick={() => setActiveItem("user")} className="cursor-pointer">Lamaran User</a>
+    <div className="container">
+      <h2 className="text-2xl font-bold mb-4">Menu</h2>
+      <ul>
+        {menuItems.map((item, index) => (
+          <li
+            key={index}
+            className="cursor-pointer hover:bg-gray-200 rounded p-2"
+            onClick={() => setActiveItem(item)}
+          >
+            {item}
           </li>
-          <li className="flex items-center  mb-4">
-            <RiBarChart2Line className="mr-2" />
-            <a onClick={() => setActiveItem("analysis")} className="cursor-pointer">Analisis</a>
-          </li>
-          <li className="flex items-center  mb-4">
-            <RiLogoutBoxRLine className="mr-2" />
-            <Link href="/">
-              <span>Logout</span>
-            </Link>
-          </li>
-        </ul>
-      </div>
+        ))}
+      </ul>
     </div>
   );
 };

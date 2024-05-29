@@ -1,29 +1,43 @@
 "use client";
+
 import { FiMenu, FiX } from "react-icons/fi";
 import { useState } from "react";
 import Link from "next/link";
 import UserActions from "./UserActions";
+import { useTheme } from "next-themes"; // Import useTheme
 
 const NavigasiBar = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { theme, setTheme } = useTheme(); // Destructure useTheme
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light"); // Toggle between light and dark themes
+  };
+
   return (
-    <div className="fixed top-0 w-full bg-slate-50 bg-opacity-90 backdrop-blur-sm text-black flex justify-between items-center p-4 z-10 shadow-xl border-b-2">
+    <div className="fixed top-0 w-full bg-slate-50 bg-opacity-90 backdrop-blur-sm text-black dark:bg-gray-800 dark:text-white flex justify-between items-center p-4 z-10 shadow-xl border-b-2">
       {/* Logo dan judul */}
       <div className="flex flex-col items-center justify-center text-center">
         <Link href="/">
-        <div className="text-lg font-semibold">BKK SMKN</div>
-        <div className="text-sm">NGARGOYOSO</div>
+          <div className="text-lg font-semibold">BKK SMKN</div>
+          <div className="text-sm">NGARGOYOSO</div>
         </Link>
       </div>
-      {/* User Avatar */}
-      <div className=" flex items-center space-x-4">
+      {/* User Avatar and Theme Toggle */}
+      <div className="flex items-center space-x-4">
+        <button
+          className="focus:outline-none p-2 rounded-lg bg-gray-200 dark:bg-gray-600"
+          type="button"
+          onClick={toggleTheme}
+        >
+          {theme === "light" ? "🌙" : "☀️"}
+        </button>
         <div className="hidden sm:flex text-xl">
-          <UserActions/>
+          <UserActions />
         </div>
         <div className="flex sm:hidden text-center ">
           <button

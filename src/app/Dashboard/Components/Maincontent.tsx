@@ -1,15 +1,24 @@
-import React from "react";
+import React from 'react';
+import Users from '../Content/users';
 
 interface MainContentProps {
   activeItem: string;
 }
 
+interface ContentMap {
+  [key: string]: JSX.Element;
+}
+
 const MainContent: React.FC<MainContentProps> = ({ activeItem }) => {
+  const content: ContentMap = {
+    Dashboard: <Users/>,
+    Profile: <h2>Profile Content</h2>,
+    Settings: <h2>Settings Content</h2>,
+  };
+
   return (
-    <div className="flex-1 p-4">
-      <h1 className="text-3xl font-semibold mb-4">Main Content</h1>
-      {activeItem === "user" && <div>Lamaran User Content</div>}
-      {activeItem === "analysis" && <div>Analisis Content</div>}
+    <div className="container">
+      {content[activeItem] || <h2>No Content Selected</h2>}
     </div>
   );
 };
