@@ -8,13 +8,17 @@ const Dashboard: React.FC = () => {
   const [activeItem, setActiveItem] = useState<string>('Dashboard');
 
   return (
-    <div className="flex h-screen bg-slate-400">
-      <div className="w-1/4 bg-gray-100">
-        <Sidebar setActiveItem={setActiveItem} />
-      </div>
-      <div className="w-3/4 bg-white">
-        <Topbar/>
-        <MainContent activeItem={activeItem} />
+    <div>
+      {/* Top Bar */}
+      <Topbar />
+      {/* Main Content */}
+      <div className="flex h-screen bg-slate-400">
+        <div className="w-1/6 bg-gray-100">
+          <Sidebar setActiveItem={setActiveItem} />
+        </div>
+        <div className="w-5/6 bg-white">
+          <MainContent activeItem={activeItem} />
+        </div>
       </div>
     </div>
   );

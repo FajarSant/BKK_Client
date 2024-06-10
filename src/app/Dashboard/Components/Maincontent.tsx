@@ -1,3 +1,4 @@
+// MainContent.tsx
 import React from 'react';
 import Users from '../Content/users';
 
@@ -11,13 +12,13 @@ interface ContentMap {
 
 const MainContent: React.FC<MainContentProps> = ({ activeItem }) => {
   const content: ContentMap = {
-    Dashboard: <Users/>,
+    Dashboard: <Users />,
     Profile: <h2>Profile Content</h2>,
     Settings: <h2>Settings Content</h2>,
   };
 
   return (
-    <div className="container">
+    <div className="p-4 md:pl-0">
       {content[activeItem] || <h2>No Content Selected</h2>}
     </div>
   );
