@@ -1,39 +1,46 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from "react";
 import { axiosInstance } from "@/lib/axios";
-import { FaBookmark } from "react-icons/fa"; // Import ikon simpan/arsip
+import { FaBookmark } from "react-icons/fa"; // Import icon simpan/arsip
 import Link from "next/link";
 
-interface Post {
+interface Jobs {
   id: number;
-  nama: string;
-  deskripsipanjang: string;
-  image: string;
-  hashtag: string[];
-  alamat: string;
-  email: string;
-  waktu: string;
-  genre: string;
+  judul: string;
+  deskripsi: string;
+  perusahaanId: string;
+  gambar?: string;
+  perusahaan: {
+    id: string;
+    nama: string;
+    alamat: string;
+    email: string;
+    genre: string;
+  };
 }
 
 const CardPost: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [jobs, setJobs] = useState<Jobs[]>([]);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchJobs = async () => {
       try {
-        const postResponse = await axiosInstance.get<Post[]>("/posts");
-        setPosts(postResponse.data);
+        const response = await axiosInstance.get<Jobs[]>("/jobs");
+        setJobs(response.data);
       } catch (error) {
         console.log(error);
       }
     };
 
-    fetchPosts();
+    fetchJobs();
   }, []);
 
   // Fungsi untuk memotong deskripsi menjadi beberapa kalimat
-  const truncateDescription = (description: string, maxLength: number) => {
+  const truncateDescription = (description: string | undefined, maxLength: number) => {
+    if (!description) {
+      return "";
+    }
+
     if (description.length > maxLength) {
       return description.substring(0, maxLength) + "...";
     } else {
@@ -41,46 +48,55 @@ const CardPost: React.FC = () => {
     }
   };
 
-  // Pastikan posts ada sebelum mencoba mengakses elemennya
-  if (posts.length === 0) {
+  // Pastikan jobs ada sebelum mencoba mengakses elemennya
+  if (jobs.length === 0) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="container px-4 py-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-      {posts.map((post, index) => (
-        <div key={post.id} className="bg-slate-300 p-4 rounded-xl shadow-lg">
+      {jobs.map((job) => (
+        <div key={job.id} className="bg-slate-300 p-4 rounded-xl shadow-lg">
+          <div className="flex justify-between items-center mb-4">
+            <div className="ml-auto">
+              <FaBookmark className="text-gray-400 text-2xl cursor-pointer" />
+            </div>
+          </div>
           <div className="">
             <div className="flex justify-between mb-4">
-              <img
-                src={post.image}
-                alt={post.nama}
-                className="w-1/4 rounded-lg"
-              />
-              <FaBookmark className="text-gray-400 text-2xl cursor-pointer" />
+              {job.gambar && (
+                <img
+                  src={job.gambar}
+                  alt={job.judul}
+                  className="w-full h-40 object-cover rounded-l"
+                />
+              )}
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl text-justify font-bold mb-2">
-                {post.nama}
+                {job.judul}
               </h1>
               <p className="text-lg text-justify text-gray-700 mb-4">
-                {truncateDescription(post.deskripsipanjang, 50)}
+                {truncateDescription(job.deskripsi, 50)}
+              </p>
+              <p className="text-md text-gray-600">
+                Perusahaan: {job.perusahaan.nama}
               </p>
             </div>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center mt-4">
               <div>
-                <a
-                 href={`/Daftar/${post.id}`}
+                <Link
+                  href={`/Daftar/${job.id}`}
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
                 >
                   Daftar
-                </a>
-                <a
-                  href={`/Postingan/${post.id}`}
+                </Link>
+                <Link
+                  href={`/Postingan/${job.id}`}
                   className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                 >
                   Lihat Detail
-                </a>
+                </Link>
               </div>
             </div>
           </div>

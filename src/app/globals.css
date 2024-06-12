@@ -1,21 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
 
 /* globals.css */
 :root {
-    --background-color: white;
-    --text-color: black;
-  }
-  
-  [data-theme="dark"] {
-    --background-color: black;
-    --text-color: white;
-  }
-  
+  --background-color: white;
+  --text-color: black;
+  --font-size-mobile: 12px;
+  --font-size-desktop: 16px;
+}
+
+[data-theme="dark"] {
+  --background-color: black;
+  --text-color: white;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-size: var(--font-size-mobile); /* Ukuran font default untuk perangkat mobile */
+}
+
+/* Ukuran font untuk perangkat desktop */
+@media (min-width: 768px) {
   body {
-    background-color: var(--background-color);
-    color: var(--text-color);
+    font-size: var(--font-size-desktop);
   }
-  
+}
