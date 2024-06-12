@@ -12,7 +12,7 @@ interface ContentMap {
 
 const MainContent: React.FC<MainContentProps> = ({ activeItem }) => {
   const content: ContentMap = {
-    Users: <Users />,
+    Users : <Users />,
     Profile: <h2>Profile Content</h2>,
     Settings: <h2>Settings Content</h2>,
   };
