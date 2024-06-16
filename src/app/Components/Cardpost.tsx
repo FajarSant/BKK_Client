@@ -9,15 +9,8 @@ interface Jobs {
   id: number;
   judul: string;
   deskripsi: string;
-  perusahaanId: string;
+  openrekrutmen: string[];
   gambar?: string;
-  perusahaan: {
-    id: string;
-    nama: string;
-    alamat: string;
-    email: string;
-    genre: string;
-  };
 }
 
 const CardPost: React.FC = () => {
@@ -36,14 +29,11 @@ const CardPost: React.FC = () => {
     fetchJobs();
   }, []);
 
-  // Fungsi untuk memotong deskripsi menjadi beberapa kalimat
-  const truncateDescription = (description: string | undefined, maxLength: number) => {
-    if (!description) {
-      return "";
-    }
-
-    if (description.length > maxLength) {
-      return description.substring(0, maxLength) + "...";
+  // Fungsi untuk memotong deskripsi menjadi 100 kata
+  const truncateDescription = (description: string) => {
+    const words = description.split(" ");
+    if (words.length > 10) {
+      return words.slice(0, 10).join(" ") + "...";
     } else {
       return description;
     }
@@ -72,9 +62,13 @@ const CardPost: React.FC = () => {
           </div>
           <div className="flex flex-col justify-between flex-grow">
             <div className="">
+              <p className="text-lg text-gray-700 mb-2">
+                {job.openrekrutmen.map((item, index) => (
+                  <span key={index}>#{item} </span>
+                ))}
+              </p>
               <h1 className="text-xl sm:text-2xl font-bold mb-2">{job.judul}</h1>
-              <p className="text-lg text-gray-700 mb-4">{truncateDescription(job.deskripsi, 100)}</p>
-              <p className="text-md text-gray-600">Perusahaan: {job.perusahaan.nama}</p>
+              <p className="text-lg text-gray-700 mb-4">{truncateDescription(job.deskripsi)}</p>
             </div>
             <div className="flex justify-center items-center mt-4 space-x-4">
               <Link href={`/Daftar/${job.id}`}>

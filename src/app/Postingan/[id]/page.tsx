@@ -1,44 +1,34 @@
-"use client"
+"use client";
 import { axiosInstance } from "@/lib/axios";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-interface Perusahaan {
-  id: string;
-  nama: string;
-  deskripsi: string;
-  alamat: string | null;
-  email: string | null;
-}
-
 interface Jobs {
   id: string;
-  gambar: string;
   judul: string;
   deskripsi: string;
-  perusahaanId: string;
-  waktu: string;
-  genre: string;
+  persyaratan?: string;
+  openrekrutmen: string[];
+  gambar: string;
+  alamat?: string;
+  email?: string;
+  nomorTelepon?: string;
 }
 
 const PostinganDetail = () => {
   const [jobs, setJobs] = useState<Jobs | null>(null);
-  const [perusahaan, setPerusahaan] = useState<Perusahaan | null>(null);
 
   useEffect(() => {
     const fetchJobData = async () => {
       try {
+        // Mengambil id dari path URL (misal: /Postingan/666eafbf53c65b15aaccf267)
         const pathArray = window.location.pathname.split("/");
         const id = pathArray[pathArray.length - 1];
 
+        // Memanggil API untuk mendapatkan detail pekerjaan berdasarkan id
         const jobResponse = await axiosInstance.get<Jobs>(`/jobs/${id}`);
         const jobData = jobResponse.data;
         setJobs(jobData);
-
-        const perusahaanId = jobData.perusahaanId;
-        const companyResponse = await axiosInstance.get<Perusahaan>(`/company/${perusahaanId}`);
-        const companyData = companyResponse.data;
-        setPerusahaan(companyData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -47,7 +37,7 @@ const PostinganDetail = () => {
     fetchJobData();
   }, []);
 
-  if (!jobs || !perusahaan) {
+  if (!jobs) {
     return <div>Loading...</div>;
   }
 
@@ -58,8 +48,8 @@ const PostinganDetail = () => {
           <Image
             src={jobs.gambar}
             alt={jobs.judul}
-            width={480}  // Set width sesuai kebutuhan Anda
-            height={270} // Set height sesuai kebutuhan Anda
+            width={480}
+            height={270}
             className="rounded-lg"
             style={{ objectFit: "cover" }}
           />
@@ -70,10 +60,28 @@ const PostinganDetail = () => {
         <div className="border-t border-gray-300 my-6"></div>
 
         <h2 className="text-xl font-bold mb-2">Informasi Perusahaan</h2>
-        <p className="text-lg text-gray-700 mb-2">Nama: {perusahaan.nama}</p>
-        <p className="text-lg text-gray-700 mb-2">Deskripsi: {perusahaan.deskripsi}</p>
-        <p className="text-lg text-gray-700 mb-2">Alamat: {perusahaan.alamat}</p>
-        <p className="text-lg text-gray-700 mb-2">Email: {perusahaan.email}</p>
+        {jobs.alamat && <p className="text-lg text-gray-700 mb-2">Alamat: {jobs.alamat}</p>}
+        {jobs.email && <p className="text-lg text-gray-700 mb-2">Email: {jobs.email}</p>}
+
+        {jobs.persyaratan && (
+          <>
+            <div className="border-t border-gray-300 my-6"></div>
+            <h2 className="text-xl font-bold mb-2">Persyaratan</h2>
+            <p className="text-lg text-gray-700 mb-2">{jobs.persyaratan}</p>
+          </>
+        )}
+
+        {jobs.openrekrutmen.length > 0 && (
+          <>
+            <div className="border-t border-gray-300 my-6"></div>
+            <h2 className="text-xl font-bold mb-2">Open Rekrutmen</h2>
+            <ul className="list-disc list-inside">
+              {jobs.openrekrutmen.map((item, index) => (
+                <li key={index} className="text-lg text-gray-700 mb-2">{item}</li>
+              ))}
+            </ul>
+          </>
+        )}
 
         <div className="border-t border-gray-300 my-6"></div>
       </div>
