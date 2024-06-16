@@ -1,5 +1,6 @@
 "use client"
 import { axiosInstance } from "@/lib/axios";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 interface Perusahaan {
@@ -51,28 +52,30 @@ const PostinganDetail = () => {
   }
 
   return (
-    <div className="container mx-auto p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-center mb-8">
-          <img 
-            src={jobs.gambar || "https://via.placeholder.com/400"} 
-            alt={jobs.judul} 
-            className="w-full rounded-lg"
-            style={{ maxHeight: "400px", objectFit: "cover" }} 
+    <div className="container mx-auto p-4">
+      <div className="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-6">
+        <div className="flex flex-col items-center mb-6">
+          <Image
+            src={jobs.gambar}
+            alt={jobs.judul}
+            width={480}  // Set width sesuai kebutuhan Anda
+            height={270} // Set height sesuai kebutuhan Anda
+            className="rounded-lg"
+            style={{ objectFit: "cover" }}
           />
         </div>
-        <h1 className="text-3xl font-bold mb-4">{jobs.judul}</h1>
+        <h1 className="text-2xl font-bold mb-2">{jobs.judul}</h1>
         <p className="text-lg text-gray-700 mb-4">{jobs.deskripsi}</p>
-        
-        <div className="border-t border-gray-300 my-8"></div>
-        
+
+        <div className="border-t border-gray-300 my-6"></div>
+
         <h2 className="text-xl font-bold mb-2">Informasi Perusahaan</h2>
-        <p className="text-lg text-gray-700 mb-4">Nama: {perusahaan.nama}</p>
-        <p className="text-lg text-gray-700 mb-4">Deskripsi: {perusahaan.deskripsi}</p>
-        <p className="text-lg text-gray-700 mb-4">Alamat: {perusahaan.alamat}</p>
-        <p className="text-lg text-gray-700 mb-4">Email: {perusahaan.email}</p>
-        
-        <div className="border-t border-gray-300 my-8"></div>
+        <p className="text-lg text-gray-700 mb-2">Nama: {perusahaan.nama}</p>
+        <p className="text-lg text-gray-700 mb-2">Deskripsi: {perusahaan.deskripsi}</p>
+        <p className="text-lg text-gray-700 mb-2">Alamat: {perusahaan.alamat}</p>
+        <p className="text-lg text-gray-700 mb-2">Email: {perusahaan.email}</p>
+
+        <div className="border-t border-gray-300 my-6"></div>
       </div>
     </div>
   );

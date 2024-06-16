@@ -1,5 +1,6 @@
 "use client";
 import { axiosInstance } from "@/lib/axios";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 interface Post {
@@ -50,7 +51,7 @@ const PostinganDetail = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <img src={post.image} alt={post.nama} className="w-full rounded-lg mb-8" />
+      <Image src={post.image} alt={post.nama} className="w-full rounded-lg mb-8" />
       <h1 className="text-3xl font-bold mb-4">{post.nama}</h1>
       <p className="text-lg text-gray-700 mb-4">{post.deskripsisingkat}</p>
       <p className="text-lg text-gray-700 mb-4">{post.deskripsipanjang}</p>
