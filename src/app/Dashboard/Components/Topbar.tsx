@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const UserIconWithDropdown = () => {
+const Topbar = () => {
   const [isOpen, setIsOpen] = useState(false); // State untuk menentukan apakah dropdown terbuka
 
   // Menangani toggle dropdown
@@ -73,4 +73,4 @@ const UserIconWithDropdown = () => {
   );
 };
 
-export default UserIconWithDropdown;
+export default Topbar;
