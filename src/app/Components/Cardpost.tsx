@@ -1,9 +1,10 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from "react";
 import { axiosInstance } from "@/lib/axios";
 import { FaBookmark } from "react-icons/fa"; // Import icon simpan/arsip
 import Link from "next/link";
 import Image from "next/image";
+import defaultImage from "@/app/public/assets/image.png"; // Import gambar default
 
 interface Jobs {
   id: number;
@@ -29,7 +30,7 @@ const CardPost: React.FC = () => {
     fetchJobs();
   }, []);
 
-  // Fungsi untuk memotong deskripsi menjadi 100 kata
+  // Fungsi untuk memotong deskripsi menjadi 10 kata
   const truncateDescription = (description: string) => {
     const words = description.split(" ");
     if (words.length > 10) {
@@ -49,26 +50,24 @@ const CardPost: React.FC = () => {
       {jobs.map((job) => (
         <div key={job.id} className="bg-slate-300 p-4 rounded-xl shadow-lg flex flex-col">
           <div className="relative mb-4">
-            {job.gambar && (
-              <Image
-                src={job.gambar}
-                alt={job.judul}
-                width={640} // Sesuaikan width
-                height={360} // Sesuaikan height
-                className="object-cover rounded-t-xl w-full h-64"
-              />
-            )}
+            <Image
+              src={job.gambar || defaultImage} // Gambar default jika job.gambar tidak ada
+              alt={job.judul}
+              width={640} // Sesuaikan width
+              height={360} // Sesuaikan height
+              className="object-cover rounded-t-xl w-full h-64"
+            />
             <FaBookmark className="text-gray-400 text-2xl cursor-pointer absolute top-2 right-2" />
           </div>
           <div className="flex flex-col justify-between flex-grow">
             <div className="">
               <p className="text-lg text-gray-700 mb-2">
-                {job.openrekrutmen.map((item, index) => (
+                {job.openrekrutmen && job.openrekrutmen.map((item, index) => (
                   <span key={index}>#{item} </span>
                 ))}
               </p>
               <h1 className="text-xl sm:text-2xl font-bold mb-2">{job.judul}</h1>
-              <p className="text-lg text-gray-700 mb-4">{truncateDescription(job.deskripsi)}</p>
+              {/* <p className="text-lg text-gray-700 mb-4">{truncateDescription(job.deskripsi)}</p> */}
             </div>
             <div className="flex justify-center items-center mt-4 space-x-4">
               <Link href={`/Daftar/${job.id}`}>

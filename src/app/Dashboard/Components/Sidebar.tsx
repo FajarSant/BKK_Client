@@ -32,7 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setActiveItem }) => {
           </IconContext.Provider>
           <span className="hidden md:block text-sm ml-2">Users</span>
         </li>
-        <li className={`p-4 mb-2 border-b-2 cursor-pointer flex items-center justify-center md:justify-start ${activeMenu === 'Lowongan' ? 'bg-blue-100 border-t-2 border-r-2 border-b-2 border-gray-300 rounded-xl' : 'hover:bg-blue-100 hover:border-blue-300 rounded-xl'}`} onClick={() => handleMenuClick('Lowongan')}>
+        <li className={`p-4 mb-2 border-b-2 cursor-pointer flex items-center justify-center md:justify-start ${activeMenu === 'Jobs' ? 'bg-blue-100 border-t-2 border-r-2 border-b-2 border-gray-300 rounded-xl' : 'hover:bg-blue-100 hover:border-blue-300 rounded-xl'}`} onClick={() => handleMenuClick('Jobs')}>
           <IconContext.Provider value={{ className: 'mr-2 text-gray-600 text-lg md:text-xl' }}>
             <FaSuitcase />
           </IconContext.Provider>
