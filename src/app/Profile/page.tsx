@@ -1,55 +1,65 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
-const UserProfile: React.FC = () => {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | undefined>(undefined);
+const UploadForm: React.FC = () => {
+  const [file, setFile] = useState<File | null>(null);
+  const [penggunaId, setPenggunaId] = useState('');
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('Token not found');
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = new FormData();
+    formData.append('gambar', file as Blob);
+    formData.append('penggunaId', penggunaId);
+
+    try {
+      const response = await axios.post('/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
         }
-        const response = await axios.get('http://localhost:2000/auth/profile', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        setUser(response.data.user); // Menggunakan response.data.user karena user berada dalam properti user di dalam response
-        console.log('User data:', response.data.user); // Console log data user
-      } catch (error: any) {
-        setError(error.message || 'Error fetching user profile');
-      } finally {
-        setLoading(false);
-      }
-    };
+      });
 
-    fetchUser();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+      console.log('Response:', response.data);
+      alert('Gambar berhasil diunggah');
+    } catch (error) {
+      console.error('Error saat mengunggah gambar:', error);
+      alert('Gagal mengunggah gambar');
+    }
+  };
 
   return (
-    <div>
-      <h2>Welcome, {user?.nama}</h2>
-      <p>Email: {user?.email}</p>
-      <p>Alamat: {user?.alamat}</p>
-      <p>Jenis Kelamin: {user?.jeniskelamin}</p>
-      <p>Tanggal Lahir: {user?.tanggalLahir}</p>
-      <p>Tempat: {user?.tempat}</p>
-      <p>User: {user?.user}</p>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="gambar">Pilih gambar:</label>
+        <input
+          type="file"
+          id="gambar"
+          accept="image/*"
+          onChange={handleFileChange}
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor="penggunaId">ID Pengguna:</label>
+        <input
+          type="text"
+          id="penggunaId"
+          value={penggunaId}
+          onChange={(e) => setPenggunaId(e.target.value)}
+          required
+        />
+      </div>
+      <button type="submit">Unggah Gambar</button>
+    </form>
   );
 };
 
-export default UserProfile;
+export default UploadForm;
