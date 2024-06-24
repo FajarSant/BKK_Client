@@ -1,65 +1,93 @@
-"use client"
-import React, { useState } from 'react';
-import axios from 'axios';
+"use client";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Image from "next/image";
+import { axiosInstance } from "@/lib/axios";
 
-const UploadForm: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [penggunaId, setPenggunaId] = useState('');
+interface User {
+  id: string;
+  email: string;
+  nama: string;
+  alamat: string;
+  nomortelepon: string;
+  gambar: string | null;
+  peran: string;
+  jurusan: string;
+}
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-    }
-  };
+const UserProfile: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
 
-    const formData = new FormData();
-    formData.append('gambar', file as Blob);
-    formData.append('penggunaId', penggunaId);
-
-    try {
-      const response = await axios.post('/api/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      if (token) {
+        try {
+          const response = await axiosInstance.get("/auth/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setUser(response.data);
+        } catch (error) {
+          console.error("Failed to fetch user data", error);
         }
-      });
+      }
+    };
 
-      console.log('Response:', response.data);
-      alert('Gambar berhasil diunggah');
-    } catch (error) {
-      console.error('Error saat mengunggah gambar:', error);
-      alert('Gagal mengunggah gambar');
-    }
-  };
+    fetchUser();
+  }, []);
+
+  if (!user) {
+    return <div>No user data available</div>;
+  }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="gambar">Pilih gambar:</label>
-        <input
-          type="file"
-          id="gambar"
-          accept="image/*"
-          onChange={handleFileChange}
-          required
-        />
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-2xl">
+        <div className="flex items-center">
+          <div className="w-24 h-24 rounded-full overflow-hidden">
+            {user.gambar ? (
+              <Image
+                src={`http://localhost:2000/${user.gambar.replace("uploads\\", "uploads/")}`}
+                alt="Profile"
+                width={96}
+                height={96}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Image
+                src="/default-profile.jpg"
+                alt="Default Profile"
+                width={96}
+                height={96}
+                className="w-full h-full object-cover"
+              />
+            )}
+          </div>
+          <div className="ml-6">
+            <h2 className="text-2xl font-bold">{user.nama}</h2>
+            <p className="text-gray-600">{user.email}</p>
+          </div>
+        </div>
+        <div className="mt-6">
+          <p>
+            <strong>Address:</strong> {user.alamat}
+          </p>
+          <p className="mt-2">
+            <strong>Phone Number:</strong> {user.nomortelepon}
+          </p>
+          <p className="mt-2">
+            <strong>Role:</strong> {user.peran}
+          </p>
+          <p className="mt-2">
+            <strong>Department:</strong> {user.jurusan}
+          </p>
+        </div>
       </div>
-      <div>
-        <label htmlFor="penggunaId">ID Pengguna:</label>
-        <input
-          type="text"
-          id="penggunaId"
-          value={penggunaId}
-          onChange={(e) => setPenggunaId(e.target.value)}
-          required
-        />
-      </div>
-      <button type="submit">Unggah Gambar</button>
-    </form>
+    </div>
   );
 };
 
-export default UploadForm;
+export default UserProfile;
