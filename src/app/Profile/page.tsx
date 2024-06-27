@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Image from "next/image";
 import { axiosInstance } from "@/lib/axios";
 import Topbar from "../Components/TopBar";
+import Footer from "../Components/Footer";
 
 interface User {
   id: string;
@@ -97,13 +97,13 @@ const UserProfile: React.FC = () => {
           </div>
         </div>
         <div className="px-6 pb-6">
-          <button className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200">
+          <button className="w-full bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition duration-200">
             Edit Profile
           </button>
         </div>
         <div className="border-t border-gray-200 mt-6">
+          <div className="font-bold text-center mt-4 underline">LAMARAN</div>
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <div className="font-bold text-center">LAMARAN</div>
             <div className="bg-gray-200 aspect-w-1 aspect-h-1">1</div>
             <div className="bg-gray-200 aspect-w-1 aspect-h-1">2</div>
             <div className="bg-gray-200 aspect-w-1 aspect-h-1">3</div>
@@ -111,6 +111,7 @@ const UserProfile: React.FC = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

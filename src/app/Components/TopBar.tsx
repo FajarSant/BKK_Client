@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaSearch, FaUserCircle } from 'react-icons/fa';
+import { FaUserCircle } from 'react-icons/fa';
 import { axiosInstance } from '@/lib/axios';
 
 interface User {
@@ -50,20 +50,35 @@ const Topbar: React.FC = () => {
       {/* Start: Logo */}
       <Link href="/" passHref>
         <div className="text-xl font-bold text-gray-700 cursor-pointer">
-          BKK SMKN enter Ngargoyoso
+          BKK SMKN Ngargoyoso
         </div>
       </Link>
 
       {/* Center: Search Input */}
-      <div className="flex items-center w-full max-w-md mx-4">
-        <input
-          type="text"
-          placeholder="Search..."
-          className="w-full p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        />
-        <button className="p-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-          <FaSearch />
-        </button>
+      <div className="flex items-center w-full max-w-lg mx-4">
+        <form className="w-full">
+          <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <svg className="w-5 h-5 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+              </svg>
+            </div>
+            <input
+              type="search"
+              id="default-search"
+              className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Search Mockups, Logos..."
+              required
+            />
+            <button
+              type="submit"
+              className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-2xl text-sm px-4 py-2"
+            >
+              Search
+            </button>
+          </div>
+        </form>
       </div>
 
       {/* End: User Icon and Dropdown */}
@@ -89,17 +104,17 @@ const Topbar: React.FC = () => {
         {dropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
             <Link href="/Profile" passHref>
-              <span className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+              <span className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
                 Profile
               </span>
             </Link>
             <Link href="/settings" passHref>
-              <span className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+              <span className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
                 Settings
               </span>
             </Link>
             <Link href="/logout" passHref>
-              <span className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+              <span className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
                 Logout
               </span>
             </Link>

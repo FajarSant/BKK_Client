@@ -18,7 +18,7 @@ const LoginForm: React.FC = () => {
       localStorage.setItem("token", token);
 
       alert("Login successful");
-      window.location.href = "/Profile"; // Redirect to the profile page
+      window.location.href = "/"; 
     } catch (error) {
       console.error("Login failed", error);
       alert("Login failed");
