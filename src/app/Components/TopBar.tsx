@@ -1,9 +1,10 @@
-"use client";
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { FaUserCircle } from 'react-icons/fa';
-import { axiosInstance } from '@/lib/axios';
+"use client"
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { FaUserCircle } from "react-icons/fa";
+import { axiosInstance } from "@/lib/axios";
+import toast, { Toaster } from "react-hot-toast";
 
 interface User {
   id: string;
@@ -19,6 +20,8 @@ interface User {
 const Topbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [showModal, setShowModal] = useState(false); // State untuk menampilkan modal
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -41,86 +44,159 @@ const Topbar: React.FC = () => {
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
+  const handleLogout = () => {
+    setShowModal(true); // Tampilkan modal konfirmasi
+  };
+
+  const confirmLogout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+    setDropdownOpen(false);
+    // Hapus data pengguna dari browser
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("user_nama");
+    setShowModal(false); // Tutup modal setelah logout
+    toast.success("Logout berhasil!");
+  };
+
+  const closeModal = () => {
+    setShowModal(false); // Tutup modal jika dibatalkan
+    toast.error("Logout dibatalkan!");
+  };
+
   return (
-    <div className="flex items-center justify-between p-4 bg-white shadow-md">
-      {/* Start: Logo */}
-      <Link href="/" passHref>
-        <div className="text-xl font-bold text-gray-700 cursor-pointer">
-          BKK SMKN Ngargoyoso
+    <div
+      className={`bg-white shadow-md py-2 px-4 ${
+        isScrolled
+          ? "fixed top-0 left-0 w-full z-20 backdrop-filter backdrop-blur-lg bg-opacity-90"
+          : ""
+      }`}
+    >
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-4">
+          <div className="text-lg font-bold text-gray-900">
+            BKK
+            <br />
+            SMKN NGARFOYOSO
+          </div>
         </div>
-      </Link>
-
-      {/* Center: Search Input */}
-      <div className="flex items-center w-full max-w-lg mx-4">
-        <form className="w-full">
-          <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <svg className="w-5 h-5 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-              </svg>
-            </div>
-            <input
-              type="search"
-              id="default-search"
-              className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Search Mockups, Logos..."
-              required
-            />
-            <button
-              type="submit"
-              className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-2xl text-sm px-4 py-2"
+        <div className="relative">
+          <button
+            onClick={toggleDropdown}
+            className="flex items-center focus:outline-none"
+          >
+            {user && user.gambar ? (
+              <div className="relative w-10 h-10">
+                <Image
+                  src={`http://localhost:2000/${user.gambar.replace(
+                    "uploads\\",
+                    "uploads/"
+                  )}`}
+                  alt={user.nama}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-full"
+                />
+              </div>
+            ) : (
+              <FaUserCircle className="text-2xl text-gray-600 rounded-full" />
+            )}
+            <span className="ml-2 text-gray-900">
+              {user ? user.nama : "Login"}
+            </span>
+          </button>
+          {dropdownOpen && (
+            <div
+              className={`absolute right-0 mt-2 w-48 bg-white text-gray-900 rounded-md shadow-lg z-10 ${
+                isScrolled
+                  ? "bg-opacity-90 backdrop-filter backdrop-blur-lg"
+                  : ""
+              }`}
             >
-              Search
-            </button>
-          </div>
-        </form>
+              {user ? (
+                <>
+                  <div className="px-4 py-2">
+                    <p className="text-sm font-medium">{user.nama}</p>
+                    <p className="text-xs text-gray-500">{user.email}</p>
+                  </div>
+                  <div className="border-t border-gray-200">
+                    <Link href="/Profile">
+                      <span className="block px-4 py-2 hover:bg-gray-200">
+                        Profile
+                      </span>
+                    </Link>
+                    {user.peran === "ADMIN" && (
+                      <Link href="/Dashboard">
+                        <span className="block px-4 py-2 hover:bg-gray-200">
+                          Dashboard
+                        </span>
+                      </Link>
+                    )}
+                    <button
+                      onClick={handleLogout}
+                      className="block px-4 py-2 hover:bg-gray-200 w-full text-left"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <Link href="/Login">
+                  <span className="block px-4 py-2 hover:bg-gray-200">
+                    Login
+                  </span>
+                </Link>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* End: User Icon and Dropdown */}
-      <div className="relative">
-        <button
-          onClick={toggleDropdown}
-          className="flex items-center text-gray-700 focus:outline-none"
-        >
-          {user?.gambar ? (
-            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-gray-300">
-              <Image
-                src={`http://localhost:2000/${user.gambar.replace("uploads\\", "uploads/")}`}
-                alt="User Profile"
-                width={32}
-                height={32}
-                className="w-full h-full object-cover"
-              />
+      {/* Modal Konfirmasi Logout */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
+          <div className="relative bg-white p-6 rounded-lg shadow-lg z-50">
+            <h2 className="text-lg font-bold mb-4">Logout Confirmation</h2>
+            <p className="text-sm text-gray-700 mb-4">
+              {`Apakah Anda yakin ingin keluar, ${user ? user.nama : 'Pengguna'}?`}
+            </p>
+            <div className="flex justify-end">
+              <button
+                onClick={closeModal}
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2"
+              >
+                Batal
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+              >
+                Ya
+              </button>
             </div>
-          ) : (
-            <FaUserCircle size={28} />
-          )}
-        </button>
-        {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
-            <Link href="/Profile" passHref>
-              <span className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
-                Profile
-              </span>
-            </Link>
-            <Link href="/settings" passHref>
-              <span className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
-                Settings
-              </span>
-            </Link>
-            <Link href="/logout" passHref>
-              <span className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
-                Logout
-              </span>
-            </Link>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Toast */}
+      <Toaster position="bottom-right" reverseOrder={false} />
     </div>
   );
 };
