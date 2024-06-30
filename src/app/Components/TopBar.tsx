@@ -1,8 +1,9 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaUser, FaTachometerAlt, FaSignOutAlt } from "react-icons/fa";
+import { AiOutlineClose } from "react-icons/ai";
 import { axiosInstance } from "@/lib/axios";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -21,7 +22,7 @@ const Topbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showModal, setShowModal] = useState(false); // State untuk menampilkan modal
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -56,27 +57,34 @@ const Topbar: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (showModal) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+  }, [showModal]);
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
   const handleLogout = () => {
-    setShowModal(true); // Tampilkan modal konfirmasi
+    setShowModal(true);
   };
 
   const confirmLogout = () => {
     localStorage.removeItem("token");
     setUser(null);
     setDropdownOpen(false);
-    // Hapus data pengguna dari browser
     localStorage.removeItem("user_id");
     localStorage.removeItem("user_nama");
-    setShowModal(false); // Tutup modal setelah logout
+    setShowModal(false);
     toast.success("Logout berhasil!");
   };
 
   const closeModal = () => {
-    setShowModal(false); // Tutup modal jika dibatalkan
+    setShowModal(false);
     toast.error("Logout dibatalkan!");
   };
 
@@ -90,7 +98,7 @@ const Topbar: React.FC = () => {
     >
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          <div className="text-lg font-bold text-gray-900">
+          <div className="text-lg font-bold text-gray-900 leading-tight">
             BKK
             <br />
             SMKN NGARFOYOSO
@@ -117,7 +125,7 @@ const Topbar: React.FC = () => {
             ) : (
               <FaUserCircle className="text-2xl text-gray-600 rounded-full" />
             )}
-            <span className="ml-2 text-gray-900">
+            <span className="ml-2 text-gray-900 font-medium">
               {user ? user.nama : "Login"}
             </span>
           </button>
@@ -137,28 +145,32 @@ const Topbar: React.FC = () => {
                   </div>
                   <div className="border-t border-gray-200">
                     <Link href="/Profile">
-                      <span className="block px-4 py-2 hover:bg-gray-200">
+                      <span className="flex items-center px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                        <FaUser className="mr-2" />
                         Profile
                       </span>
                     </Link>
                     {user.peran === "ADMIN" && (
                       <Link href="/Dashboard">
-                        <span className="block px-4 py-2 hover:bg-gray-200">
+                        <span className="flex items-center px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                          <FaTachometerAlt className="mr-2" />
                           Dashboard
                         </span>
                       </Link>
                     )}
                     <button
                       onClick={handleLogout}
-                      className="block px-4 py-2 hover:bg-gray-200 w-full text-left"
+                      className="flex items-center px-4 py-2 hover:bg-gray-200 w-full text-left"
                     >
+                      <FaSignOutAlt className="mr-2" />
                       Logout
                     </button>
                   </div>
                 </>
               ) : (
                 <Link href="/Login">
-                  <span className="block px-4 py-2 hover:bg-gray-200">
+                  <span className="flex items-center px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                    <FaUser className="mr-2" />
                     Login
                   </span>
                 </Link>
@@ -167,13 +179,17 @@ const Topbar: React.FC = () => {
           )}
         </div>
       </div>
-
-      {/* Modal Konfirmasi Logout */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
-          <div className="relative bg-white p-6 rounded-lg shadow-lg z-50">
-            <h2 className="text-lg font-bold mb-4">Logout Confirmation</h2>
+          <div className="relative bg-white p-6 rounded-xl shadow-lg z-50 w-96">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={closeModal}
+            >
+              <AiOutlineClose size={24} />
+            </button>
+            <h2 className="text-lg font-bold mb-4">Konfirmasi Logout</h2>
             <p className="text-sm text-gray-700 mb-4">
               {`Apakah Anda yakin ingin keluar, ${user ? user.nama : 'Pengguna'}?`}
             </p>
@@ -194,8 +210,6 @@ const Topbar: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Toast */}
       <Toaster position="bottom-right" reverseOrder={false} />
     </div>
   );

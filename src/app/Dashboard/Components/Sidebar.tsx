@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IconContext } from 'react-icons';
-import { FaHome, FaUsers, FaSuitcase, FaChartBar } from 'react-icons/fa'; // Import ikon yang ingin digunakan
+import { FaHome, FaUsers, FaSuitcase, FaChartBar, FaSignOutAlt } from 'react-icons/fa'; // Import ikon yang ingin digunakan
 
 interface SidebarProps {
   setActiveItem: (item: string) => void;
@@ -14,35 +14,44 @@ const Sidebar: React.FC<SidebarProps> = ({ setActiveItem }) => {
     setActiveMenu(item);
   };
 
+  const handleLogout = () => {
+    // Tidak menghapus token dari localStorage, hanya mengarahkan pengguna ke halaman utama
+    window.location.href = '/';
+  };
+
+  const menuItems = [
+    { label: 'Home', icon: FaHome },
+    { label: 'Users', icon: FaUsers },
+    { label: 'Lowongan', icon: FaSuitcase },
+    { label: 'Analisis', icon: FaChartBar },
+  ];
+
   return (
     <div className="flex flex-col h-full p-2">
-      <div className="p-4 border-b-2">
-        <h2 className="text-xl font-semibold">DASHBOARD</h2>
+      <div className="p-2 border-b-2 text-center">
+        <h2 className="text-xl font-semibold">MENU</h2>
       </div>
-      <ul className="flex-1">
-        <li className={`p-4 mb-2 border-b-2 cursor-pointer flex items-center justify-center md:justify-start ${activeMenu === 'Home' ? 'bg-blue-100 border-t-2 border-r-2 border-b-2 border-gray-300 rounded-xl' : 'hover:bg-blue-200 hover:border-blue-300 rounded-xl'}`} onClick={() => handleMenuClick('Home')}>
+      <ul className="flex-1 space-y-2 mt-4">
+        {menuItems.map((item) => (
+          <li
+            key={item.label}
+            className={`p-4 cursor-pointer flex items-center justify-center md:justify-start rounded-xl border-b-2 ${activeMenu === item.label ? 'bg-blue-100 border-gray-300' : 'hover:bg-blue-200 hover:border-blue-300'}`}
+            onClick={() => handleMenuClick(item.label)}
+          >
+            <IconContext.Provider value={{ className: 'mr-2 text-gray-600 text-lg md:text-xl' }}>
+              <item.icon />
+            </IconContext.Provider>
+            <span className="hidden md:block text-sm ml-2">{item.label}</span>
+          </li>
+        ))}
+        <li
+          className="p-4 cursor-pointer flex items-center justify-center md:justify-start rounded-xl border-b-2 hover:bg-blue-200 hover:border-blue-300"
+          onClick={handleLogout}
+        >
           <IconContext.Provider value={{ className: 'mr-2 text-gray-600 text-lg md:text-xl' }}>
-            <FaHome />
+            <FaSignOutAlt />
           </IconContext.Provider>
-          <span className="hidden md:block text-sm ml-2">Home</span>
-        </li>
-        <li className={`p-4 mb-2 border-b-2 cursor-pointer flex items-center justify-center md:justify-start ${activeMenu === 'Users' ? 'bg-blue-100 border-t-2 border-r-2 border-b-2 border-gray-300 rounded-xl' : 'hover:bg-blue-100 hover:border-blue-300 rounded-xl'}`} onClick={() => handleMenuClick('Users')}>
-          <IconContext.Provider value={{ className: 'mr-2 text-gray-600 text-lg md:text-xl' }}>
-            <FaUsers />
-          </IconContext.Provider>
-          <span className="hidden md:block text-sm ml-2">Users</span>
-        </li>
-        <li className={`p-4 mb-2 border-b-2 cursor-pointer flex items-center justify-center md:justify-start ${activeMenu === 'Jobs' ? 'bg-blue-100 border-t-2 border-r-2 border-b-2 border-gray-300 rounded-xl' : 'hover:bg-blue-100 hover:border-blue-300 rounded-xl'}`} onClick={() => handleMenuClick('Jobs')}>
-          <IconContext.Provider value={{ className: 'mr-2 text-gray-600 text-lg md:text-xl' }}>
-            <FaSuitcase />
-          </IconContext.Provider>
-          <span className="hidden md:block text-sm ml-2">Lowongan</span>
-        </li>
-        <li className={`p-4 mb-2 border-b-2 cursor-pointer flex items-center justify-center md:justify-start ${activeMenu === 'Analisis' ? 'bg-blue-100 border-t-2 border-r-2 border-b-2 border-gray-300 rounded-xl' : 'hover:bg-blue-100 hover:border-blue-300 rounded-xl'}`} onClick={() => handleMenuClick('Analisis')}>
-          <IconContext.Provider value={{ className: 'mr-2 text-gray-600 text-lg md:text-xl' }}>
-            <FaChartBar />
-          </IconContext.Provider>
-          <span className="hidden md:block text-sm ml-2">Analisis</span>
+          <span className="hidden md:block text-sm ml-2">Logout</span>
         </li>
       </ul>
     </div>
