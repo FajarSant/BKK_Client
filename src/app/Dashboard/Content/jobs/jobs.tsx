@@ -1,153 +1,128 @@
-import React, { useState, useEffect } from 'react';
-import { axiosInstance } from '@/lib/axios';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import { axiosInstance } from "@/lib/axios";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 
 interface Job {
-  _id: string;
   judul: string;
+  gambar?: string;
   namaPT: string;
-  deskripsi: string;
-  persyaratan: string[] | null | undefined;
-  openrekrutmen: string[] | null | undefined;
-  gambar?: string | null;
   alamat: string;
-  email: string;
   nomorTelepon: string;
+  email: string;
 }
 
 const JobsTable: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [jobsPerPage] = useState<number>(10); // Ubah jumlah item per halaman sesuai kebutuhan
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axiosInstance.get<Job[]>('/jobs'); // Ganti endpoint sesuai API Anda
+        const response = await axiosInstance.get<Job[]>("/jobs");
         setJobs(response.data);
-      } catch (error) {
-        console.error('Error fetching jobs:', error);
+      } catch (err) {
+        setError("Failed to fetch jobs");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchJobs();
   }, []);
 
-  // Logic for pagination
-  const indexOfLastJob = currentPage * jobsPerPage;
-  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
-
-  // Change page
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
-  // Previous page
-  const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Next page
-  const nextPage = () => {
-    if (currentPage < Math.ceil(jobs.length / jobsPerPage)) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handleEdit = (jobId: string) => {
-    alert(`Edit job with ID: ${jobId}`);
-  };
-
-  const handleDelete = (jobId: string) => {
-    alert(`Delete job with ID: ${jobId}`);
-  };
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-8 text-center underline">Informasi Lowongan</h1>
-      <div className="bg-gray-200 p-4 rounded-t-md shadow-md">
-        <h2 className="text-xl font-semibold mb-2">Tambahkan Lowongan</h2>
-        <button className="bg-green-400 text-white px-4 py-2 rounded-md hover:bg-green-500 transition duration-300">
-          ADD
-        </button>
-      </div>
-      <div className="overflow-x-auto mb-4">
-        <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-lg">
-          <thead className="bg-gray-100 text-left">
-            <tr>
-              <th className="py-3 px-4 text-center border-b border-r border-t border-gray-300 bg-gray-200">No</th>
-              <th className="py-3 px-4 text-center border-b border-r border-t border-gray-300 bg-gray-200">Judul</th>
-              <th className="py-3 px-4 text-center border-b border-r border-t border-gray-300 bg-gray-200">Nama PT</th>
-              <th className="py-3 px-4 text-center border-b border-r border-t border-gray-300 bg-gray-200">Alamat</th>
-              <th className="py-3 px-4 text-center border-b border-r border-t border-gray-300 bg-gray-200">Email</th>
-              <th className="py-3 px-4 text-center border-b border-r border-t border-gray-300 bg-gray-200">Telepon</th>
-              <th className="py-3 px-4 text-center border-b border-r border-t border-gray-300 bg-gray-200">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentJobs.map((job, index) => (
-              <tr key={job._id} className="hover:bg-gray-50">
-                <td className="py-4 px-4 text-center border-b border-r border-gray-300">{indexOfFirstJob + index + 1}</td>
-                <td className="py-4 px-4 text-left border-r border-b border-gray-300">{job.judul}</td>
-                <td className="py-4 px-4 text-center border-b border-r border-gray-300">{job.namaPT}</td>
-                <td className="py-4 px-4 text-center border-b border-r border-gray-300">{job.alamat}</td>
-                <td className="py-4 px-4 text-center border-b border-r border-gray-300">{job.email}</td>
-                <td className="py-4 px-4 text-center border-b border-r border-gray-300">{job.nomorTelepon}</td>
-                <td className="py-4 px-4 text-center border-b border-r border-gray-300 ">
-                  <button
-                    className="bg-blue-500 text-white px-3 py-1 rounded-lg flex items-center justify-center mb-2 hover:bg-blue-600 transition duration-300"
-                    onClick={() => handleEdit(job._id)}
-                  >
-                    <FaEdit className="mr-1" /> Edit
-                  </button>
-                  <button
-                    className="bg-red-500 text-white px-3 py-1 rounded-lg flex items-center justify-center hover:bg-red-600 transition duration-300"
-                    onClick={() => handleDelete(job._id)}
-                  >
-                    <FaTrash className="mr-1" /> Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {/* Pagination */}
-      <div className="flex justify-between items-center mb-4">
-        <p className="text-sm text-gray-600">
-          Menampilkan {indexOfFirstJob + 1} hingga {Math.min(indexOfLastJob, jobs.length)} dari {jobs.length} data
-        </p>
-        <div className="flex">
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <h1 className="text-center font-bold text-2xl">INFORMASI JOBS</h1>
+      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <caption className="p-5 text-lg font-semibold text-left text-gray-900 bg- dark:text-white dark:bg-gray-800">
+          Job Listings
+          <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+            Browse the list of available jobs along with their details.
+          </p>
           <button
-            className={`mx-1 px-4 py-2 bg-white text-black rounded-md ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-300'}`}
-            onClick={prevPage}
-            disabled={currentPage === 1}
+            type="button"
+            className="text-white mt-2 bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm p-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
           >
-            {'Previous'}
+            <div className="flex items-center ">
+            <FaPlus /> <p className="ml-1">Tambahkan</p>
+            </div>
           </button>
-          {Array.from({ length: Math.ceil(jobs.length / jobsPerPage) }, (_, index) => (
-            <button
+        </caption>
+        <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" className="px-6 py-3">
+              No
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Judul
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Gambar
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Nama PT
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Alamat
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Nomor Telepon
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Email
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {jobs.map((job, index) => (
+            <tr
               key={index}
-              className={`mx-1 px-4 py-2 bg-white text-black rounded-md ${
-                currentPage === index + 1 ? 'bg-blue-500 text-white' : 'hover:bg-gray-300'
-              }`}
-              onClick={() => paginate(index + 1)}
+              className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
             >
-              {index + 1}
-            </button>
+              <td className="px-6 py-4">{index + 1}</td>
+              <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                {job.judul}
+              </td>
+              <td className="px-6 py-4">
+                {job.gambar ? (
+                  <img
+                    src={job.gambar}
+                    alt={job.judul}
+                    className="w-16 h-16 object-cover"
+                  />
+                ) : (
+                  "No Image"
+                )}
+              </td>
+              <td className="px-6 py-4">{job.namaPT}</td>
+              <td className="px-6 py-4">{job.alamat}</td>
+              <td className="px-6 py-4">{job.nomorTelepon}</td>
+              <td className="px-6 py-4">{job.email}</td>
+              <td className="px-6 py-4 flex space-x-2">
+                <button
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  <FaEdit />
+                </button>
+                <button
+                  type="button"
+                  className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm p-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                >
+                  <FaTrash />
+                </button>
+              </td>
+            </tr>
           ))}
-          <button
-            className={`mx-1 px-4 py-2 bg-white text-black rounded-md ${
-              currentPage === Math.ceil(jobs.length / jobsPerPage) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-300'
-            }`}
-            onClick={nextPage}
-            disabled={currentPage === Math.ceil(jobs.length / jobsPerPage)}
-          >
-            {'Next'}
-          </button>
-        </div>
-      </div>
+        </tbody>
+      </table>
     </div>
   );
 };

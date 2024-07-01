@@ -22,7 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setActiveItem }) => {
   const menuItems = [
     { label: 'Home', icon: FaHome },
     { label: 'Users', icon: FaUsers },
-    { label: 'Lowongan', icon: FaSuitcase },
+    { label: 'Jobs', icon: FaSuitcase },
     { label: 'Analisis', icon: FaChartBar },
   ];
 
