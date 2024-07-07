@@ -4,26 +4,33 @@ import { axiosInstance } from '@/lib/axios';
 import EditModal from './EditModal';
 import DeleteModal from './DeleteModal';
 import AddModal from './AddModal';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface Job {
-  id:string;
+  id: string;
   judul: string;
-  gambar?: string;
   namaPT: string;
+  deskripsi?: string;
+  persyaratan: string[];
+  openrekrutmen: string[];
+  gambar?: string;
   alamat: string;
-  nomorTelepon: string;
   email: string;
+  nomorTelepon: string;
 }
 
 const JobList: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
   useEffect(() => {
-    // Fetch data from /jobs endpoint using Axios
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
     axiosInstance.get<Job[]>('/jobs')
       .then(response => {
         setJobs(response.data);
@@ -31,54 +38,62 @@ const JobList: React.FC = () => {
       .catch(error => {
         console.error('Error fetching jobs:', error);
       });
-  }, []);
+  };
 
   const openEditModal = (job: Job) => {
     setSelectedJob(job);
-    setEditModalOpen(true); // Set editModalOpen to true
+    setEditModalOpen(true);
   };
 
   const openDeleteModal = (job: Job) => {
     setSelectedJob(job);
-    setDeleteModalOpen(true); // Set deleteModalOpen to true
+    setDeleteModalOpen(true);
   };
 
   const openAddModal = () => {
-    setAddModalOpen(true); // Set addModalOpen to true
+    setAddModalOpen(true);
   };
 
   const handleEditSave = () => {
-    // Logic to handle save in edit modal
-    console.log('Save edit');
-    setEditModalOpen(false); // Close edit modal after save
+    setEditModalOpen(false);
+    fetchData();
   };
 
   const handleDeleteConfirm = () => {
-    // Logic to handle delete confirmation
-    console.log('Delete confirmed');
-    setDeleteModalOpen(false); // Close delete modal after confirmation
+    if (!selectedJob) return;
+
+    axiosInstance.delete(`/jobs/${selectedJob.id}`)
+      .then(response => {
+        console.log('Job deleted successfully:', response);
+        setJobs(prevJobs => prevJobs.filter(job => job.id !== selectedJob.id));
+        setDeleteModalOpen(false);
+      })
+      .catch(error => {
+        console.error('Error deleting job:', error);
+      })
+      .finally(() => {
+        fetchData();
+      });
   };
 
   const handleDeleteCancel = () => {
-    // Logic to handle delete cancellation
-    console.log('Delete cancelled');
-    setDeleteModalOpen(false); // Close delete modal after cancellation
+    setDeleteModalOpen(false);
   };
 
   const handleAdd = () => {
-    // Logic to handle add operation
-    console.log('Add job');
-    setAddModalOpen(false); // Close add modal after adding job
+    setAddModalOpen(false);
+    fetchData();
   };
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <h1 className="text-center font-bold text-2xl">INFORMASI JOBS</h1>
+      <Toaster /> 
+      <h1 className="text-center font-bold text-2xl">INFORMASI JOB</h1>
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 relative">
         <caption className="p-5 text-lg font-semibold text-left text-gray-900 bg-gray-200 dark:bg-gray-800">
-          Job Listings
+          Daftar Job
           <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-            Browse the list of available jobs along with their details.
+            Telusuri daftar pekerjaan yang tersedia beserta detailnya.
           </p>
           <button
             className="text-white mt-2 bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm p-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
@@ -113,7 +128,7 @@ const JobList: React.FC = () => {
               Email
             </th>
             <th scope="col" className="px-6 py-3">
-              Actions
+              Aksi
             </th>
           </tr>
         </thead>
@@ -145,13 +160,13 @@ const JobList: React.FC = () => {
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <button
                   className="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  onClick={() => openEditModal(job)} // Ensure correct invocation of openEditModal
+                  onClick={() => openEditModal(job)}
                 >
                   <FaEdit />
                 </button>
                 <button
                   className="text-white mt-2 bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm p-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                  onClick={() => openDeleteModal(job)} // Ensure correct invocation of openDeleteModal
+                  onClick={() => openDeleteModal(job)}
                 >
                   <FaTrash />
                 </button>
@@ -162,10 +177,10 @@ const JobList: React.FC = () => {
       </table>
 
       {/* Edit Modal */}
-      <EditModal isOpen={editModalOpen} onClose={() => setEditModalOpen(false)} job={selectedJob} onSave={handleEditSave} />
+      <EditModal isOpen={editModalOpen} onClose={() => setEditModalOpen(false)} onEdit={handleEditSave} job={selectedJob} />
 
       {/* Delete Modal */}
-      <DeleteModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} job={selectedJob} onDelete={handleDeleteConfirm} />
+      <DeleteModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} job={selectedJob} onDelete={handleDeleteConfirm} onCancel={() => setDeleteModalOpen(false)} />
 
       {/* Add Modal */}
       <AddModal isOpen={addModalOpen} onClose={() => setAddModalOpen(false)} onAdd={handleAdd} />

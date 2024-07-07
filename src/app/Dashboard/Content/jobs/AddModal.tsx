@@ -1,86 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 import { axiosInstance } from '@/lib/axios';
 
 interface AddModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: () => void; // Tambahkan prop onAdd untuk menangani penambahan data
-}
-
-interface JobData {
-  judul: string;
-  namaPT: string;
-  deskripsi: string;
-  persyaratan: string[];
-  openrekrutmen: string[];
-  gambar?: string | null;
-  alamat: string;
-  email: string;
-  nomorTelepon: string;
+  onAdd: () => void;
 }
 
 const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
-  const [newJob, setNewJob] = useState<JobData>({
+  const [newJob, setNewJob] = useState({
     judul: '',
     namaPT: '',
     deskripsi: '',
-    persyaratan: [],
-    openrekrutmen: [],
-    gambar: null,
+    persyaratan: [] as string[],
+    openrekrutmen: [] as string[],
+    gambar: '',
     alamat: '',
     email: '',
-    nomorTelepon: '',
+    nomorTelepon: ''
   });
-  const [error, setError] = useState<string>('');
 
-  useEffect(() => {
-    // Reset form fields when modal opens
-    if (isOpen) {
-      setNewJob({
-        judul: '',
-        namaPT: '',
-        deskripsi: '',
-        persyaratan: [],
-        openrekrutmen: [],
-        gambar: null,
-        alamat: '',
-        email: '',
-        nomorTelepon: '',
-      });
-      setError('');
-    }
-  }, [isOpen]);
+  const [error, setError] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setNewJob({
-      ...newJob,
-      [name]: value,
-    });
-  };
-
-  const handlePersyaratanChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const { value } = e.currentTarget;
-    if (value.trim() !== '' && e.key === 'Enter') {
-      setNewJob({
-        ...newJob,
-        persyaratan: [...newJob.persyaratan, value.trim()],
-      });
-      e.currentTarget.value = ''; // Clear input after adding
-      e.preventDefault(); // Prevent form submission on Enter
-    }
-  };
-
-  const handleOpenrekrutmenChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const { value } = e.currentTarget;
-    if (value.trim() !== '' && e.key === 'Enter') {
-      setNewJob({
-        ...newJob,
-        openrekrutmen: [...newJob.openrekrutmen, value.trim()],
-      });
-      e.currentTarget.value = ''; // Clear input after adding
-      e.preventDefault(); // Prevent form submission on Enter
-    }
+    setNewJob({ ...newJob, [name]: value });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,35 +34,37 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setNewJob({
-          ...newJob,
-          gambar: reader.result as string,
-        });
+        setNewJob({ ...newJob, gambar: reader.result as string });
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, key: 'persyaratan' | 'openrekrutmen') => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const value = (e.target as HTMLInputElement).value;
+      if (value) {
+        setNewJob(prevState => ({
+          ...prevState,
+          [key]: [...prevState[key], value]
+        }));
+        (e.target as HTMLInputElement).value = '';
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validate required fields
-    if (!newJob.judul || !newJob.namaPT || !newJob.deskripsi || !newJob.alamat || !newJob.email || !newJob.nomorTelepon) {
-      setError('Semua bidang harus diisi!');
-      return;
-    }
-
     try {
-      // Send data to API using Axios (adjust URL and headers as needed)
-      const response = await axiosInstance.post('/jobs', newJob);
-      console.log('Job added successfully:', response.data);
-      // Close modal after successful submission
-      onAdd();
-      onClose();
+      await axiosInstance.post('/jobs', newJob);
+      toast.success('Job added successfully!');
+      onAdd(); // Refresh job list
+      onClose(); // Close modal
     } catch (error) {
+      toast.error('Failed to add job.');
+      setError('Failed to add job.');
       console.error('Error adding job:', error);
-      // Handle error state or display error message
-      setError('Gagal menambahkan job. Silakan coba lagi.');
     }
   };
 
@@ -180,7 +128,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             <input
               type="text"
               placeholder="Tambahkan persyaratan"
-              onKeyDown={handlePersyaratanChange}
+              onKeyDown={(e) => handleKeyDown(e, 'persyaratan')}
               className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
             />
             <ul>
@@ -207,7 +155,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             <input
               type="text"
               placeholder="Tambahkan open rekrutmen"
-              onKeyDown={handleOpenrekrutmenChange}
+              onKeyDown={(e) => handleKeyDown(e, 'openrekrutmen')}
               className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
             />
             <ul>
@@ -256,7 +204,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             onClick={onClose}
             className="text-white bg-gray-500 hover:bg-gray-600 mt-2 font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
           >
-            Close
+            Batal
           </button>
         </form>
       </div>
