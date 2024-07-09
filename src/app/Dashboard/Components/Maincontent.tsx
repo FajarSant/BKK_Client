@@ -1,6 +1,6 @@
 // MainContent.tsx
 import React from 'react';
-import Users from '../Content/UsersModal/User';
+import Users from '../Content/users/User';
 import JobsTable from '../Content/jobs/jobs';
 
 interface MainContentProps {

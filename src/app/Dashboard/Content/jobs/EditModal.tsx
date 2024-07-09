@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Job } from './type'; // Pastikan untuk mengimpor dari lokasi yang benar
+import { Job } from './type'; // Pastikan import dari lokasi yang benar
 import { axiosInstance } from '@/lib/axios';
 import { toast } from 'react-hot-toast';
 
@@ -15,8 +15,8 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
     judul: '',
     namaPT: '',
     deskripsi: '',
-    persyaratan: [], // Inisialisasi sebagai array kosong
-    openrekrutmen: [], // Inisialisasi sebagai array kosong
+    persyaratan: [],
+    openrekrutmen: [],
     gambar: '',
     alamat: '',
     email: '',
@@ -29,16 +29,18 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
   useEffect(() => {
     if (job) {
       setEditedJob({
-        judul: job.judul,
-        namaPT: job.namaPT,
+        judul: job.judul || '',
+        namaPT: job.namaPT || '',
         deskripsi: job.deskripsi || '',
-        persyaratan: job.persyaratan || [], // Pastikan untuk menangani nilai undefined dengan default []
-        openrekrutmen: job.openrekrutmen || [], // Pastikan untuk menangani nilai undefined dengan default []
+        persyaratan: job.persyaratan ? [...job.persyaratan] : [],
+        openrekrutmen: job.openrekrutmen ? [...job.openrekrutmen] : [],
         gambar: job.gambar || '',
-        alamat: job.alamat,
-        email: job.email,
-        nomorTelepon: job.nomorTelepon
+        alamat: job.alamat || '',
+        email: job.email || '',
+        nomorTelepon: job.nomorTelepon || ''
       });
+    } else {
+      setEditedJob(initialEditedJob);
     }
   }, [job]);
 
@@ -59,6 +61,22 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
     }));
   };
 
+  const handleDelete = (field: 'persyaratan' | 'openrekrutmen', index: number) => {
+    const newArray = [...(editedJob[field] || [])];
+    newArray.splice(index, 1);
+    setEditedJob(prevState => ({
+      ...prevState,
+      [field]: newArray
+    }));
+  };
+
+  const handleAdd = (field: 'persyaratan' | 'openrekrutmen') => {
+    setEditedJob(prevState => ({
+      ...prevState,
+      [field]: [...(prevState[field] || []), '']
+    }));
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -74,7 +92,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
       });
       setEditedJob(prevState => ({
         ...prevState,
-        gambar: response.data.imageUrl // Ganti dengan property yang sesuai pada response
+        gambar: response.data.imageUrl // Pastikan struktur respons sesuai
       }));
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -88,22 +106,35 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
       if (!job) return;
       await axiosInstance.put(`/jobs/${job.id}`, editedJob as Job);
       onEdit();
-      toast.success('Job updated successfully');
-      onClose();
+      toast.success(`Job "${job.judul}" updated successfully`);
+      onClose(); // Menutup modal setelah berhasil
     } catch (error) {
       console.error('Error updating job:', error);
       setError('Error updating job. Please try again.');
+      toast.error('Failed to update job. Please try again.'); // Toast error jika gagal
+    }
+  };
+
+  const handleClose = () => {
+    onClose();
+    if (job) {
+      toast('Edit job canceled: ' + job.judul, { icon: '❌' }); // Toast ketika modal dibatalkan
+    } else {
+      toast('Edit job canceled', { icon: '❌' }); // Jika job tidak tersedia, hanya tampilkan pesan umum
     }
   };
 
   return (
     <div className={`fixed inset-0 flex items-center justify-center z-10 ${isOpen ? '' : 'hidden'}`}>
-      <div className="absolute inset-0 bg-black opacity-50" onClick={onClose}></div>
-      <div className="relative bg-white w-full max-w-md p-6 rounded-md shadow-lg">
-        <h2 className="text-lg font-semibold mb-4">Edit Job</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="judul" className="block text-sm font-medium text-gray-700">
+      <div className="absolute inset-0 bg-black opacity-50" onClick={handleClose}></div>
+      <div className="relative bg-white w-full max-w-screen-md mx-auto my-12 p-6 rounded-md shadow-lg overflow-y-auto max-h-[50vh]">
+        <h2 className="text-lg font-semibold mb-4 text-center">Edit Job</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label
+              htmlFor="judul"
+              className="block text-sm font-medium text-gray-700"
+            >
               Judul
             </label>
             <input
@@ -116,8 +147,11 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
-          <div className="mb-4">
-            <label htmlFor="namaPT" className="block text-sm font-medium text-gray-700">
+          <div>
+            <label
+              htmlFor="namaPT"
+              className="block text-sm font-medium text-gray-700"
+            >
               Nama PT
             </label>
             <input
@@ -130,8 +164,11 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
-          <div className="mb-4">
-            <label htmlFor="deskripsi" className="block text-sm font-medium text-gray-700">
+          <div>
+            <label
+              htmlFor="deskripsi"
+              className="block text-sm font-medium text-gray-700"
+            >
               Deskripsi
             </label>
             <textarea
@@ -139,65 +176,100 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               name="deskripsi"
               value={editedJob.deskripsi}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              rows={4}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm resize-none"
             />
           </div>
-          <div className="mb-4">
-            <label htmlFor="persyaratan" className="block text-sm font-medium text-gray-700">
+          <div>
+            <label
+              htmlFor="persyaratan"
+              className="block text-sm font-medium text-gray-700"
+            >
               Persyaratan
             </label>
-            {editedJob.persyaratan && editedJob.persyaratan.map((item, index) => (
-              <input
-                key={index}
-                type="text"
-                value={item}
-                onChange={(e) => handleArrayChange('persyaratan', index, e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-            ))}
+            {editedJob.persyaratan &&
+              editedJob.persyaratan.map((item, index) => (
+                <div key={index} className="flex items-center mb-2">
+                  <input
+                    type="text"
+                    value={item}
+                    onChange={(e) =>
+                      handleArrayChange("persyaratan", index, e.target.value)
+                    }
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mr-2"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleDelete("persyaratan", index)}
+                    className="text-red-600 focus:outline-none"
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
             <button
               type="button"
-              onClick={() => setEditedJob(prevState => ({ ...prevState, persyaratan: [...(prevState.persyaratan || []), ''] }))}
-              className="mt-2 px-4 py-1 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              onClick={() => handleAdd("persyaratan")}
+              className="px-4 py-1 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Tambah Persyaratan
             </button>
           </div>
-          <div className="mb-4">
-            <label htmlFor="openrekrutmen" className="block text-sm font-medium text-gray-700">
+          <div>
+            <label
+              htmlFor="openrekrutmen"
+              className="block text-sm font-medium text-gray-700"
+            >
               Open Rekrutmen
             </label>
-            {editedJob.openrekrutmen && editedJob.openrekrutmen.map((item, index) => (
-              <input
-                key={index}
-                type="text"
-                value={item}
-                onChange={(e) => handleArrayChange('openrekrutmen', index, e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-            ))}
+            {editedJob.openrekrutmen &&
+              editedJob.openrekrutmen.map((item, index) => (
+                <div key={index} className="flex items-center mb-2">
+                  <input
+                    type="text"
+                    value={item}
+                    onChange={(e) =>
+                      handleArrayChange("openrekrutmen", index, e.target.value)
+                    }
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mr-2"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleDelete("openrekrutmen", index)}
+                    className="text-red-600 focus:outline-none"
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
             <button
               type="button"
-              onClick={() => setEditedJob(prevState => ({ ...prevState, openrekrutmen: [...(prevState.openrekrutmen || []), ''] }))}
-              className="mt-2 px-4 py-1 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              onClick={() => handleAdd("openrekrutmen")}
+              className="px-4 py-1 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Tambah Open Rekrutmen
             </button>
           </div>
-          <div className="mb-4">
-            <label htmlFor="gambar" className="block text-sm font-medium text-gray-700">
+          <div>
+            <label
+              htmlFor="gambar"
+              className="block text-sm font-medium text-gray-700"
+            >
               Gambar
             </label>
             <input
               type="file"
               id="gambar"
-              accept="image/*"
+              name="gambar"
               onChange={handleImageUpload}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
           </div>
-          <div className="mb-4">
-            <label htmlFor="alamat" className="block text-sm font-medium text-gray-700">
+          <div>
+            <label
+              htmlFor="alamat"
+              className="block text-sm font-medium text-gray-700"
+            >
               Alamat
             </label>
             <input
@@ -206,12 +278,14 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               name="alamat"
               value={editedJob.alamat}
               onChange={handleInputChange}
-              required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -220,41 +294,42 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               name="email"
               value={editedJob.email}
               onChange={handleInputChange}
-              required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
+          <div>
+            <label
+              htmlFor="nomorTelepon"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Nomor Telepon
+            </label>
+            <input
+              type="tel"
+              id="nomorTelepon"
+              name="nomorTelepon"
+              value={editedJob.nomorTelepon}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+          
           <div className="flex justify-end">
             <button
-              type="submit"
-              className="px-4 py-1 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              type="button"
+              onClick={handleClose}
+              className="mr-2 px-4 py-2 bg-gray-500 text-white rounded-md shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
             >
-              Simpan
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Save
             </button>
           </div>
         </form>
-        {error && <p className="text-red-500">{error}</p>}
-        <button
-          className="absolute top-0 right-0 mt-3 mr-3 text-gray-400 hover:text-gray-800 focus:outline-none"
-          onClick={onClose}
-        >
-          <span className="sr-only">Close</span>
-          <svg
-            className="h-6 w-6"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
       </div>
     </div>
   );
