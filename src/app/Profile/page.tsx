@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
+import NextLink from "next/link";
 import { axiosInstance } from "@/lib/axios";
 import Topbar from "../Components/TopBar";
 import Footer from "../Components/Footer";
@@ -16,8 +16,23 @@ interface User {
   jurusan: string;
 }
 
+interface Application {
+  id: string;
+  pekerjaanId: string;
+  status: string;
+  tanggalDibuat: string;
+  pengguna: {
+    nama: string;
+  };
+  pekerjaan: {
+    judul: string;
+  };
+}
+
 const UserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [saveJobs, setSaveJobs] = useState<Application[]>([]);
+  const [appliedJobs, setAppliedJobs] = useState<Application[]>([]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -37,7 +52,43 @@ const UserProfile: React.FC = () => {
       }
     };
 
+    const fetchSaveJobs = async () => {
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        try {
+          const response = await axiosInstance.get("/savejobs", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setSaveJobs(response.data);
+        } catch (error) {
+          console.error("Failed to fetch saved jobs data", error);
+        }
+      }
+    };
+
+    const fetchAppliedJobs = async () => {
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        try {
+          const response = await axiosInstance.get("/application", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setAppliedJobs(response.data);
+        } catch (error) {
+          console.error("Failed to fetch applied jobs data", error);
+        }
+      }
+    };
+
     fetchUser();
+    fetchSaveJobs();
+    fetchAppliedJobs();
   }, []);
 
   if (!user) {
@@ -51,24 +102,13 @@ const UserProfile: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center p-6">
           <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
             {user.gambar ? (
-              <Image
-                src={`http://localhost:2000/${user.gambar.replace(
-                  "uploads\\",
-                  "uploads/"
-                )}`}
-                alt="Profile"
-                width={128}
-                height={128}
-                className="w-full h-full object-cover"
+              <img
+                src={user.gambar}
+                alt={user.nama}
+                className="w-32 h-32 object-cover"
               />
             ) : (
-              <Image
-                src="/default-profile.jpg"
-                alt="Default Profile"
-                width={128}
-                height={128}
-                className="w-full h-full object-cover"
-              />
+              "No Image"
             )}
           </div>
           <div className="flex-1 ml-6 md:ml-12">
@@ -102,16 +142,56 @@ const UserProfile: React.FC = () => {
           </button>
         </div>
         <div className="border-t border-gray-200 mt-6">
-          <div className="font-bold text-center mt-4 underline">LAMARAN</div>
+          <div className="font-bold text-center mt-4 underline">
+            LAMARAN TERSIMPAN
+          </div>
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <div className="bg-gray-200 aspect-w-1 aspect-h-1">1</div>
-            <div className="bg-gray-200 aspect-w-1 aspect-h-1">2</div>
-            <div className="bg-gray-200 aspect-w-1 aspect-h-1">3</div>
-            <div className="bg-gray-200 aspect-w-1 aspect-h-1">4</div>
+            {saveJobs.map((item) => (
+              <NextLink
+                key={item.id}
+                href={`/Postingan/${item.pekerjaanId}`}
+                passHref
+              >
+                <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
+                  <h3 className="text-lg font-semibold">
+                    {item.pekerjaan.judul}
+                  </h3>
+                  <p className="text-gray-600">Ditambahkan oleh: {user.nama}</p>
+                </div>
+              </NextLink>
+            ))}
+          </div>
+        </div>
+        <div className="border-t border-gray-200 mt-6">
+          <div className="font-bold text-center mt-4 underline">
+            LAMARAN DIDAFTRAKAN
+          </div>
+          <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {appliedJobs.map((item) => (
+              <NextLink
+                key={item.id}
+                href={`/Postingan/${item.pekerjaanId}`}
+                passHref
+              >
+                <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
+                  <h3 className="text-lg font-semibold">
+                    {item.pekerjaan.judul}
+                  </h3>
+                  <p className="text-gray-600">
+                    Ditambahkan oleh: {item.pengguna.nama}
+                  </p>
+                  <p className="text-gray-600">Status: {item.status}</p>
+                  <p className="text-gray-600">
+                    Tanggal Didaftarkan:{" "}
+                    {new Date(item.tanggalDibuat).toLocaleDateString()}
+                  </p>
+                </div>
+              </NextLink>
+            ))}
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

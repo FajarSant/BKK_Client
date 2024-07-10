@@ -197,8 +197,6 @@ const JobList: React.FC = () => {
           </tbody>
         </table>
 
-     
-
         {/* Edit Modal */}
         <EditModal
           isOpen={editModalOpen}
@@ -224,24 +222,24 @@ const JobList: React.FC = () => {
         />
       </div>
       <div className="flex justify-between items-center mt-4">
-          <button
-            className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
-            disabled={currentPage === 1}
-            onClick={handlePrevPage}
-          >
-            Previous
-          </button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
-            disabled={currentPage === totalPages}
-            onClick={handleNextPage}
-          >
-            Next
-          </button>
-        </div>
+        <button
+          className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+          disabled={currentPage === 1}
+          onClick={handlePrevPage}
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+          disabled={currentPage === totalPages}
+          onClick={handleNextPage}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };

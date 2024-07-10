@@ -111,16 +111,15 @@ const Topbar: React.FC = () => {
           >
             {user && user.gambar ? (
               <div className="relative w-10 h-10">
-                <Image
-                  src={`http://localhost:2000/${user.gambar.replace(
-                    "uploads\\",
-                    "uploads/"
-                  )}`}
-                  alt={user.nama}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-full"
-                />
+               {user.gambar ? (
+                    <img
+                      src={user.gambar}
+                      alt={user.nama}
+                      className="w-10 h-10 object-cover"
+                    />
+                  ) : (
+                    "No Image"
+                  )}
               </div>
             ) : (
               <FaUserCircle className="text-2xl text-gray-600 rounded-full" />

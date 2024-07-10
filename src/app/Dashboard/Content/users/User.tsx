@@ -178,7 +178,7 @@ const UserManagementTable: React.FC = () => {
       </div>
       <div className="relative bg-slate-500 overflow-x-auto shadow-md sm:rounded-lg">
       <button
-        className="text-white my-2 ml-4 flex items-center bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-xl text-sm p-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+        className="text-white my-4 mx-4 flex items-center bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm p-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
         onClick={handleShowAddModal}
       >
         <FaPlus className="mr-2" /> Tambah Users
@@ -219,15 +219,15 @@ const UserManagementTable: React.FC = () => {
                 <td className="px-6 py-4">{user.alamat}</td>
                 <td className="px-6 py-4">{user.peran}</td>
                 <td className="px-6 py-4">{user.jurusan}</td>
-                <td className="px-6 py-4 space-x-2">
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button
-                    className="text-blue-500 hover:text-blue-700"
+                    className="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     onClick={() => handleShowEditModal(user)}
                   >
                     <FaEdit />
                   </button>
                   <button
-                    className="text-red-500 hover:text-red-700"
+                    className="text-white mt-2 bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm p-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                     onClick={() => handleConfirmDelete(user.id, user.nama)}
                   >
                     <FaTrash />

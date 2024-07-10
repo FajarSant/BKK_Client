@@ -2,6 +2,7 @@
 import React from 'react';
 import Users from '../Content/users/User';
 import JobsTable from '../Content/jobs/jobs';
+import Home from "../Content/home/home";
 
 interface MainContentProps {
   activeItem: string;
@@ -14,6 +15,7 @@ interface ContentMap {
 const MainContent: React.FC<MainContentProps> = ({ activeItem }) => {
   const content: ContentMap = {
     Users : <Users />,
+    Home : <Home/>,
     Jobs: <JobsTable/>,
     Settings: <h2>Settings Content</h2>,
   };
