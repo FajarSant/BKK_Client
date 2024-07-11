@@ -1,66 +1,177 @@
-"use client";
-import { axiosInstance } from "@/lib/axios";
-import Image from "next/image";
+"use client"
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { FaArrowLeft, FaUser, FaClipboardList, FaBuilding, FaEnvelope, FaPhone } from "react-icons/fa";
+import { TbMapSearch } from "react-icons/tb";
+import { axiosInstance } from "@/lib/axios";
+import defaultImage from "@/app/public/assets/image.png";
+import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
-interface Post {
-  id: number;
-  image: string;
-  nama: string;
-  deskripsisingkat: string;
-  deskripsipanjang: string;
-  alamat: string;
-  email: string;
-  waktu: string;
-  genre: string;
-  hashtag: string[];
+interface Jobs {
+  id: string;
+  judul: string;
+  deskripsi: string;
+  persyaratan: string[];
+  openrekrutmen: string[];
+  gambar?: string;
+  alamat?: string;
+  nomorTelepon?: string;
+  email?: string;
+  namaPT?: string;
+  Link?: string; // Menambahkan field Link untuk menyimpan URL yang disimpan
 }
 
 const PostinganDetail = () => {
-  const [post, setpost] = useState<Post | null>(null);
+  const [jobs, setJobs] = useState<Jobs | null>(null);
 
   useEffect(() => {
-    const pathArray = window.location.pathname.split("/");
-    const id = pathArray[pathArray.length - 1];
-
-    const fetchData = async () => {
+    const fetchJobData = async () => {
       try {
-        const response = await axiosInstance.get<Post>(`/posts/${id}`);
-        const data = response.data;
-
-        if (!data) {
-          console.log("Data not found for ID:", id);
-          return;
-        }
-
-        console.log("Data found for ID:", id);
-        setpost(data);
+        const pathArray = window.location.pathname.split("/");
+        const id = pathArray[pathArray.length - 1];
+        const jobResponse = await axiosInstance.get<Jobs>(`/jobs/${id}`);
+        const jobData = jobResponse.data;
+        setJobs(jobData);
       } catch (error) {
         console.error("Error fetching data:", error);
-        console.log("Error fetching data for ID:", id);
       }
     };
 
-    fetchData();
-  }, []); // id sebagai bagian dari dependency array
+    fetchJobData();
+  }, []);
 
-  // Menangani keadaan loading atau data kosong
-  if (!post) {
+  const handleBack = () => {
+  };
+
+  const handleSave = () => {
+    toast.success("Lowongan Tersimpan");
+    // Simpan logika penyimpanan data aplikasi di sini
+  };
+
+  const handleApply = () => {
+    if (jobs?.Link) {
+      toast.success("Mengarahkan ke halaman yang disimpan...");
+      setTimeout(() => {
+        window.location.href = jobs.Link!; // Mengarahkan ke halaman yang disimpan
+      }, 2000); // Menunggu 2 detik sebelum diarahkan ke halaman yang disimpan
+    }
+  };
+
+  if (!jobs) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <Image src={post.image} alt={post.nama} className="w-full rounded-lg mb-8" />
-      <h1 className="text-3xl font-bold mb-4">{post.nama}</h1>
-      <p className="text-lg text-gray-700 mb-4">{post.deskripsisingkat}</p>
-      <p className="text-lg text-gray-700 mb-4">{post.deskripsipanjang}</p>
-      <p className="text-lg text-gray-700 mb-4">Alamat: {post.alamat}</p>
-      <p className="text-lg text-gray-700 mb-4">Email: <a href={`mailto:${post.email}`} className="text-blue-600 hover:underline">{post.email}</a></p>
-      <p className="text-lg text-gray-700 mb-4">Waktu: {new Date(post.waktu).toLocaleDateString()}</p>
-      <p className="text-lg text-gray-700 mb-4">Genre: {post.genre}</p>
-      <p className="text-lg text-gray-700 mb-4">Hashtag: {post.hashtag.join(", ")}</p>
-    </div> 
+    <div className="">
+      <div className="flex justify-between items-center mb-4">
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded flex items-center"
+          onClick={handleBack}
+        >
+          <FaArrowLeft />
+          Kembali
+        </button>
+      </div>
+      <div className="max-w-3xl mx-auto bg-white shadow-sm rounded-lg p-6">
+        <h1 className="text-2xl font-bold text-center underline mb-6">
+          {jobs.judul}
+        </h1>
+        <div className="flex flex-col items-center mb-6">
+          <div className="border-t-2 border-gray-300 my-6"></div>
+          <Image
+            src={jobs.gambar || defaultImage}
+            alt={jobs.judul}
+            width={480}
+            height={240}
+            className="rounded-lg"
+            style={{ objectFit: "cover" }}
+          />
+          <div>
+            <p className="text-lg text-gray-700 mb-4 text-justify">
+              {jobs.deskripsi}
+            </p>
+            <div className="border-t-2 border-gray-300"></div>
+            <div className="text-2xl font-bold mb-2 flex items-center">
+              Informasi Perusahaan
+            </div>
+            {jobs.namaPT && (
+              <p className="text-lg text-gray-600 mb-2 flex items-center">
+                <FaBuilding /> NamaPT: {jobs.namaPT}
+              </p>
+            )}
+            {jobs.alamat && (
+              <p className="text-lg text-gray-600 mb-2 flex items-center">
+                <TbMapSearch /> Alamat: {jobs.alamat}
+              </p>
+            )}
+            {jobs.email && (
+              <p className="text-lg text-gray-600 mb-2 flex items-center">
+                <FaEnvelope /> Email: {jobs.email}
+              </p>
+            )}
+            {jobs.nomorTelepon && (
+              <p className="text-lg text-gray-600 mb-2 flex items-center">
+                <FaPhone /> Nomor Telepon: {jobs.nomorTelepon}
+              </p>
+            )}
+            {jobs.persyaratan && (
+              <>
+                <div className="border-t-2 border-gray-300 my-6"></div>
+                <div className="flex items-center mb-2">
+                  <FaUser className="mr-2 text-gray-600 text-lg" />
+                  <h2 className="text-lg font-bold">Persyaratan</h2>
+                </div>
+                <ul>
+                  {jobs.persyaratan.map((item, index) => (
+                    <li
+                      key={index}
+                      className="text-lg list-disc mx-6 text-gray-600 mb-2"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {jobs.openrekrutmen && (
+              <>
+                <div className="border-t-2 border-gray-300 my-6"></div>
+                <div className="flex items-center mb-2">
+                  <FaClipboardList className="mr-2 text-gray-600 text-lg" />
+                  <h2 className="text-lg font-bold">Open Recruitment</h2>
+                </div>
+                <ul>
+                  {jobs.openrekrutmen.map((item, index) => (
+                    <li
+                      key={index}
+                      className="text-lg list-disc mx-6 text-gray-600 mb-2"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <div className="border-t-2 border-gray-300 my-6"></div>
+          </div>
+        </div>
+      </div>
+      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4 flex justify-between items-center">
+        <Button
+          className="bg-green-500 text-white px-4 py-2 rounded flex items-center"
+          onClick={handleApply}
+        >
+          Daftar
+        </Button>
+        <Button
+          className="bg-blue-600 text-white px-4 py-2 rounded flex items-center"
+          onClick={handleSave}
+        >
+          Simpan
+        </Button>
+      </div>
+    </div>
   );
 };
 

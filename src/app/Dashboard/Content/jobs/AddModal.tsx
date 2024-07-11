@@ -19,7 +19,8 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
     gambar: '',
     alamat: '',
     email: '',
-    nomorTelepon: ''
+    nomorTelepon: '',
+    Link: ''  // Add the new field Link
   });
 
   const [error, setError] = useState('');
@@ -120,6 +121,14 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             name="nomorTelepon"
             placeholder="Nomor Telepon"
             value={newJob.nomorTelepon}
+            onChange={handleInputChange}
+            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+          <input
+            type="text"
+            name="Link"
+            placeholder="Link"
+            value={newJob.Link}
             onChange={handleInputChange}
             className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
           />

@@ -1,10 +1,13 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from "react";
-import NextLink from "next/link";
-import { axiosInstance } from "@/lib/axios";
+import Link from "next/link";
+import { toast } from "react-hot-toast";
+import { FaTrash, FaInfoCircle } from "react-icons/fa";
 import Topbar from "../Components/TopBar";
 import Footer from "../Components/Footer";
+import { axiosInstance } from "@/lib/axios";
 
+// Define User interface
 interface User {
   id: string;
   email: string;
@@ -14,25 +17,33 @@ interface User {
   gambar: string | null;
   peran: string;
   jurusan: string;
+  lamaran: {
+    id: string;
+    pekerjaan: {
+      id: string;
+      judul: string;
+    };
+    status: string;
+    tanggalDibuat: string;
+    pengguna?: {
+      nama: string;
+    };
+  }[];
+  lowonganTersimpan: {
+    id: string;
+    pekerjaan: {
+      id: string;
+      judul: string;
+    };
+  }[];
 }
 
-interface Application {
-  id: string;
-  pekerjaanId: string;
-  status: string;
-  tanggalDibuat: string;
-  pengguna: {
-    nama: string;
-  };
-  pekerjaan: {
-    judul: string;
-  };
-}
-
+// UserProfile component
 const UserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [saveJobs, setSaveJobs] = useState<Application[]>([]);
-  const [appliedJobs, setAppliedJobs] = useState<Application[]>([]);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState<string>("");
+  const [selectedItemType, setSelectedItemType] = useState<"lamaran" | "lowonganTersimpan" | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -52,47 +63,65 @@ const UserProfile: React.FC = () => {
       }
     };
 
-    const fetchSaveJobs = async () => {
-      const token = localStorage.getItem("token");
-
-      if (token) {
-        try {
-          const response = await axiosInstance.get("/savejobs", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setSaveJobs(response.data);
-        } catch (error) {
-          console.error("Failed to fetch saved jobs data", error);
-        }
-      }
-    };
-
-    const fetchAppliedJobs = async () => {
-      const token = localStorage.getItem("token");
-
-      if (token) {
-        try {
-          const response = await axiosInstance.get("/application", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setAppliedJobs(response.data);
-        } catch (error) {
-          console.error("Failed to fetch applied jobs data", error);
-        }
-      }
-    };
-
     fetchUser();
-    fetchSaveJobs();
-    fetchAppliedJobs();
   }, []);
 
+  const handleDelete = async () => {
+    if (!selectedItemId || !selectedItemType || !user) return;
+
+    try {
+      const url =
+        selectedItemType === "lowonganTersimpan"
+          ? `/savejobs/${selectedItemId}`
+          : `/application/${selectedItemId}`;
+
+      await axiosInstance.delete(url);
+      setUser((prevUser) => {
+        if (!prevUser) return null;
+
+        if (selectedItemType === "lowonganTersimpan") {
+          return {
+            ...prevUser,
+            lowonganTersimpan: prevUser.lowonganTersimpan.filter(
+              (item) => item.id !== selectedItemId
+            ),
+          };
+        } else {
+          return {
+            ...prevUser,
+            lamaran: prevUser.lamaran.filter(
+              (item) => item.id !== selectedItemId
+            ),
+          };
+        }
+      });
+
+      // Show success toast for deletion
+      toast.success(
+        `${selectedItemType === "lowonganTersimpan" ? "Lowongan tersimpan" : "Lamaran"} berhasil dihapus!`
+      );
+    } catch (error) {
+      console.error("Failed to delete item", error);
+      toast.error("Gagal menghapus item");
+    } finally {
+      closeConfirmationModal(); // Close modal after delete attempt
+    }
+  };
+
+  const openConfirmationModal = (itemId: string, itemType: "lamaran" | "lowonganTersimpan") => {
+    setSelectedItemId(itemId);
+    setSelectedItemType(itemType);
+    setIsConfirmationModalOpen(true);
+  };
+
+  const closeConfirmationModal = () => {
+    setSelectedItemId("");
+    setSelectedItemType(null);
+    setIsConfirmationModalOpen(false);
+  };
+
   if (!user) {
-    return <div>No user data available</div>;
+    return <div>Loading...</div>;
   }
 
   return (
@@ -146,19 +175,32 @@ const UserProfile: React.FC = () => {
             LAMARAN TERSIMPAN
           </div>
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {saveJobs.map((item) => (
-              <NextLink
-                key={item.id}
-                href={`/Postingan/${item.pekerjaanId}`}
-                passHref
-              >
-                <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
-                  <h3 className="text-lg font-semibold">
-                    {item.pekerjaan.judul}
-                  </h3>
-                  <p className="text-gray-600">Ditambahkan oleh: {user.nama}</p>
-                </div>
-              </NextLink>
+            {user.lowonganTersimpan.map((item) => (
+              <div key={item.id} className="relative">
+                <Link href={`/Postingan/${item.pekerjaan.id}`} passHref>
+                  <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
+                    <h3 className="text-lg font-semibold">
+                      {item.pekerjaan.judul}
+                    </h3>
+                    <p className="text-gray-600">Ditambahkan oleh: {user.nama}</p>
+                    <div className="flex justify-end mt-2">
+                      <Link href={`/Postingan/${item.pekerjaan.id}`}>
+                        <span className="text-blue-500 hover:underline flex items-center">
+                          <FaInfoCircle className="mr-1" />
+                          Detail
+                        </span>
+                      </Link>
+                      <button
+                        onClick={() => openConfirmationModal(item.id, "lowonganTersimpan")}
+                        className="ml-2 text-red-500 hover:text-red-700 transition duration-200"
+                        title="Delete"
+                      >
+                        <FaTrash size={20} />
+                      </button>
+                    </div>
+                  </div>
+                </Link>
+              </div>
             ))}
           </div>
         </div>
@@ -167,31 +209,68 @@ const UserProfile: React.FC = () => {
             LAMARAN DIDAFTRAKAN
           </div>
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {appliedJobs.map((item) => (
-              <NextLink
-                key={item.id}
-                href={`/Postingan/${item.pekerjaanId}`}
-                passHref
-              >
-                <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
-                  <h3 className="text-lg font-semibold">
-                    {item.pekerjaan.judul}
-                  </h3>
-                  <p className="text-gray-600">
-                    Ditambahkan oleh: {item.pengguna.nama}
-                  </p>
-                  <p className="text-gray-600">Status: {item.status}</p>
-                  <p className="text-gray-600">
-                    Tanggal Didaftarkan:{" "}
-                    {new Date(item.tanggalDibuat).toLocaleDateString()}
-                  </p>
-                </div>
-              </NextLink>
+            {user.lamaran.map((item) => (
+              <div key={item.id} className="relative">
+                <Link href={`/Postingan/${item.pekerjaan.id}`} passHref>
+                  <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
+                    <h3 className="text-lg font-semibold">
+                      {item.pekerjaan.judul}
+                    </h3>
+                    <p className="text-gray-600">Status: {item.status}</p>
+                    <p className="text-gray-600">
+                      Daftar Pada:{" "}
+                      {new Date(item.tanggalDibuat).toLocaleDateString()}
+                    </p>
+                    <div className="flex justify-end mt-2">
+                      <Link href={`/Postingan/${item.pekerjaan.id}`}>
+                        <span className="text-blue-500 hover:underline flex items-center">
+                          <FaInfoCircle className="mr-1" />
+                          Detail
+                        </span>
+                      </Link>
+                      <button
+                        onClick={() => openConfirmationModal(item.id, "lamaran")}
+                        className="ml-2 text-red-500 hover:text-red-700 transition duration-200"
+                        title="Delete"
+                      >
+                        <FaTrash size={20} />
+                      </button>
+                    </div>
+                  </div>
+                </Link>
+              </div>
             ))}
           </div>
         </div>
       </div>
       <Footer />
+
+      {/* Confirmation Modal */}
+      {isConfirmationModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-lg max-w-md">
+            <p className="text-lg font-semibold mb-4">
+              Apakah Anda yakin ingin menghapus{" "}
+              {selectedItemType === "lowonganTersimpan" ? "lowongan" : "lamaran"}{" "}
+              ini?
+            </p>
+            <div className="flex justify-end">
+              <button
+                onClick={handleDelete}
+                className="bg-red-500 text-white px-4 py-2 rounded mr-2 hover:bg-red-600 transition duration-200"
+              >
+                Delete
+              </button>
+              <button
+                onClick={closeConfirmationModal}
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition duration-200"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
