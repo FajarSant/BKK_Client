@@ -20,7 +20,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
     alamat: '',
     email: '',
     nomorTelepon: '',
-    Link: ''  // Add the new field Link
+    Link: ''
   });
 
   const [error, setError] = useState('');

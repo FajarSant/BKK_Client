@@ -20,7 +20,8 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
     gambar: '',
     alamat: '',
     email: '',
-    nomorTelepon: ''
+    nomorTelepon: '',
+    Link: '' // Pastikan Link ada dalam definisi tipe data Partial<Job> atau Job jika diperlukan
   };
 
   const [editedJob, setEditedJob] = useState<Partial<Job>>(initialEditedJob);
@@ -37,7 +38,8 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
         gambar: job.gambar || '',
         alamat: job.alamat || '',
         email: job.email || '',
-        nomorTelepon: job.nomorTelepon || ''
+        nomorTelepon: job.nomorTelepon || '',
+        Link: job.Link || '' // Pastikan properti Link ada di objek job jika diperlukan
       });
     } else {
       setEditedJob(initialEditedJob);
@@ -261,9 +263,19 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               type="file"
               id="gambar"
               name="gambar"
+              accept="image/*"
               onChange={handleImageUpload}
-              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
+            {editedJob.gambar && (
+              <div className="mt-2">
+                <img
+                  src={editedJob.gambar}
+                  alt="Preview"
+                  className="max-w-full h-auto"
+                />
+              </div>
+            )}
           </div>
           <div>
             <label
@@ -278,6 +290,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               name="alamat"
               value={editedJob.alamat}
               onChange={handleInputChange}
+              required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
@@ -294,6 +307,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               name="email"
               value={editedJob.email}
               onChange={handleInputChange}
+              required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
@@ -310,15 +324,31 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               name="nomorTelepon"
               value={editedJob.nomorTelepon}
               onChange={handleInputChange}
+              required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
-          
-          <div className="flex justify-end">
+          <div>
+            <label
+              htmlFor="Link"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Link
+            </label>
+            <input
+              type="text"
+              id="Link"
+              name="Link"
+              value={editedJob.Link}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+          <div className="flex justify-end space-x-4 mt-6">
             <button
               type="button"
               onClick={handleClose}
-              className="mr-2 px-4 py-2 bg-gray-500 text-white rounded-md shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              className="px-4 py-2 bg-gray-400 text-white rounded-md shadow-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
             >
               Cancel
             </button>
@@ -326,9 +356,10 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
-              Save
+              Update Job
             </button>
           </div>
+          {error && <p className="text-red-500">{error}</p>}
         </form>
       </div>
     </div>

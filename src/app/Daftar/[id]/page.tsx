@@ -1,17 +1,20 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { FaArrowLeft, FaUser, FaClipboardList, FaBuilding, FaEnvelope, FaPhone } from "react-icons/fa";
-import { TbMapSearch } from "react-icons/tb";
+import {
+  FaUser,
+  FaClipboardList,
+  FaBuilding,
+  FaEnvelope,
+  FaPhone,
+} from "react-icons/fa";
+import { TiLocationOutline } from "react-icons/ti";
 import { axiosInstance } from "@/lib/axios";
-import defaultImage from "@/app/public/assets/image.png";
-import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 
 interface Jobs {
   id: string;
   judul: string;
-  deskripsi: string;
+  deskripsi: string[];
   persyaratan: string[];
   openrekrutmen: string[];
   gambar?: string;
@@ -19,11 +22,12 @@ interface Jobs {
   nomorTelepon?: string;
   email?: string;
   namaPT?: string;
-  Link?: string; // Menambahkan field Link untuk menyimpan URL yang disimpan
+  Link?: string;
 }
 
-const PostinganDetail = () => {
+const DaftarPage = () => {
   const [jobs, setJobs] = useState<Jobs | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -38,141 +42,155 @@ const PostinganDetail = () => {
       }
     };
 
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Token not found in local storage");
+        }
+
+        const userResponse = await axiosInstance.get<{ id: string }>("/auth/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const userData = userResponse.data;
+        setUserId(userData.id);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
     fetchJobData();
+    fetchUserData();
   }, []);
-
-  const handleBack = () => {
-  };
-
-  const handleSave = () => {
-    toast.success("Lowongan Tersimpan");
-    // Simpan logika penyimpanan data aplikasi di sini
-  };
-
-  const handleApply = () => {
-    if (jobs?.Link) {
-      toast.success("Mengarahkan ke halaman yang disimpan...");
-      setTimeout(() => {
-        window.location.href = jobs.Link!; // Mengarahkan ke halaman yang disimpan
-      }, 2000); // Menunggu 2 detik sebelum diarahkan ke halaman yang disimpan
-    }
-  };
 
   if (!jobs) {
     return <div>Loading...</div>;
   }
 
+  const handleDaftarClick = async () => {
+    const confirmed = window.confirm("Anda yakin ingin mendaftar?");
+    if (confirmed && jobs.Link && userId) {
+      window.open(jobs.Link, "_blank");
+
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Token not found in local storage");
+        }
+
+        const applicationResponse = await axiosInstance.post("/application", {
+          pekerjaanId: jobs.id,
+          penggunaId: userId,
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log("Application post response:", applicationResponse.data);
+        toast.success("Berhasil mendaftar!");
+
+      } catch (error) {
+        console.error("Error posting application data:", error);
+        toast.error("Gagal mendaftar. Silakan coba lagi.");
+      }
+    }
+  };
+
+  const handleBackClick = () => {
+    window.history.back();
+  };
+
   return (
-    <div className="">
-      <div className="flex justify-between items-center mb-4">
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded flex items-center"
-          onClick={handleBack}
-        >
-          <FaArrowLeft />
-          Kembali
-        </button>
-      </div>
-      <div className="max-w-3xl mx-auto bg-white shadow-sm rounded-lg p-6">
-        <h1 className="text-2xl font-bold text-center underline mb-6">
-          {jobs.judul}
-        </h1>
-        <div className="flex flex-col items-center mb-6">
-          <div className="border-t-2 border-gray-300 my-6"></div>
-          <Image
-            src={jobs.gambar || defaultImage}
-            alt={jobs.judul}
-            width={480}
-            height={240}
-            className="rounded-lg"
-            style={{ objectFit: "cover" }}
-          />
-          <div>
-            <p className="text-lg text-gray-700 mb-4 text-justify">
-              {jobs.deskripsi}
-            </p>
-            <div className="border-t-2 border-gray-300"></div>
-            <div className="text-2xl font-bold mb-2 flex items-center">
-              Informasi Perusahaan
-            </div>
-            {jobs.namaPT && (
-              <p className="text-lg text-gray-600 mb-2 flex items-center">
-                <FaBuilding /> NamaPT: {jobs.namaPT}
-              </p>
-            )}
-            {jobs.alamat && (
-              <p className="text-lg text-gray-600 mb-2 flex items-center">
-                <TbMapSearch /> Alamat: {jobs.alamat}
-              </p>
-            )}
-            {jobs.email && (
-              <p className="text-lg text-gray-600 mb-2 flex items-center">
-                <FaEnvelope /> Email: {jobs.email}
-              </p>
-            )}
-            {jobs.nomorTelepon && (
-              <p className="text-lg text-gray-600 mb-2 flex items-center">
-                <FaPhone /> Nomor Telepon: {jobs.nomorTelepon}
-              </p>
-            )}
-            {jobs.persyaratan && (
-              <>
-                <div className="border-t-2 border-gray-300 my-6"></div>
-                <div className="flex items-center mb-2">
-                  <FaUser className="mr-2 text-gray-600 text-lg" />
-                  <h2 className="text-lg font-bold">Persyaratan</h2>
-                </div>
-                <ul>
-                  {jobs.persyaratan.map((item, index) => (
-                    <li
-                      key={index}
-                      className="text-lg list-disc mx-6 text-gray-600 mb-2"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-            {jobs.openrekrutmen && (
-              <>
-                <div className="border-t-2 border-gray-300 my-6"></div>
-                <div className="flex items-center mb-2">
-                  <FaClipboardList className="mr-2 text-gray-600 text-lg" />
-                  <h2 className="text-lg font-bold">Open Recruitment</h2>
-                </div>
-                <ul>
-                  {jobs.openrekrutmen.map((item, index) => (
-                    <li
-                      key={index}
-                      className="text-lg list-disc mx-6 text-gray-600 mb-2"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-            <div className="border-t-2 border-gray-300 my-6"></div>
-          </div>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 bg-white shadow-xl rounded-lg p-6">
+        <div className="text-xl text-red-600 text-center mb-4">
+          APAKAH ANDA YAKIN MENDAFTAR LOWONGAN INI?
         </div>
-      </div>
-      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4 flex justify-between items-center">
-        <Button
-          className="bg-green-500 text-white px-4 py-2 rounded flex items-center"
-          onClick={handleApply}
-        >
-          Daftar
-        </Button>
-        <Button
-          className="bg-blue-600 text-white px-4 py-2 rounded flex items-center"
-          onClick={handleSave}
-        >
-          Simpan
-        </Button>
+        <div className="text-sm text-center mb-8">
+          Jika anda mendaftar maka anda dihubungkan ke halaman google form untuk melakukan pengisian formulir.
+        </div>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold">{jobs.judul}</h2>
+        </div>
+        {jobs.namaPT && (
+          <p className="text-lg text-gray-600 mb-2 flex items-center">
+            <FaBuilding className="mr-2 text-lg text-blue-500" />
+            Nama PT: {jobs.namaPT}
+          </p>
+        )}
+        {jobs.alamat && (
+          <p className="text-lg text-gray-600 mb-2 flex items-center">
+            <TiLocationOutline className="mr-2 text-lg text-blue-500" />
+            Alamat: {jobs.alamat}
+          </p>
+        )}
+        {jobs.email && (
+          <p className="text-lg text-gray-600 mb-2 flex items-center">
+            <FaEnvelope className="mr-2 text-lg text-blue-500" />
+            Email: {jobs.email}
+          </p>
+        )}
+        {jobs.nomorTelepon && (
+          <p className="text-lg text-gray-600 mb-2 flex items-center">
+            <FaPhone className="mr-2 text-lg text-blue-500" />
+            Nomor Telepon: {jobs.nomorTelepon}
+          </p>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          {jobs.persyaratan && jobs.persyaratan.length > 0 && (
+            <div>
+              <div className="border-t-2 border-gray-300 my-4"></div>
+              <div className="flex items-center mb-2">
+                <FaUser className="mr-2 text-lg text-gray-600" />
+                <h2 className="text-lg font-bold">Persyaratan</h2>
+              </div>
+              <ul className="list-disc ml-6">
+                {jobs.persyaratan.map((item, index) => (
+                  <li key={index} className="text-lg text-gray-600 mb-2">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {jobs.openrekrutmen && jobs.openrekrutmen.length > 0 && (
+            <div>
+              <div className="border-t-2 border-gray-300 my-4"></div>
+              <div className="flex items-center mb-2">
+                <FaClipboardList className="mr-2 text-lg text-gray-600" />
+                <h2 className="text-lg font-bold">Open Recruitment</h2>
+              </div>
+              <ul className="list-disc ml-6">
+                {jobs.openrekrutmen.map((item, index) => (
+                  <li key={index} className="text-lg text-gray-600 mb-2">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+        <div className="flex justify-between mt-6">
+          <button
+            onClick={handleBackClick}
+            className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition duration-300"
+          >
+            Kembali
+          </button>
+          <button
+            onClick={handleDaftarClick}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+          >
+            Daftar
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default PostinganDetail;
+export default DaftarPage;

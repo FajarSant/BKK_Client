@@ -1,6 +1,5 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { FaTrash, FaInfoCircle } from "react-icons/fa";
 import Topbar from "../Components/TopBar";
@@ -97,14 +96,23 @@ const UserProfile: React.FC = () => {
       });
 
       // Show success toast for deletion
-      toast.success(
-        `${selectedItemType === "lowonganTersimpan" ? "Lowongan tersimpan" : "Lamaran"} berhasil dihapus!`
-      );
+      // Show success toast for deletion
+toast.success(
+  `${
+    selectedItemType === "lowonganTersimpan"
+      ? "Lowongan tersimpan"
+      : "Lamaran"
+  } berhasil dihapus!`,
+  {
+    position: "top-center",
+  }
+);
+
     } catch (error) {
       console.error("Failed to delete item", error);
       toast.error("Gagal menghapus item");
     } finally {
-      closeConfirmationModal(); // Close modal after delete attempt
+      closeConfirmationModal( ); // Close modal after delete attempt
     }
   };
 
@@ -127,7 +135,7 @@ const UserProfile: React.FC = () => {
   return (
     <div>
       <Topbar />
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-10">
+      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-16">
         <div className="flex flex-col md:flex-row items-center p-6">
           <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
             {user.gambar ? (
@@ -149,14 +157,14 @@ const UserProfile: React.FC = () => {
             </div>
             <div className="flex flex-col md:flex-row mt-4">
               <p className="mr-4">
-                <span className="font-semibold">Address:</span> {user.alamat}
+                <span className="font-semibold">Alamat:</span> {user.alamat}
               </p>
               <p className="mr-4">
-                <span className="font-semibold">Department:</span>{" "}
+                <span className="font-semibold">Jurusan:</span>{" "}
                 {user.jurusan}
               </p>
               <p className="mr-4">
-                <span className="font-semibold">Phone:</span>{" "}
+                <span className="font-semibold">Nomor Telepon:</span>{" "}
                 {user.nomortelepon}
               </p>
               <p className="mr-4">
@@ -177,29 +185,25 @@ const UserProfile: React.FC = () => {
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {user.lowonganTersimpan.map((item) => (
               <div key={item.id} className="relative">
-                <Link href={`/Postingan/${item.pekerjaan.id}`} passHref>
-                  <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
-                    <h3 className="text-lg font-semibold">
-                      {item.pekerjaan.judul}
-                    </h3>
-                    <p className="text-gray-600">Ditambahkan oleh: {user.nama}</p>
-                    <div className="flex justify-end mt-2">
-                      <Link href={`/Postingan/${item.pekerjaan.id}`}>
-                        <span className="text-blue-500 hover:underline flex items-center">
-                          <FaInfoCircle className="mr-1" />
-                          Detail
-                        </span>
-                      </Link>
-                      <button
-                        onClick={() => openConfirmationModal(item.id, "lowonganTersimpan")}
-                        className="ml-2 text-red-500 hover:text-red-700 transition duration-200"
-                        title="Delete"
-                      >
-                        <FaTrash size={20} />
-                      </button>
-                    </div>
+                <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
+                  <h3 className="text-lg font-semibold">
+                    {item.pekerjaan.judul}
+                  </h3>
+                  <p className="text-gray-600">Ditambahkan oleh: {user.nama}</p>
+                  <div className="flex justify-end mt-2">
+                    <span className="text-blue-500 hover:underline flex items-center">
+                      <FaInfoCircle className="mr-1" />
+                      Detail
+                    </span>
+                    <button
+                      onClick={() => openConfirmationModal(item.id, "lowonganTersimpan")}
+                      className="ml-2 text-red-500 hover:text-red-700 transition duration-200"
+                      title="Delete"
+                    >
+                      <FaTrash size={20} />
+                    </button>
                   </div>
-                </Link>
+                </div>
               </div>
             ))}
           </div>
@@ -211,33 +215,29 @@ const UserProfile: React.FC = () => {
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {user.lamaran.map((item) => (
               <div key={item.id} className="relative">
-                <Link href={`/Postingan/${item.pekerjaan.id}`} passHref>
-                  <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
-                    <h3 className="text-lg font-semibold">
-                      {item.pekerjaan.judul}
-                    </h3>
-                    <p className="text-gray-600">Status: {item.status}</p>
-                    <p className="text-gray-600">
-                      Daftar Pada:{" "}
-                      {new Date(item.tanggalDibuat).toLocaleDateString()}
-                    </p>
-                    <div className="flex justify-end mt-2">
-                      <Link href={`/Postingan/${item.pekerjaan.id}`}>
-                        <span className="text-blue-500 hover:underline flex items-center">
-                          <FaInfoCircle className="mr-1" />
-                          Detail
-                        </span>
-                      </Link>
-                      <button
-                        onClick={() => openConfirmationModal(item.id, "lamaran")}
-                        className="ml-2 text-red-500 hover:text-red-700 transition duration-200"
-                        title="Delete"
-                      >
-                        <FaTrash size={20} />
-                      </button>
-                    </div>
+                <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
+                  <h3 className="text-lg font-semibold">
+                    {item.pekerjaan.judul}
+                  </h3>
+                  <p className="text-gray-600">Status: {item.status}</p>
+                  <p className="text-gray-600">
+                    Daftar Pada:{" "}
+                    {new Date(item.tanggalDibuat).toLocaleDateString()}
+                  </p>
+                  <div className="flex justify-end mt-2">
+                    <span className="text-blue-500 hover:underline flex items-center">
+                      <FaInfoCircle className="mr-1" />
+                      Detail
+                    </span>
+                    <button
+                      onClick={() => openConfirmationModal(item.id, "lamaran")}
+                      className="ml-2 text-red-500 hover:text-red-700 transition duration-200"
+                      title="Delete"
+                    >
+                      <FaTrash size={20} />
+                    </button>
                   </div>
-                </Link>
+                </div>
               </div>
             ))}
           </div>

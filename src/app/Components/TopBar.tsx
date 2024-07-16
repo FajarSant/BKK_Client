@@ -1,8 +1,13 @@
-"use client";
-import React, { useState, useEffect } from "react";
+"use client"
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaUserCircle, FaUser, FaTachometerAlt, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaUserCircle,
+  FaUser,
+  FaTachometerAlt,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { axiosInstance } from "@/lib/axios";
 import toast, { Toaster } from "react-hot-toast";
@@ -21,8 +26,9 @@ interface User {
 const Topbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -46,24 +52,17 @@ const Topbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      setIsScrolled(scrollPosition > 0);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("mousedown", handleClickOutside);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  useEffect(() => {
-    if (showModal) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
-  }, [showModal]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -89,37 +88,32 @@ const Topbar: React.FC = () => {
   };
 
   return (
-    <div
-      className={`bg-white shadow-md py-2 px-4 ${
-        isScrolled
-          ? "fixed top-0 left-0 w-full z-20 backdrop-filter backdrop-blur-lg bg-opacity-90"
-          : ""
-      }`}
-    >
+    <div className="bg-white shadow-md py-2 px-4 fixed top-0 left-0 w-full z-50">
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          <div className="text-lg font-bold text-gray-900 leading-tight">
-            BKK
-            <br />
-            SMKN NGARFOYOSO
-          </div>
+          <a href="/" className="btn btn-ghost text-lg">
+            BKK SMKN <br /> NGARGOYOSO
+          </a>
         </div>
-        <div className="relative">
+
+        <div className="relative" ref={dropdownRef}>
           <button
             onClick={toggleDropdown}
             className="flex items-center focus:outline-none"
           >
             {user && user.gambar ? (
-              <div className="relative w-10 h-10">
-               {user.gambar ? (
-                    <img
-                      src={user.gambar}
-                      alt={user.nama}
-                      className="w-10 h-10 object-cover"
-                    />
-                  ) : (
-                    "No Image"
-                  )}
+              <div className="w-10 h-10 rounded-full overflow-hidden border-4 border-gray-300">
+                {user.gambar ? (
+                  <Image
+                    src={user.gambar}
+                    alt={user.nama}
+                    width={40} // Sesuaikan dengan ukuran yang Anda inginkan
+                    height={40} // Sesuaikan dengan ukuran yang Anda inginkan
+                    className="object-cover"
+                  />
+                ) : (
+                  "No Image"
+                )}
               </div>
             ) : (
               <FaUserCircle className="text-2xl text-gray-600 rounded-full" />
@@ -129,13 +123,7 @@ const Topbar: React.FC = () => {
             </span>
           </button>
           {dropdownOpen && (
-            <div
-              className={`absolute right-0 mt-2 w-48 bg-white text-gray-900 rounded-md shadow-lg z-10 ${
-                isScrolled
-                  ? "bg-opacity-90 backdrop-filter backdrop-blur-lg"
-                  : ""
-              }`}
-            >
+            <div className="absolute right-0 mt-2 w-48 bg-white text-gray-900 rounded-md shadow-lg z-10">
               {user ? (
                 <>
                   <div className="px-4 py-2">
@@ -179,9 +167,8 @@ const Topbar: React.FC = () => {
         </div>
       </div>
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
-          <div className="relative bg-white p-6 rounded-xl shadow-lg z-50 w-96">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+          <div className="relative bg-white p-6 rounded-xl shadow-lg w-96">
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
               onClick={closeModal}
@@ -190,7 +177,9 @@ const Topbar: React.FC = () => {
             </button>
             <h2 className="text-lg font-bold mb-4">Konfirmasi Logout</h2>
             <p className="text-sm text-gray-700 mb-4">
-              {`Apakah Anda yakin ingin keluar, ${user ? user.nama : 'Pengguna'}?`}
+              {`Apakah Anda yakin ingin keluar, ${
+                user ? user.nama : "Pengguna"
+              }?`}
             </p>
             <div className="flex justify-end">
               <button

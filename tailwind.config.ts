@@ -10,8 +10,7 @@ const config: Config = {
   ],
   prefix: '',
   plugins: [
-    require('tailwindcss-animate'),
-    require('flowbite/plugin'),
+    require('daisyui'),
   ],
 };
 

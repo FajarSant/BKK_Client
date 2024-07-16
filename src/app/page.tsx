@@ -7,9 +7,8 @@ const page = () => {
   return (
     <div>
       <Topbar/>
-      <div className="mt-32"> 
+      <div className=" bg-white mb-10"> 
         {/* <SearchBar /> */}
-        <Header />
         <CardPost />
         <CardPost />
         <CardPost />

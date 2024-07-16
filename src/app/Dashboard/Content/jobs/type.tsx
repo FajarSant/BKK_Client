@@ -1,4 +1,5 @@
 export interface Job {
+    Link: string;
     id: string;
     judul: string;
     gambar?: string;

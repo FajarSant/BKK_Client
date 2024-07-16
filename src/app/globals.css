@@ -10,10 +10,7 @@
   --font-size-desktop: 16px;
 }
 
-[data-theme="dark"] {
-  --background-color: black;
-  --text-color: white;
-}
+
 
 body {
   background-color: var(--background-color);
