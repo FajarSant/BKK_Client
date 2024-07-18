@@ -5,19 +5,7 @@ import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
 import AddModal from "./AddModal";
 import toast, { Toaster } from "react-hot-toast";
-
-interface Job {
-  id: string;
-  judul: string;
-  namaPT: string;
-  deskripsi?: string;
-  persyaratan: string[];
-  openrekrutmen: string[];
-  gambar?: string;
-  alamat: string;
-  email: string;
-  nomorTelepon: string;
-}
+import { Job } from "./type"; // Pastikan tipe Job diimpor dari type.tsx
 
 const JobList: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -106,7 +94,7 @@ const JobList: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="container p-4">
       <Toaster />
       <h1 className="text-center mb-4 font-bold text-2xl">INFORMASI JOB</h1>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -221,11 +209,13 @@ const JobList: React.FC = () => {
           onAdd={handleAdd}
         />
       </div>
+
+      {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
         <button
-          className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
-          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
           onClick={handlePrevPage}
+          disabled={currentPage === 1}
         >
           Previous
         </button>
@@ -233,9 +223,9 @@ const JobList: React.FC = () => {
           Page {currentPage} of {totalPages}
         </span>
         <button
-          className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
-          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
           onClick={handleNextPage}
+          disabled={currentPage === totalPages}
         >
           Next
         </button>

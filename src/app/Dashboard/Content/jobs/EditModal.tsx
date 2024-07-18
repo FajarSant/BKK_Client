@@ -129,7 +129,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
   return (
     <div className={`fixed inset-0 flex items-center justify-center z-10 ${isOpen ? '' : 'hidden'}`}>
       <div className="absolute inset-0 bg-black opacity-50" onClick={handleClose}></div>
-      <div className="relative bg-white w-full max-w-screen-md mx-auto my-12 p-6 rounded-md shadow-lg overflow-y-auto max-h-[50vh]">
+      <div className="relative modal-box bg-white w-full max-w-screen-md mx-auto my-12 p-6 rounded-xl shadow-lg">
         <h2 className="text-lg font-semibold mb-4 text-center">Edit Job</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

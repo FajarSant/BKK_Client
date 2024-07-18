@@ -73,7 +73,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-4 rounded-lg">
+      <div className="bg-white modal-box p-4 rounded-lg">
         <h2 className="text-lg font-semibold mb-4">Tambahkan Job</h2>
         {error && <p className="text-red-500 mb-2">{error}</p>}
         <form onSubmit={handleSubmit}>

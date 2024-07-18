@@ -70,7 +70,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose, onSave }) 
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-4 rounded shadow-lg w-1/2">
+      <div className="bg-white modal-box p-4 rounded shadow-lg w-1/2">
         <h2 className="text-xl mb-4">Edit Pengguna</h2>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Nama</label>
