@@ -1,44 +1,51 @@
 "use client"
-import React, { useRef } from 'react';
-import { FaArrowDown } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
 
 const HeroSection = () => {
-  const contentRef = useRef<HTMLDivElement>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const slides = [
+    { src: "/image/background.jpg", text: "Selamat Datang di Slide Pertama Kami" },
+    { src: "/image/background.jpg", text: "Nikmati Slide Kedua Kami" },
+    { src: "https://img.daisyui.com/images/stock/photo-1414694762283-acccc27bca85.webp", text: "Temukan Slide Ketiga Kami" },
+    { src: "https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.webp", text: "Jelajahi Slide Keempat Kami" }
+  ];
 
-  const handleGetStartedClick = () => {
-    if (contentRef.current) {
-      contentRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
+    }, 5000); // Ganti slide setiap 10 detik
+
+    return () => clearInterval(interval);
+  }, [slides.length]);
 
   return (
-    <div
-      className="bg-cover ob bg-center relative"
-      style={{
-        backgroundImage: 'url("/image/background.jpg")',
-        minHeight: '100vh',
-      }}
-    >
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black opacity-50"></div>
-
-      <div className="container mx-auto flex flex-col items-center justify-center py-20 relative h-full">
-        <div className="max-w-3xl text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">SMKN NGARGOYOSO</h1>
-          <p className="text-lg md:text-2xl mb-8">
-            Tempat mencari pekerjaan yang tepat untukmu.
-          </p>
-          <button
-            className="bg-white text-blue-500 font-semibold py-2 px-6 rounded shadow hover:bg-gray-100 transition duration-300"
-            onClick={handleGetStartedClick}
+    <div className="relative h-screen overflow-hidden">
+      <div className="carousel w-full h-full">
+        {slides.map((slide, index) => (
+          <div
+            key={index}
+            className={`carousel-item absolute w-full h-full transition-transform duration-1000 ease-in-out ${index === currentSlide ? 'translate-x-0' : 'translate-x-full'}`}
+            style={{ transform: `translateX(${(index - currentSlide) * 100}%)` }}
           >
-            Get Started <FaArrowDown className="ml-2" />
-          </button>
-        </div>
+            <img
+              src={slide.src}
+              className="w-full h-full object-cover"
+              alt={`Slide ${index + 1}`}
+            />
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <div className="text-center text-white px-4">
+                <h1 className="text-4xl md:text-6xl font-bold mb-4">{slide.text}</h1>
+                <p className="text-lg md:text-2xl">
+                  {index === 0 && "Selamat datang di website kami! Temukan berbagai lowongan pekerjaan dengan mudah dan cepat."}
+                  {index === 1 && "Nikmati kemudahan dalam mencari informasi terkait pekerjaan dan pengembangan karir."}
+                  {index === 2 && "Temukan peluang karir yang sesuai dengan minat dan bakat Anda di sini."}
+                  {index === 3 && "Jelajahi informasi terbaru dan relevan untuk mempersiapkan diri menghadapi dunia kerja."}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
-
-      {/* Placeholder for content after scroll */}
-      <div ref={contentRef}></div>
     </div>
   );
 };

@@ -8,12 +8,12 @@ interface DeleteConfirmModalProps {
 
 const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ userName, onConfirm, onCancel }) => {
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-4 rounded shadow-lg w-1/2">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
         <p className="text-xl mb-4">Apakah Anda yakin ingin menghapus pengguna {userName}?</p>
-        <div className="flex justify-end">
+        <div className="flex justify-end space-x-2">
           <button
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mr-2"
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
             onClick={onConfirm}
           >
             Ya

@@ -11,7 +11,6 @@ interface DeleteModalProps {
 
 interface Job {
   id: string;
-  judul: string;
   gambar?: string;
   namaPT: string;
   alamat: string;
@@ -29,13 +28,13 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, job, onDelet
     }
 
     onDelete(); // Call onDelete function passed from parent component
-    toast.success(`Job "${job.judul}" berhasil dihapus`);
+    toast.success(`Job "${job.namaPT}" berhasil dihapus`);
     onClose(); // Close the modal after successful deletion
   };
 
   const handleCancel = () => {
     onCancel(); // Call onCancel function passed from parent component
-    toast.error(`Penghapusan job "${job.judul}" dibatalkan`);
+    toast.error(`Penghapusan job "${job.namaPT}" dibatalkan`);
     onClose(); // Close the modal after cancellation
   };
 
@@ -45,7 +44,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, job, onDelet
         <h2 className="text-lg font-semibold mb-4">Konfirmasi Hapus Job</h2>
         <div className="mb-4">
           <p>Anda yakin ingin menghapus job ini?</p>
-          <p>{job.judul}</p>
+          <p>{job.namaPT}</p>
         </div>
         <div className="flex justify-between">
           <button

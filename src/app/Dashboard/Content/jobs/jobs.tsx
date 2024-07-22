@@ -119,9 +119,6 @@ const JobList: React.FC = () => {
                 No
               </th>
               <th scope="col" className="px-6 py-3">
-                Judul
-              </th>
-              <th scope="col" className="px-6 py-3">
                 Gambar
               </th>
               <th scope="col" className="px-6 py-3">
@@ -148,14 +145,11 @@ const JobList: React.FC = () => {
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
               >
                 <td className="px-6 py-4">{indexOfFirstRow + index + 1}</td>
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  {job.judul}
-                </td>
                 <td className="px-6 py-4">
                   {job.gambar ? (
                     <img
                       src={job.gambar}
-                      alt={job.judul}
+                      alt={job.namaPT}
                       className="w-16 h-16 object-cover"
                     />
                   ) : (

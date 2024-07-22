@@ -1,5 +1,5 @@
 "use client";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import React, { useState, useEffect } from "react";
 import { axiosInstance } from "@/lib/axios";
 import { FaBookmark } from "react-icons/fa"; // Import icon simpan/arsip
@@ -9,7 +9,7 @@ import defaultImage from "@/app/public/assets/image.png"; // Import gambar defau
 
 interface Jobs {
   id: number;
-  judul: string;
+  namaPT: string;
   deskripsi: string;
   openrekrutmen: string[];
   gambar?: string;
@@ -41,10 +41,9 @@ const CardPost: React.FC = () => {
     }
   };
 
-  // Handler saat tombol "Daftar" diklik
   const handleDaftarClick = async (jobId: number) => {
     const token = localStorage.getItem("token");
-
+  
     if (token) {
       try {
         // Kirim token ke backend untuk mendapatkan data pengguna
@@ -53,26 +52,31 @@ const CardPost: React.FC = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
+  
         const userId = response.data.id;
-
+  
         // Kirim data ke backend
         await axiosInstance.post("/savejobs", {
           penggunaId: userId.toString(),
           pekerjaanId: jobId.toString(),
         });
-
-        toast.success("Job berhasil disimpan.");
-      } catch (error) {
-        console.error("Gagal menyimpan job:", error);
-        toast.error("Gagal menyimpan job. Silakan coba lagi.");
+  
+        toast.success("Job berhasil disimpan.", { position: "top-center" });
+      } catch (error: any) {
+        // Menangani error berdasarkan status kode
+        if (error.response && error.response.status === 400) {
+          toast.error("Lamaran sudah disimpan sebelumnya.", { position: "top-center" });
+        } else {
+          console.error("Gagal menyimpan job:", error);
+          toast.error("Gagal menyimpan job. Silakan coba lagi.", { position: "top-center" });
+        }
       }
     } else {
       console.log("Token tidak ditemukan. Harap login terlebih dahulu.");
-      toast.error("Harap login terlebih dahulu.");
+      toast.error("Harap login terlebih dahulu.", { position: "top-center" });
     }
   };
-
+  
   // Pastikan jobs ada sebelum mencoba mengakses elemennya
   if (jobs.length === 0) {
     return <div>Loading...</div>;
@@ -85,7 +89,7 @@ const CardPost: React.FC = () => {
           <div className="relative mb-4">
             <Image
               src={job.gambar || defaultImage} // Gambar default jika job.gambar tidak ada
-              alt={job.judul}
+              alt={job.namaPT}
               width={640} // Sesuaikan width
               height={360} // Sesuaikan height
               className="object-cover rounded-t-lg w-full h-64"
@@ -101,7 +105,7 @@ const CardPost: React.FC = () => {
                 <span key={index}>#{item} </span>
               ))}
             </p>
-            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{job.judul}</h5>
+            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{job.namaPT}</h5>
             <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{truncateDescription(job.deskripsi)}</p>
             <div className="flex justify-between items-center">
               <Link href={`/Daftar/${job.id}`}>
@@ -124,7 +128,6 @@ const CardPost: React.FC = () => {
           </div>
         </div>
       ))}
-      <Toaster position="bottom-center" reverseOrder={false} />
     </div>
   );
 };

@@ -1,54 +1,56 @@
 import React, { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { axiosInstance } from '@/lib/axios';
-import toast from 'react-hot-toast'; // Import toast dari react-hot-toast
+import toast from 'react-hot-toast';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 interface AddUserModalProps {
-  onClose: () => void; // Prop untuk menutup modal
+  onClose: () => void;
 }
 
 const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
   const [nama, setNama] = useState('');
   const [email, setEmail] = useState('');
+  const [NIS, setNIS] = useState('');
   const [alamat, setAlamat] = useState('');
-  const [peran, setPeran] = useState(''); // State untuk peran
-  const [jurusan, setJurusan] = useState(''); // State untuk jurusan
+  const [peran, setPeran] = useState('');
+  const [jurusan, setJurusan] = useState('');
   const [kataSandi, setKataSandi] = useState('');
+  const [tanggalLahir, setTanggalLahir] = useState<Date | null>(null);
   const [nomorTelepon, setNomorTelepon] = useState('');
   const [gambar, setGambar] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Handler untuk mengirim data pengguna baru ke server
   const handleAddUser = () => {
     const formData = new FormData();
     formData.append('nama', nama);
     formData.append('email', email);
+    formData.append('NIS', NIS);
     formData.append('alamat', alamat);
     formData.append('peran', peran);
     formData.append('jurusan', jurusan);
     formData.append('kataSandi', kataSandi);
-    formData.append('nomortelepon', nomorTelepon);
+    formData.append('tanggalLahir', tanggalLahir ? tanggalLahir.toISOString() : '');
+    formData.append('nomorTelepon', nomorTelepon);
     if (gambar) {
       formData.append('gambar', gambar);
     }
 
     axiosInstance.post('/users', formData)
       .then(response => {
-        console.log('User added successfully:', response.data);
-        toast.success('Pengguna berhasil ditambahkan'); // Tampilkan toast sukses
-        onClose(); // Tutup modal setelah berhasil menambahkan pengguna
+        toast.success('Pengguna berhasil ditambahkan',{position: 'top-center'});
+        onClose();
       })
       .catch(error => {
-        console.error('Error adding user:', error);
         setError('Gagal menambahkan pengguna');
-        toast.error('Gagal menambahkan pengguna'); // Tampilkan toast error
+        toast.error('Gagal menambahkan pengguna',{position: 'top-center'});
       });
   };
 
-  // Handler untuk menutup modal dan menampilkan toast
   const handleModalClose = () => {
-    onClose(); // Tutup modal
-    toast('Operasi pembatalan menambahkan data berhasil', { icon: '👋' }); // Tampilkan toast operasi pembatalan
+    onClose();
+    toast('Operasi pembatalan menambahkan data berhasil', { icon: '👋',position: 'top-center'});
   };
 
   return (
@@ -69,7 +71,17 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
               id="nama"
               value={nama}
               onChange={(e) => setNama(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="NIS" className="block text-sm font-medium text-gray-700">NIS</label>
+            <input
+              type="text"
+              id="NIS"
+              value={NIS}
+              onChange={(e) => setNIS(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
           <div className="mb-4">
@@ -79,7 +91,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
           <div className="mb-4">
@@ -89,7 +101,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
               id="alamat"
               value={alamat}
               onChange={(e) => setAlamat(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
           <div className="mb-4">
@@ -98,7 +110,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
               id="peran"
               value={peran}
               onChange={(e) => setPeran(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
               <option value="">Pilih Peran</option>
               <option value="ADMIN">ADMIN</option>
@@ -111,7 +123,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
               id="jurusan"
               value={jurusan}
               onChange={(e) => setJurusan(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
               <option value="">Pilih Jurusan</option>
               <option value="PERHOTELAN">PERHOTELAN</option>
@@ -124,7 +136,20 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
               id="kataSandi"
               value={kataSandi}
               onChange={(e) => setKataSandi(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="tanggalLahir" className="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
+            <DatePicker
+              id="tanggalLahir"
+              selected={tanggalLahir}
+              onChange={(date: Date | null) => setTanggalLahir(date)}
+              dateFormat="yyyy-MM-dd"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholderText="yyyy-mm-dd"
+              showYearDropdown
+              scrollableYearDropdown
             />
           </div>
           <div className="mb-4">
@@ -134,7 +159,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
               id="nomorTelepon"
               value={nomorTelepon}
               onChange={(e) => setNomorTelepon(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
           <div className="mb-4">
@@ -144,21 +169,21 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
               id="gambar"
               accept="image/*"
               onChange={(e) => setGambar(e.target.files ? e.target.files[0] : null)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end space-x-2">
             <button
-              onClick={handleAddUser} // Panggil handler saat tombol diklik
-              className="bg-green-500 text-white px-4 py-2 rounded mr-2 hover:bg-green-600 transition duration-300"
-            >
-              Tambahkan
-            </button>
-            <button
-              onClick={handleModalClose} // Panggil handler saat tombol diklik
-              className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition duration-300"
+              onClick={handleModalClose}
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Batal
+            </button>
+            <button
+              onClick={handleAddUser}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Tambah
             </button>
           </div>
         </div>

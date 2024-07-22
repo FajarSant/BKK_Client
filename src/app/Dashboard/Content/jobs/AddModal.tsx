@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { axiosInstance } from '@/lib/axios';
 
@@ -11,12 +10,12 @@ interface AddModalProps {
 
 const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
   const [newJob, setNewJob] = useState({
-    judul: '',
+    berkas: '',
     namaPT: '',
     deskripsi: '',
     persyaratan: [] as string[],
     openrekrutmen: [] as string[],
-    gambar: '',
+    gambar: null as File | null,
     alamat: '',
     email: '',
     nomorTelepon: '',
@@ -27,17 +26,13 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setNewJob({ ...newJob, [name]: value });
+    setNewJob(prevState => ({ ...prevState, [name]: value }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setNewJob({ ...newJob, gambar: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+      setNewJob(prevState => ({ ...prevState, gambar: file }));
     }
   };
 
@@ -55,19 +50,56 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
     }
   };
 
+  const handleDelete = (key: 'persyaratan' | 'openrekrutmen', index: number) => {
+    const updatedList = [...newJob[key]];
+    updatedList.splice(index, 1);
+    setNewJob(prevState => ({ ...prevState, [key]: updatedList }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('namaPT', newJob.namaPT);
+    formData.append('deskripsi', newJob.deskripsi);
+    formData.append('berkas', newJob.berkas);
+    formData.append('alamat', newJob.alamat);
+    formData.append('email', newJob.email);
+    formData.append('nomorTelepon', newJob.nomorTelepon);
+    formData.append('Link', newJob.Link);
+    
+    // Serialize arrays to JSON strings
+    formData.append('persyaratan', JSON.stringify(newJob.persyaratan));
+    formData.append('openrekrutmen', JSON.stringify(newJob.openrekrutmen));
+    
+    if (newJob.gambar) formData.append('gambar', newJob.gambar);
+  
     try {
-      await axiosInstance.post('/jobs', newJob);
+      await axiosInstance.post('/jobs', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       toast.success('Job added successfully!');
       onAdd(); // Refresh job list
       onClose(); // Close modal
+      setNewJob({
+        berkas: '',
+        namaPT: '',
+        deskripsi: '',
+        persyaratan: [],
+        openrekrutmen: [],
+        gambar: null,
+        alamat: '',
+        email: '',
+        nomorTelepon: '',
+        Link: ''
+      }); // Clear inputs
     } catch (error) {
       toast.error('Failed to add job.');
       setError('Failed to add job.');
       console.error('Error adding job:', error);
     }
   };
+  
 
   if (!isOpen) return null;
 
@@ -79,58 +111,27 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
         <form onSubmit={handleSubmit}>
           <input
             type="text"
-            name="judul"
-            placeholder="Judul"
-            value={newJob.judul}
-            onChange={handleInputChange}
-            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-          <input
-            type="text"
             name="namaPT"
             placeholder="Nama PT"
             value={newJob.namaPT}
             onChange={handleInputChange}
-            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
           />
-          <textarea
+          <input
+            type="text"
             name="deskripsi"
             placeholder="Deskripsi"
             value={newJob.deskripsi}
             onChange={handleInputChange}
-            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
           />
           <input
             type="text"
-            name="alamat"
-            placeholder="Alamat"
-            value={newJob.alamat}
+            name="berkas"
+            placeholder="Berkas"
+            value={newJob.berkas}
             onChange={handleInputChange}
-            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-          <input
-            type="text"
-            name="email"
-            placeholder="Email"
-            value={newJob.email}
-            onChange={handleInputChange}
-            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-          <input
-            type="text"
-            name="nomorTelepon"
-            placeholder="Nomor Telepon"
-            value={newJob.nomorTelepon}
-            onChange={handleInputChange}
-            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-          <input
-            type="text"
-            name="Link"
-            placeholder="Link"
-            value={newJob.Link}
-            onChange={handleInputChange}
-            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
           />
           <label className="block mb-2">
             Persyaratan:
@@ -138,7 +139,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
               type="text"
               placeholder="Tambahkan persyaratan"
               onKeyDown={(e) => handleKeyDown(e, 'persyaratan')}
-              className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
             />
             <ul>
               {newJob.persyaratan.map((item, index) => (
@@ -146,11 +147,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
                   {item}
                   <button
                     type="button"
-                    onClick={() => {
-                      const updatedPersyaratan = [...newJob.persyaratan];
-                      updatedPersyaratan.splice(index, 1);
-                      setNewJob({ ...newJob, persyaratan: updatedPersyaratan });
-                    }}
+                    onClick={() => handleDelete('persyaratan', index)}
                     className="ml-2 text-red-600"
                   >
                     Delete
@@ -165,7 +162,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
               type="text"
               placeholder="Tambahkan open rekrutmen"
               onKeyDown={(e) => handleKeyDown(e, 'openrekrutmen')}
-              className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
             />
             <ul>
               {newJob.openrekrutmen.map((item, index) => (
@@ -173,11 +170,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
                   {item}
                   <button
                     type="button"
-                    onClick={() => {
-                      const updatedOpenrekrutmen = [...newJob.openrekrutmen];
-                      updatedOpenrekrutmen.splice(index, 1);
-                      setNewJob({ ...newJob, openrekrutmen: updatedOpenrekrutmen });
-                    }}
+                    onClick={() => handleDelete('openrekrutmen', index)}
                     className="ml-2 text-red-600"
                   >
                     Delete
@@ -196,12 +189,44 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             />
             {newJob.gambar && (
               <img
-                src={newJob.gambar}
+                src={URL.createObjectURL(newJob.gambar)}
                 alt="Preview"
                 className="w-16 h-16 object-cover"
               />
             )}
           </label>
+          <input
+            type="text"
+            name="alamat"
+            placeholder="Alamat"
+            value={newJob.alamat}
+            onChange={handleInputChange}
+            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+          />
+          <input
+            type="text"
+            name="email"
+            placeholder="Email"
+            value={newJob.email}
+            onChange={handleInputChange}
+            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+          />
+          <input
+            type="text"
+            name="nomorTelepon"
+            placeholder="Nomor Telepon"
+            value={newJob.nomorTelepon}
+            onChange={handleInputChange}
+            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+          />
+          <input
+            type="text"
+            name="Link"
+            placeholder="Link"
+            value={newJob.Link}
+            onChange={handleInputChange}
+            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+          />
           <button
             type="submit"
             className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-300"

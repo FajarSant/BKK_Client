@@ -11,7 +11,7 @@ const LoginForm: React.FC = () => {
     try {
       const response = await axiosInstance.post("/auth/login", {
         nis,
-        kataSandi: password,
+        katasandi: password,
       });
 
       const { token, user } = response.data;

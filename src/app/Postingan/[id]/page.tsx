@@ -16,15 +16,15 @@ import { Button } from "@/components/ui/button";
 
 interface Jobs {
   id: string;
-  judul: string;
+  namaPT: string;
   deskripsi: string;
   persyaratan: string[];
   openrekrutmen: string[];
   gambar?: string;
   alamat?: string;
+  berkas:string;
   nomorTelepon?: string;
   email?: string;
-  namaPT?: string;
 }
 
 const PostinganDetail = () => {
@@ -75,13 +75,13 @@ const PostinganDetail = () => {
       </div>
       <div className="max-w-3xl mx-auto bg-white shadow-sm rounded-lg p-6">
         <h1 className="text-2xl font-bold text-center underline mb-6">
-          {jobs.judul}
+          {jobs.namaPT}
         </h1>
         <div className="flex flex-col items-center mb-6">
           <div className="border-t-2 border-gray-300 my-6"></div>
           <Image
             src={jobs.gambar || defaultImage}
-            alt={jobs.judul}
+            alt={jobs.namaPT}
             width={480}
             height={240}
             className="rounded-lg"
@@ -90,6 +90,9 @@ const PostinganDetail = () => {
           <div>
             <p className="text-lg text-gray-700 mb-4 text-justify">
               {jobs.deskripsi}
+            </p>
+            <p className="text-lg text-gray-700 mb-4 text-justify">
+              {jobs.berkas}
             </p>
             <div className="border-t-2 border-gray-300"></div>
             <div className="text-2xl font-bold mb-2 flex items-center">

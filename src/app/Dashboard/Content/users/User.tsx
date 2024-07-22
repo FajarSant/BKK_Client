@@ -23,9 +23,10 @@ interface User {
   alamat: string;
   peran: string;
   jurusan: string;
-  nomorTelepon: string;
+  nomortelepon: string;
   password?: string;
-  gambar?: string;
+  gambar: string;
+  NIS: string;
 }
 
 const UserManagementTable: React.FC = () => {
@@ -37,6 +38,7 @@ const UserManagementTable: React.FC = () => {
   const [deleteUserName, setDeleteUserName] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
+  const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -98,6 +100,30 @@ const UserManagementTable: React.FC = () => {
       }
     }
   };
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setFile(event.target.files[0]);
+    }
+  };
+  const handleFileUpload = async () => {
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        await axiosInstance.post("/users/import", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        toast.success("File berhasil diupload dan pengguna berhasil diimpor.");
+        fetchUsers();
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        toast.error("Gagal mengupload file.");
+      }
+    }
+  };
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
@@ -112,6 +138,9 @@ const UserManagementTable: React.FC = () => {
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
+
+  // URL or path to the file to be downloaded
+  const downloadFileUrl = "https://docs.google.com/spreadsheets/d/1fSQh5jT1651ruXcPxOiM3Q77aYt2P_cb/edit?usp=sharing&ouid=102677950529644945883&rtpof=true&sd=true";
 
   return (
     <div className="container mx-auto p-4">
@@ -176,23 +205,66 @@ const UserManagementTable: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="relative bg-slate-500 overflow-x-auto shadow-md sm:rounded-lg">
-      <button
-        className="text-white my-4 mx-4 flex items-center bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm p-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-        onClick={handleShowAddModal}
-      >
-        <FaPlus className="mr-2" /> Tambah Users
-      </button>
+      <div className="relative bg-slate-400 overflow-x-auto shadow-md sm:rounded-lg">
+      <div className="container p-4">
+          <h2 className="text-xl text-red-500 font-sans mb-4">
+            Tambahkan Users dengan menambahkan Excel dibawah ini !!!
+          </h2>
+          <input
+            type="file"
+            onChange={handleFileChange}
+            className="file-input file-input-bordered file-input-success w-full max-w-xs mb-4"
+            accept=".xlsx, .xls"
+          />
+          <button
+            type="button"
+            onClick={handleFileUpload}
+            className="btn btn-success ml-2"
+          >
+            Upload
+          </button>
+          <a
+            href={downloadFileUrl}
+            download
+            className="btn btn-primary mx-2"
+          >
+            Download Template
+          </a>
+        </div>
+        <button
+          className="btn btn-success mb-4 mx-4"
+          onClick={handleShowAddModal}
+        >
+          <FaPlus className="mr-2" /> Tambah Users
+        </button>
+
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs bg-slate-500 text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th scope="col" className="px-6 py-3">Gambar</th>
-              <th scope="col" className="px-6 py-3">Nama</th>
-              <th scope="col" className="px-6 py-3">Email</th>
-              <th scope="col" className="px-6 py-3">Alamat</th>
-              <th scope="col" className="px-6 py-3">Peran</th>
-              <th scope="col" className="px-6 py-3">Jurusan</th>
-              <th scope="col" className="px-6 py-3">Aksi</th>
+              <th scope="col" className="px-6 py-3">
+                NIS
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Gambar
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Nama
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Email
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Alamat
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Peran
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Jurusan
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Aksi
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -201,6 +273,7 @@ const UserManagementTable: React.FC = () => {
                 key={user.id}
                 className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800"
               >
+                <td className="px-6 py-4">{user.NIS}</td>
                 <td className="px-6 py-4">
                   {user.gambar ? (
                     <img

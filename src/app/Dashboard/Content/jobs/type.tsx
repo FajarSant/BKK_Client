@@ -1,7 +1,7 @@
 export interface Job {
     Link: string;
     id: string;
-    judul: string;
+    berkas: string;
     gambar?: string;
     namaPT: string;
     alamat: string;
