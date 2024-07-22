@@ -79,7 +79,7 @@ const UserManagementTable: React.FC = () => {
   };
 
   const handleCancelDelete = () => {
-    toast("Penghapusan pengguna " + deleteUserName + " dibatalkan");
+    toast("Penghapusan pengguna " + deleteUserName + " dibatalkan",{position:"top-center"});
     setDeleteUserId(null);
     setDeleteUserName("");
   };
@@ -88,13 +88,13 @@ const UserManagementTable: React.FC = () => {
     if (deleteUserId !== null) {
       try {
         await axiosInstance.delete(`/users/${deleteUserId}`);
-        toast.success("Pengguna " + deleteUserName + " berhasil dihapus");
+        toast.success("Pengguna " + deleteUserName + " berhasil dihapus",{position:"top-center"});
         fetchUsers();
         setDeleteUserId(null);
         setDeleteUserName("");
       } catch (error) {
         console.error("Error deleting user:", error);
-        toast.error("Gagal menghapus pengguna " + deleteUserName);
+        toast.error("Gagal menghapus pengguna " + deleteUserName,{position:"top-center"});
         setDeleteUserId(null);
         setDeleteUserName("");
       }
@@ -116,11 +116,11 @@ const UserManagementTable: React.FC = () => {
             "Content-Type": "multipart/form-data",
           },
         });
-        toast.success("File berhasil diupload dan pengguna berhasil diimpor.");
+        toast.success("File berhasil diupload dan pengguna berhasil diimpor.",{position:"top-center"});
         fetchUsers();
       } catch (error) {
         console.error("Error uploading file:", error);
-        toast.error("Gagal mengupload file.");
+        toast.error("Gagal mengupload file.",{position:"top-center"});
       }
     }
   };
@@ -144,7 +144,6 @@ const UserManagementTable: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <Toaster position="top-center" reverseOrder={false} />
 
       <header className="mb-4 flex justify-between items-center border-b pb-2">
         <h1 className="text-2xl font-bold text-center w-full">
@@ -238,7 +237,7 @@ const UserManagementTable: React.FC = () => {
           <FaPlus className="mr-2" /> Tambah Users
         </button>
 
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <table className="w-full table-xs text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs bg-slate-500 text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">

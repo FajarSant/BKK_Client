@@ -182,18 +182,18 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose, onSave }) 
             <img src={formData.gambar} alt="Gambar Pengguna" className="mt-2 w-32 h-32 object-cover" />
           )}
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end space-x-2">
           <button
-            className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 mr-2"
-            onClick={handleClose}
-          >
-            Batal
-          </button>
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="btn btn-success"
             onClick={handleSave}
           >
             Simpan
+          </button>
+          <button
+            className="btn btn-error"
+            onClick={handleClose}
+          >
+            Batal
           </button>
         </div>
       </div>

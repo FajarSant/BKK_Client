@@ -13,13 +13,13 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({ userName, onCon
         <p className="text-xl mb-4">Apakah Anda yakin ingin menghapus pengguna {userName}?</p>
         <div className="flex justify-end space-x-2">
           <button
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            className="btn btn-error"
             onClick={onConfirm}
           >
             Ya
           </button>
           <button
-            className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300"
+            className="btn btn-info"
             onClick={onCancel}
           >
             Batal

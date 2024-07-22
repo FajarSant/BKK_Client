@@ -16,6 +16,7 @@ const Dashboard: React.FC = () => {
       
       {/* Main Content */}
       <div className="w-5/6 ml-auto bg-white overflow-y-auto h-screen">
+        <Topbar />
         <MainContent activeItem={activeItem} />
       </div>
     </div>

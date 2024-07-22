@@ -28,13 +28,13 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, job, onDelet
     }
 
     onDelete(); // Call onDelete function passed from parent component
-    toast.success(`Job "${job.namaPT}" berhasil dihapus`);
+    toast.success(`Job "${job.namaPT}" berhasil dihapus`,{position:"top-center"});
     onClose(); // Close the modal after successful deletion
   };
 
   const handleCancel = () => {
     onCancel(); // Call onCancel function passed from parent component
-    toast.error(`Penghapusan job "${job.namaPT}" dibatalkan`);
+    toast.error(`Penghapusan job "${job.namaPT}" dibatalkan`,{position:"top-center"});
     onClose(); // Close the modal after cancellation
   };
 
@@ -46,18 +46,18 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, job, onDelet
           <p>Anda yakin ingin menghapus job ini?</p>
           <p>{job.namaPT}</p>
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-end space-x-2">
           <button
             type="button"
             onClick={handleDelete}
-            className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-300"
+            className="btn btn-error"
           >
             Hapus
           </button>
           <button
             type="button"
             onClick={handleCancel}
-            className="text-white bg-gray-500 hover:bg-gray-600 font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+            className="btn btn-info"
           >
             Batal
           </button>

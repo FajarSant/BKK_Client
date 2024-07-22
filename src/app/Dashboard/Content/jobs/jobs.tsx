@@ -95,7 +95,6 @@ const JobList: React.FC = () => {
 
   return (
     <div className="container p-4">
-      <Toaster />
       <h1 className="text-center mb-4 font-bold text-2xl">INFORMASI JOB</h1>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 relative">

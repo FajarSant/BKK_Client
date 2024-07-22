@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const slides = [
-    { src: "/image/background.jpg", text: "Selamat Datang di Slide Pertama Kami" },
-    { src: "/image/background.jpg", text: "Nikmati Slide Kedua Kami" },
-    { src: "https://img.daisyui.com/images/stock/photo-1414694762283-acccc27bca85.webp", text: "Temukan Slide Ketiga Kami" },
-    { src: "https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.webp", text: "Jelajahi Slide Keempat Kami" }
+    { src: "/image/background1.jpg", text: "Selamat Datang di Slide Pertama Kami" },
+    { src: "/image/background2.jpg", text: "Nikmati Slide Kedua Kami" },
+    { src: "/image/background3.jpg", text: "Temukan Slide Ketiga Kami" },
+    { src: "/image/background4.jpeg", text: "Jelajahi Slide Keempat Kami" }
   ];
 
   useEffect(() => {

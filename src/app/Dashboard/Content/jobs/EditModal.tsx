@@ -108,21 +108,21 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
       if (!job) return;
       await axiosInstance.put(`/jobs/${job.id}`, editedJob as Job);
       onEdit();
-      toast.success(`Job "${job.namaPT}" updated successfully`);
+      toast.success(`Job "${job.namaPT}" updated successfully`,{position:"top-center"});
       onClose(); // Menutup modal setelah berhasil
     } catch (error) {
       console.error('Error updating job:', error);
       setError('Error updating job. Please try again.');
-      toast.error('Failed to update job. Please try again.'); // Toast error jika gagal
+      toast.error('Failed to update job. Please try again.',{position:"top-center"}); // Toast error jika gagal
     }
   };
 
   const handleClose = () => {
     onClose();
     if (job) {
-      toast('Edit job canceled: ' + job.namaPT, { icon: '❌' }); // Toast ketika modal dibatalkan
+      toast('Edit job canceled: ' + job.namaPT, { icon: '❌',position:"top-center" }); // Toast ketika modal dibatalkan
     } else {
-      toast('Edit job canceled', { icon: '❌' }); // Jika job tidak tersedia, hanya tampilkan pesan umum
+      toast('Edit job canceled', { icon: '❌',position:"top-center" }); // Jika job tidak tersedia, hanya tampilkan pesan umum
     }
   };
 
@@ -284,18 +284,19 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <div className="flex justify-end gap-2">
             <button
-              type="button"
-              onClick={handleClose}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            >
-              Cancel
-            </button>
-            <button
               type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="btn btn-success"
             >
               Save
             </button>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="btn btn-error"
+            >
+              Cancel
+            </button>
+            
           </div>
         </form>
       </div>
