@@ -24,6 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setActiveItem }) => {
     { label: 'Users', icon: FaUsers },
     { label: 'Jobs', icon: FaSuitcase },
     { label: 'Analisis', icon: FaChartBar },
+    { label: 'Pelatihan', icon: FaChartBar },
   ];
 
   return (

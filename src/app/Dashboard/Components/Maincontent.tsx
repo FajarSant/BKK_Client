@@ -3,6 +3,7 @@ import React from 'react';
 import Users from '../Content/users/User';
 import JobsTable from '../Content/jobs/jobs';
 import Home from "../Content/home/home";
+import Pelatihan from "../Content/pelatihan/pelatihan";
 
 interface MainContentProps {
   activeItem: string;
@@ -17,6 +18,7 @@ const MainContent: React.FC<MainContentProps> = ({ activeItem }) => {
     Users : <Users />,
     Home : <Home/>,
     Jobs: <JobsTable/>,
+    Pelatihan: <Pelatihan/>,
     Settings: <h2>Settings Content</h2>,
   };
 

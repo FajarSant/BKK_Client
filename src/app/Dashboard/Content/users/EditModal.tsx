@@ -60,7 +60,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose, onSave }) 
   const handleSave = () => {
     const updatedData = new FormData();
     Object.keys(formData).forEach(key => {
-      if (key !== 'gambar') {
+      if (key !== 'gambar' && (key !== 'katasandi' || formData[key])) {
         updatedData.append(key, formData[key as keyof typeof formData]);
       }
     });
@@ -74,12 +74,12 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose, onSave }) 
       }
     })
     .then(response => {
-      toast.success('Pengguna berhasil diperbarui',{position: 'top-center'});
+      toast.success('Pengguna berhasil diperbarui', { position: 'top-center' });
       onSave();
       onClose();
     })
     .catch(error => {
-      toast.error('Gagal memperbarui pengguna',{position: 'top-center'});
+      toast.error('Gagal memperbarui pengguna', { position: 'top-center' });
       console.error('Error updating user:', error);
     });
   };

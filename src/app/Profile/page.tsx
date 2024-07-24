@@ -16,11 +16,12 @@ interface User {
   gambar: string | null;
   peran: string;
   jurusan: string;
+  NIS: string; // Added NIS field
   lamaran: {
     id: string;
     pekerjaan: {
       id: string;
-      judul: string;
+      namaPT: string;
     };
     status: string;
     tanggalDibuat: string;
@@ -32,7 +33,7 @@ interface User {
     id: string;
     pekerjaan: {
       id: string;
-      judul: string;
+      namaPT: string;
     };
   }[];
 }
@@ -51,7 +52,8 @@ const UserProfile: React.FC = () => {
     alamat: "",
     email: "",
     nomortelepon: "",
-    gambar: "",
+    gambar: "" as string | File, // Adjusted type
+    NIS: "", // Added NIS field
   });
   const [profileUpdatedAt, setProfileUpdatedAt] = useState<number>(Date.now());
 
@@ -73,6 +75,7 @@ const UserProfile: React.FC = () => {
             email: response.data.email,
             nomortelepon: response.data.nomortelepon,
             gambar: response.data.gambar || "",
+            NIS: response.data.NIS || "", // Initialize NIS field
           });
         } catch (error) {
           console.error("Failed to fetch user data", error);
@@ -138,21 +141,21 @@ const UserProfile: React.FC = () => {
     if (!token || !user) return;
 
     try {
-      const response = await axiosInstance.put(
-        `/users/${user.id}`,
-        {
-          nama: editFormData.nama,
-          alamat: editFormData.alamat,
-          email: editFormData.email,
-          nomortelepon: editFormData.nomortelepon,
-          gambar: editFormData.gambar,
+      const formData = new FormData();
+      formData.append("nama", editFormData.nama);
+      formData.append("alamat", editFormData.alamat);
+      formData.append("email", editFormData.email);
+      formData.append("nomortelepon", editFormData.nomortelepon);
+      formData.append("NIS", editFormData.NIS); // Add NIS to FormData
+      if (editFormData.gambar)
+        formData.append("gambar", editFormData.gambar as File);
+
+      const response = await axiosInstance.put(`/users/${user.id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      });
 
       setUser(response.data);
       toast.success("Profil berhasil diperbarui!", { position: "top-center" });
@@ -188,8 +191,11 @@ const UserProfile: React.FC = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setEditFormData((prevData) => ({ ...prevData, [name]: value }));
+    const { name, value, files } = e.target;
+    setEditFormData((prevData) => ({
+      ...prevData,
+      [name]: files ? files[0] : value,
+    }));
   };
 
   if (!user) {
@@ -233,6 +239,9 @@ const UserProfile: React.FC = () => {
               <p className="mr-4">
                 <span className="font-semibold">Email:</span> {user.email}
               </p>
+              <p className="mr-4">
+                <span className="font-semibold">NIS:</span> {user.NIS}
+              </p>
             </div>
           </div>
         </div>
@@ -250,185 +259,214 @@ const UserProfile: React.FC = () => {
           </div>
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {user.lowonganTersimpan?.map((item) => (
-              <div key={item.id} className="relative">
-                <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
-                  <h3 className="text-lg font-semibold">
-                    {item.pekerjaan.judul}
-                  </h3>
-                  <p className="text-gray-600">Ditambahkan oleh: {user.nama}</p>
-                  <div className="flex justify-end mt-2">
-                    <span className="text-blue-500 hover:underline flex items-center">
-                      <FaInfoCircle className="mr-1" />
-                      Detail
-                    </span>
-                    <button
-                      onClick={() =>
-                        openConfirmationModal(item.id, "lowonganTersimpan")
-                      }
-                      className="text-red-500 hover:text-red-700 ml-4"
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                </div>
+              <div key={item.id} className="bg-gray-100 p-4 rounded-lg shadow">
+                <h3 className="text-lg font-semibold">
+                  {item.pekerjaan.namaPT}
+                </h3>
+                <button
+                  onClick={() =>
+                    openConfirmationModal(item.id, "lowonganTersimpan")
+                  }
+                  className="mt-2 bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
+                >
+                  <FaTrash />
+                </button>
               </div>
             ))}
           </div>
-        </div>
-        <div className="border-t border-gray-200 mt-6">
-          <div className="font-bold text-center mt-4 underline">LAMARAN</div>
-          <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {user.lamaran?.map((item) => (
-              <div key={item.id} className="relative">
-                <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
+          <div className="border-t border-gray-200 mt-6">
+            <div className="font-bold text-center mt-4 underline">LAMARAN</div>
+            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {user.lamaran?.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-gray-100 p-4 rounded-lg shadow"
+                >
                   <h3 className="text-lg font-semibold">
-                    {item.pekerjaan.judul}
+                    {item.pekerjaan.namaPT}
                   </h3>
-                  <p className="text-gray-600">
-                    Ditambahkan oleh: {item.pengguna?.nama}
+                  <p className="text-sm text-gray-600">
+                    Tanggal Dibuat:{" "}
+                    {new Date(item.tanggalDibuat).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                    })}
                   </p>
-                  <p className="text-gray-600">
-                    Status:{" "}
-                    <span
-                      className={`${
-                        item.status === "DIPROSES"
-                          ? "text-yellow-500"
-                          : item.status === "DITERIMA"
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {item.status}
-                    </span>
+                  <p
+                    className={`indicator-item badge ${
+                      item.status === "DIKIRIM"
+                        ? "text-blue-500"
+                        : item.status === "DIPROSES"
+                        ? "text-yellow-500"
+                        : item.status === "DITERIMA"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    Status: {item.status}
                   </p>
-                  <div className="flex justify-end mt-2">
-                    <span className="text-blue-500 hover:underline flex items-center">
-                      <FaInfoCircle className="mr-1" />
-                      Detail
-                    </span>
-                    <button
-                      onClick={() => openConfirmationModal(item.id, "lamaran")}
-                      className="text-red-500 hover:text-red-700 ml-4"
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => openConfirmationModal(item.id, "lamaran")}
+                    className="mt-2 bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
+                  >
+                    <FaTrash />
+                  </button>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
-      <Footer />
 
-      {isEditModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="modal-box bg-white w-3/4 md:w-1/2 p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
-            <form onSubmit={(e) => e.preventDefault()}>
-              <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Nama
-                </label>
-                <input
-                  type="text"
-                  name="nama"
-                  value={editFormData.nama}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Alamat
-                </label>
-                <input
-                  type="text"
-                  name="alamat"
-                  value={editFormData.alamat}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={editFormData.email}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block  text-gray-700 font-semibold mb-2">
-                  Nomor Telepon
-                </label>
-                <input
-                  type="text"
-                  name="nomortelepon"
-                  value={editFormData.nomortelepon}
-                  onChange={handleChange}
-                  className="w-full input input-bordered  px-3 py-2 border rounded-lg"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Gambar
-                </label>
-                <input
-              type="file"
-              name="gambar"
-              accept=".jpg, .jpeg, .png"
-              onChange={handleChange}
-              className="mb-2"
-            />
-              </div>
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={closeEditModal}
-                  className="mr-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-                >
-                  Batal
-                </button>
-                <button
-                  type="button"
-                  onClick={handleEditProfile}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                >
-                  Simpan
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
+      {/* Confirmation Modal */}
       {isConfirmationModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white w-full md:w-1/3 p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Konfirmasi Hapus</h2>
-            <p>Apakah Anda yakin ingin menghapus item ini?</p>
-            <div className="flex justify-end mt-6">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-lg font-semibold">Konfirmasi Hapus</h2>
+            <p className="mt-2">
+              Apakah Anda yakin ingin menghapus{" "}
+              {selectedItemType === "lowonganTersimpan"
+                ? "lowongan tersimpan"
+                : "lamaran"}{" "}
+              ini?
+            </p>
+            <div className="flex justify-end mt-4">
               <button
-                onClick={closeConfirmationModal}
-                className="mr-4 bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
-              >
-                Batal
-              </button>
-              <button
+                className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
                 onClick={handleDelete}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
               >
                 Hapus
+              </button>
+              <button
+                className="ml-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400"
+                onClick={closeConfirmationModal}
+              >
+                Batal
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Edit Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-1/2">
+            <h2 className="text-lg font-semibold mb-4">Edit Profile</h2>
+            <div className="mb-4">
+              <label
+                htmlFor="nama"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Nama
+              </label>
+              <input
+                type="text"
+                id="nama"
+                name="nama"
+                value={editFormData.nama}
+                onChange={handleChange}
+                className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="alamat"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Alamat
+              </label>
+              <input
+                type="text"
+                id="alamat"
+                name="alamat"
+                value={editFormData.alamat}
+                onChange={handleChange}
+                className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={editFormData.email}
+                onChange={handleChange}
+                className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="nomortelepon"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Nomor Telepon
+              </label>
+              <input
+                type="text"
+                id="nomortelepon"
+                name="nomortelepon"
+                value={editFormData.nomortelepon}
+                onChange={handleChange}
+                className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="NIS"
+                className="block text-sm font-medium text-gray-700"
+              >
+                NIS
+              </label>
+              <input
+                type="text"
+                id="NIS"
+                name="NIS"
+                value={editFormData.NIS}
+                readOnly
+                className="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md shadow-sm"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="gambar"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Gambar
+              </label>
+              <input
+                type="file"
+                id="gambar"
+                name="gambar"
+                onChange={handleChange}
+                className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm"
+              />
+            </div>
+            <div className="flex justify-end mt-4">
+              <button
+                className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+                onClick={handleEditProfile}
+              >
+                Simpan
+              </button>
+              <button
+                className="ml-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400"
+                onClick={closeEditModal}
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <Footer />
     </div>
   );
 };

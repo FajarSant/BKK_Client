@@ -17,6 +17,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
     openrekrutmen: [] as string[],
     gambar: null as File | null,
     alamat: '',
+    jenis: '',
     email: '',
     nomorTelepon: '',
     Link: ''
@@ -64,6 +65,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
     formData.append('deskripsi', newJob.deskripsi);
     formData.append('berkas', newJob.berkas);
     formData.append('alamat', newJob.alamat);
+    formData.append('jenis', newJob.jenis);
     formData.append('email', newJob.email);
     formData.append('nomorTelepon', newJob.nomorTelepon);
     formData.append('Link', newJob.Link);
@@ -89,6 +91,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
         openrekrutmen: [],
         gambar: null,
         alamat: '',
+        jenis: '',
         email: '',
         nomorTelepon: '',
         Link: ''
@@ -200,6 +203,14 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             name="alamat"
             placeholder="Alamat"
             value={newJob.alamat}
+            onChange={handleInputChange}
+            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+          />
+          <input
+            type="text"
+            name="jenis"
+            placeholder="jenis"
+            value={newJob.jenis}
             onChange={handleInputChange}
             className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
           />

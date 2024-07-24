@@ -13,25 +13,10 @@ interface Jobs {
   deskripsi: string;
   openrekrutmen: string[];
   gambar?: string;
-  kategori: string; // Tambahkan kategori pada interface Jobs
 }
-
-const categories = [
-  "ALL",
-  "Category1",
-  "Category2",
-  "Category3",
-  "Category4",
-  "Category5",
-  "Category6",
-  "Category7",
-  "Category8"
-];
 
 const CardPost: React.FC = () => {
   const [jobs, setJobs] = useState<Jobs[]>([]);
-  const [filteredJobs, setFilteredJobs] = useState<Jobs[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [loading, setLoading] = useState<boolean>(true); // State untuk loading
 
   useEffect(() => {
@@ -39,7 +24,6 @@ const CardPost: React.FC = () => {
       try {
         const response = await axiosInstance.get<Jobs[]>("/jobs");
         setJobs(response.data);
-        setFilteredJobs(response.data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -49,14 +33,6 @@ const CardPost: React.FC = () => {
 
     fetchJobs();
   }, []);
-
-  useEffect(() => {
-    if (selectedCategory === "ALL") {
-      setFilteredJobs(jobs);
-    } else {
-      setFilteredJobs(jobs.filter(job => job.kategori === selectedCategory));
-    }
-  }, [selectedCategory, jobs]);
 
   const truncateDescription = (description: string) => {
     const words = description.split(" ");
@@ -122,23 +98,8 @@ const CardPost: React.FC = () => {
 
   return (
     <div className="container mt-10 mx-auto px-4 py-8">
-      <div className="mb-6 flex flex-wrap justify-center space-x-2">
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`px-4 py-2 rounded-lg font-semibold text-sm ${
-              selectedCategory === category
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-700"
-            } hover:bg-blue-800 hover:text-white transition duration-300`}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
       <div className=" grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {filteredJobs.map((job) => (
+        {jobs.map((job) => (
           <div key={job.id} className="bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
             <div className="relative mb-4">
               <Image

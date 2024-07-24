@@ -18,6 +18,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
     persyaratan: [],
     openrekrutmen: [],
     gambar: '',
+    jenis: '',
     alamat: '',
     email: '',
     nomorTelepon: '',
@@ -38,6 +39,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
         gambar: job.gambar || '',
         alamat: job.alamat || '',
         email: job.email || '',
+        jenis: job.jenis || '',
         nomorTelepon: job.nomorTelepon || '',
         Link: job.Link || '' // Pastikan properti Link ada di objek job jika diperlukan
       });
@@ -221,6 +223,18 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
             {editedJob.gambar && (
               <img src={editedJob.gambar} alt="Uploaded" className="mt-2 w-32 h-32 object-cover" />
             )}
+          </div>
+          <div>
+            <label htmlFor="jenis" className="block text-sm font-medium text-gray-700">jenis</label>
+            <input
+              type="text"
+              id="jenis"
+              name="jenis"
+              value={editedJob.jenis || ''}
+              onChange={handleInputChange}
+              required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
           </div>
           <div>
             <label htmlFor="alamat" className="block text-sm font-medium text-gray-700">Alamat</label>
