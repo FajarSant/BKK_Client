@@ -159,7 +159,7 @@ const JobList: React.FC = () => {
                 <td className="px-6 py-4">{job.alamat}</td>
                 <td className="px-6 py-4">{job.nomorTelepon}</td>
                 <td className="px-6 py-4">{job.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <td className="px-6 py-4 whitespace-nowrap space-x-2 text-right text-sm font-medium">
                   <button
                     className="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     onClick={() => openEditModal(job)}

@@ -259,62 +259,72 @@ const UserProfile: React.FC = () => {
           </div>
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {user.lowonganTersimpan?.map((item) => (
-              <div key={item.id} className="bg-gray-100 p-4 rounded-lg shadow">
-                <h3 className="text-lg font-semibold">
-                  {item.pekerjaan.namaPT}
-                </h3>
-                <button
-                  onClick={() =>
-                    openConfirmationModal(item.id, "lowonganTersimpan")
-                  }
-                  className="mt-2 bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
-                >
-                  <FaTrash />
-                </button>
-              </div>
-            ))}
-          </div>
-          <div className="border-t border-gray-200 mt-6">
-            <div className="font-bold text-center mt-4 underline">LAMARAN</div>
-            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {user.lamaran?.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-gray-100 p-4 rounded-lg shadow"
-                >
+              <div key={item.id} className="relative">
+                <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
                   <h3 className="text-lg font-semibold">
                     {item.pekerjaan.namaPT}
                   </h3>
-                  <p className="text-sm text-gray-600">
-                    Tanggal Dibuat:{" "}
-                    {new Date(item.tanggalDibuat).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "2-digit",
-                      day: "2-digit",
-                    })}
-                  </p>
-                  <p
-                    className={`indicator-item badge ${
-                      item.status === "DIKIRIM"
-                        ? "text-blue-500"
-                        : item.status === "DIPROSES"
-                        ? "text-yellow-500"
-                        : item.status === "DITERIMA"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }`}
-                  >
-                    Status: {item.status}
-                  </p>
-                  <button
-                    onClick={() => openConfirmationModal(item.id, "lamaran")}
-                    className="mt-2 bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
-                  >
-                    <FaTrash />
-                  </button>
+                  <p className="text-gray-600">Ditambahkan oleh: {user.nama}</p>
+                  <div className="flex justify-end mt-2">
+                    <span className="text-blue-500 hover:underline flex items-center">
+                      <FaInfoCircle className="mr-1" />
+                      Detail
+                    </span>
+                    <button
+                      onClick={() =>
+                        openConfirmationModal(item.id, "lowonganTersimpan")
+                      }
+                      className="text-red-500 hover:text-red-700 ml-4"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="border-t border-gray-200 mt-6">
+          <div className="font-bold text-center mt-4 underline">LAMARAN</div>
+          <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {user.lamaran?.map((item) => (
+              <div key={item.id} className="relative">
+                <div className="bg-gray-200 p-4 rounded-lg shadow-md cursor-pointer">
+                  <h3 className="text-lg font-semibold">
+                    {item.pekerjaan.namaPT}
+                  </h3>
+                  <p className="text-gray-600">
+                    Ditambahkan oleh: {item.pengguna?.nama}
+                  </p>
+                  <p className="text-gray-600">
+                    Status:{" "}
+                    <span
+                      className={`${
+                        item.status === "DIPROSES"
+                          ? "text-yellow-500"
+                          : item.status === "DITERIMA"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {item.status}
+                    </span>
+                  </p>
+                  <div className="flex justify-end mt-2">
+                    <span className="text-blue-500 hover:underline flex items-center">
+                      <FaInfoCircle className="mr-1" />
+                      Detail
+                    </span>
+                    <button
+                      onClick={() => openConfirmationModal(item.id, "lamaran")}
+                      className="text-red-500 hover:text-red-700 ml-4"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
