@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IconContext } from 'react-icons';
-import { FaHome, FaUsers, FaSuitcase, FaChartBar, FaSignOutAlt } from 'react-icons/fa'; // Import ikon yang ingin digunakan
+import { FaHome, FaUsers, FaSuitcase, FaChartBar, FaSignOutAlt, FaChalkboardTeacher } from 'react-icons/fa'; // Import ikon yang ingin digunakan
 
 interface SidebarProps {
   setActiveItem: (item: string) => void;
@@ -21,10 +21,10 @@ const Sidebar: React.FC<SidebarProps> = ({ setActiveItem }) => {
 
   const menuItems = [
     { label: 'Home', icon: FaHome },
-    { label: 'Users', icon: FaUsers },
-    { label: 'Jobs', icon: FaSuitcase },
+    { label: 'Pengguna', icon: FaUsers },
+    { label: 'Lamaran', icon: FaSuitcase },
     { label: 'Analisis', icon: FaChartBar },
-    { label: 'Pelatihan', icon: FaChartBar },
+    { label: 'Pelatihan', icon: FaChalkboardTeacher },
   ];
 
   return (

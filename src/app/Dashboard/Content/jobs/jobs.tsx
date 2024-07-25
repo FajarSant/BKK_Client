@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaSortAlphaDown, FaSortAlphaUp, FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
 import { axiosInstance } from "@/lib/axios";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
 import AddModal from "./AddModal";
 import toast, { Toaster } from "react-hot-toast";
-import { Job } from "./type"; // Pastikan tipe Job diimpor dari type.tsx
+import { Job } from "./type";
 
 const JobList: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -15,6 +15,9 @@ const JobList: React.FC = () => {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
+
+  const [sortBy, setSortBy] = useState<"namaPT" | "tanggalDibuat">("namaPT");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     fetchData();
@@ -81,8 +84,21 @@ const JobList: React.FC = () => {
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = jobs.slice(indexOfFirstRow, indexOfLastRow);
 
+  // Sort jobs based on the selected sort criteria and order
+  const sortedJobs = [...jobs].sort((a, b) => {
+    if (sortBy === "namaPT") {
+      return sortOrder === "asc"
+        ? a.namaPT.localeCompare(b.namaPT)
+        : b.namaPT.localeCompare(a.namaPT);
+    } else {
+      return sortOrder === "asc"
+        ? new Date(a.tanggalDibuat).getTime() - new Date(b.tanggalDibuat).getTime()
+        : new Date(b.tanggalDibuat).getTime() - new Date(a.tanggalDibuat).getTime();
+    }
+  });
+
+  const currentRows = sortedJobs.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(jobs.length / rowsPerPage);
 
   const handlePrevPage = () => {
@@ -103,14 +119,39 @@ const JobList: React.FC = () => {
             <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
               Telusuri daftar pekerjaan yang tersedia beserta detailnya.
             </p>
+            <div className="flex justify-between items-center mb-4">
+          
+          <button
+            className="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm p-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            onClick={openAddModal}
+          >
+            <div className="flex items-center">
+              <FaPlus /> <p className="ml-1">Tambahkan</p>
+            </div>
+          </button>
+          <div>
             <button
-              className="text-white mt-2 bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm p-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-              onClick={openAddModal}
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-4"
+              onClick={() => {
+                setSortBy("tanggalDibuat");
+                setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+              }}
             >
-              <div className="flex items-center">
-                <FaPlus /> <p className="ml-1">Tambahkan</p>
-              </div>
+              Sort by Date
+              {sortBy === "tanggalDibuat" && (sortOrder === "asc" ? <FaSortAmountDown className="ml-2" /> : <FaSortAmountUp className="ml-2" />)}
             </button>
+            <button
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              onClick={() => {
+                setSortBy("namaPT");
+                setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+              }}
+            >
+              Sort by Name
+              {sortBy === "namaPT" && (sortOrder === "asc" ? <FaSortAlphaDown className="ml-2" /> : <FaSortAlphaUp className="ml-2" />)}
+            </button>
+          </div>
+        </div>
           </caption>
           <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -120,8 +161,11 @@ const JobList: React.FC = () => {
               <th scope="col" className="px-6 py-3">
                 Gambar
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 flex items-center cursor-pointer">
                 Nama PT
+              </th>
+              <th scope="col" className="px-6 py-3 flex items-center cursor-pointer">
+                Tanggal
               </th>
               <th scope="col" className="px-6 py-3">
                 Alamat
@@ -131,6 +175,9 @@ const JobList: React.FC = () => {
               </th>
               <th scope="col" className="px-6 py-3">
                 Email
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Tanggal
               </th>
               <th scope="col" className="px-6 py-3">
                 Aksi
@@ -159,9 +206,10 @@ const JobList: React.FC = () => {
                 <td className="px-6 py-4">{job.alamat}</td>
                 <td className="px-6 py-4">{job.nomorTelepon}</td>
                 <td className="px-6 py-4">{job.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap space-x-2 text-right text-sm font-medium">
+                <td className="px-6 py-4">{new Date(job.tanggalDibuat).toLocaleDateString()}</td>
+                <td className="px-6 py-4">
                   <button
-                    className="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     onClick={() => openEditModal(job)}
                   >
                     <FaEdit />
@@ -192,7 +240,7 @@ const JobList: React.FC = () => {
           onClose={() => setDeleteModalOpen(false)}
           job={selectedJob}
           onDelete={handleDeleteConfirm}
-          onCancel={() => setDeleteModalOpen(false)}
+          onCancel={handleDeleteCancel}
         />
 
         {/* Add Modal */}

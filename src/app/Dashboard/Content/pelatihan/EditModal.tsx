@@ -28,10 +28,18 @@ interface EditModalProps {
 const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, pelatihan, onEdit }) => {
   const [updatedPelatihan, setUpdatedPelatihan] = useState<Pelatihan>({ ...pelatihan });
   const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(pelatihan.gambar || null);
-
+  
+  // State for dynamic inputs
+  const [administrasi, setAdministrasi] = useState<string[]>(pelatihan.administrasi);
+  const [skills, setSkills] = useState<string[]>(pelatihan.skills);
+  const [fasilitas, setFasilitas] = useState<string[]>(pelatihan.fasilitas);
+  
   useEffect(() => {
     setUpdatedPelatihan({ ...pelatihan });
     setImagePreview(pelatihan.gambar || null);
+    setAdministrasi(pelatihan.administrasi);
+    setSkills(pelatihan.skills);
+    setFasilitas(pelatihan.fasilitas);
   }, [pelatihan]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -51,20 +59,49 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, pelatihan, onEdi
     }
   };
 
-  const handleSubmit = async () => {
-    try {
-      await axiosInstance.put(`/pelatihan/${pelatihan.id}`, updatedPelatihan);
-      onEdit(pelatihan.id, updatedPelatihan);
-      toast.success('Pelatihan berhasil diperbarui!',{position:"top-center"});
-      onClose();
-    } catch (error) {
-      console.error("Error updating pelatihan:", error);
-      toast.error('Gagal memperbarui pelatihan.,{position:"top-center"}');
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, category: 'administrasi' | 'skills' | 'fasilitas') => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const value = (e.target as HTMLInputElement).value;
+      if (value) {
+        if (category === 'administrasi') {
+          setAdministrasi((prev) => [...prev, value]);
+        } else if (category === 'skills') {
+          setSkills((prev) => [...prev, value]);
+        } else if (category === 'fasilitas') {
+          setFasilitas((prev) => [...prev, value]);
+        }
+        (e.target as HTMLInputElement).value = '';
+      }
     }
   };
 
-  const convertToArray = (data: string | string[]): string[] => {
-    return typeof data === "string" ? [data] : data;
+  const handleDelete = (category: 'administrasi' | 'skills' | 'fasilitas', index: number) => {
+    if (category === 'administrasi') {
+      setAdministrasi((prev) => prev.filter((_, i) => i !== index));
+    } else if (category === 'skills') {
+      setSkills((prev) => prev.filter((_, i) => i !== index));
+    } else if (category === 'fasilitas') {
+      setFasilitas((prev) => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const updatedData = {
+        ...updatedPelatihan,
+        administrasi,
+        skills,
+        fasilitas
+      };
+      await axiosInstance.put(`/pelatihan/${pelatihan.id}`, updatedData);
+      onEdit(pelatihan.id, updatedData);
+      toast.success('Pelatihan berhasil diperbarui!', { position: "top-center" });
+      onClose();
+    } catch (error) {
+      console.error("Error updating pelatihan:", error);
+      toast.error('Gagal memperbarui pelatihan.', { position: "top-center" });
+    }
   };
 
   return (
@@ -106,27 +143,81 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, pelatihan, onEdi
             placeholder="Deskripsi"
             className="w-full p-2 border border-gray-300 rounded-md bg-white"
           />
-          <textarea
-            name="administrasi"
-            value={convertToArray(updatedPelatihan.administrasi).join(", ")}
-            onChange={handleChange}
-            placeholder="Administrasi"
-            className="w-full p-2 border border-gray-300 rounded-md bg-white"
-          />
-          <textarea
-            name="skills"
-            value={convertToArray(updatedPelatihan.skills).join(", ")}
-            onChange={handleChange}
-            placeholder="Skills"
-            className="w-full p-2 border border-gray-300 rounded-md bg-white"
-          />
-          <textarea
-            name="fasilitas"
-            value={convertToArray(updatedPelatihan.fasilitas).join(", ")}
-            onChange={handleChange}
-            placeholder="Fasilitas"
-            className="w-full p-2 border border-gray-300 rounded-md bg-white"
-          />
+          <div className="space-y-4">
+            <label htmlFor="fasilitas" className="block text-sm font-medium text-gray-700">
+              Fasilitas
+            </label>
+            <input
+              type="text"
+              placeholder="Tambahkan fasilitas"
+              onKeyDown={(e) => handleKeyDown(e, 'fasilitas')}
+              className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+            />
+            <ul>
+              {fasilitas.map((item, index) => (
+                <li key={index} className="flex items-center justify-between mb-2">
+                  {item}
+                  <button
+                    type="button"
+                    onClick={() => handleDelete('fasilitas', index)}
+                    className="ml-2 text-red-600 hover:text-red-800"
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="space-y-4">
+            <label htmlFor="skills" className="block text-sm font-medium text-gray-700">
+              Skills
+            </label>
+            <input
+              type="text"
+              placeholder="Tambahkan skill"
+              onKeyDown={(e) => handleKeyDown(e, 'skills')}
+              className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+            />
+            <ul>
+              {skills.map((item, index) => (
+                <li key={index} className="flex items-center justify-between mb-2">
+                  {item}
+                  <button
+                    type="button"
+                    onClick={() => handleDelete('skills', index)}
+                    className="ml-2 text-red-600 hover:text-red-800"
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="space-y-4">
+            <label htmlFor="administrasi" className="block text-sm font-medium text-gray-700">
+              Administrasi
+            </label>
+            <input
+              type="text"
+              placeholder="Tambahkan administrasi"
+              onKeyDown={(e) => handleKeyDown(e, 'administrasi')}
+              className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+            />
+            <ul>
+              {administrasi.map((item, index) => (
+                <li key={index} className="flex items-center justify-between mb-2">
+                  {item}
+                  <button
+                    type="button"
+                    onClick={() => handleDelete('administrasi', index)}
+                    className="ml-2 text-red-600 hover:text-red-800"
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
           <input
             type="text"
             name="nomortelepon"

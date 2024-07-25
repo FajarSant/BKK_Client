@@ -39,6 +39,7 @@ const UserManagementTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
   const [file, setFile] = useState<File | null>(null);
+  
 
   useEffect(() => {
     fetchUsers();

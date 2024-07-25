@@ -7,6 +7,7 @@ export interface Job {
     alamat: string;
     jenis: string;
     nomorTelepon: string;
+    tanggalDibuat: string;
     email: string;
     deskripsi?: string;
     persyaratan: string[];
