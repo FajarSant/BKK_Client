@@ -15,6 +15,7 @@ import EditUserModal from "./EditModal";
 import DeleteConfirmModal from "./DeleteConfirmasiModal";
 import toast, { Toaster } from "react-hot-toast";
 import { axiosInstance } from "@/lib/axios";
+import Image from "next/image";
 
 interface User {
   id: number;
@@ -276,11 +277,13 @@ const UserManagementTable: React.FC = () => {
                 <td className="px-6 py-4">{user.NIS}</td>
                 <td className="px-6 py-4">
                   {user.gambar ? (
-                    <img
-                      src={user.gambar}
-                      alt="User Avatar"
-                      className="h-12 w-12 object-cover rounded-full"
-                    />
+                     <Image
+                     src={user.gambar}
+                     alt="User Avatar"
+                     width={48} // Set width
+                     height={48} // Set height
+                     className="object-cover rounded-full"
+                   />
                   ) : (
                     <span className="h-12 w-12 flex items-center justify-center bg-gray-200 rounded-full">
                       <FaUser className="text-gray-500 text-2xl" />

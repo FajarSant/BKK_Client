@@ -1,4 +1,5 @@
-"use client"
+"use client";
+import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 const HeroSection = () => {
@@ -13,7 +14,7 @@ const HeroSection = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
-    }, 5000); // Ganti slide setiap 10 detik
+    }, 5000); // Ganti slide setiap 5 detik
 
     return () => clearInterval(interval);
   }, [slides.length]);
@@ -27,11 +28,15 @@ const HeroSection = () => {
             className={`carousel-item absolute w-full h-full transition-transform duration-1000 ease-in-out ${index === currentSlide ? 'translate-x-0' : 'translate-x-full'}`}
             style={{ transform: `translateX(${(index - currentSlide) * 100}%)` }}
           >
-            <img
-              src={slide.src}
-              className="w-full h-full object-cover"
-              alt={`Slide ${index + 1}`}
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src={slide.src}
+                alt={`Slide ${index + 1}`}
+                layout="fill"
+                objectFit="cover"
+                quality={100}
+              />
+            </div>
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
               <div className="text-center text-white px-4">
                 <h1 className="text-4xl md:text-6xl font-bold mb-4">{slide.text}</h1>

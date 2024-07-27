@@ -5,6 +5,7 @@ import { FaTrash, FaInfoCircle } from "react-icons/fa";
 import Topbar from "../Components/TopBar";
 import Footer from "../Components/Footer";
 import { axiosInstance } from "@/lib/axios";
+import Image from "next/image";
 
 // Define User interface
 interface User {
@@ -209,7 +210,7 @@ const UserProfile: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center p-6">
           <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
             {user.gambar ? (
-              <img
+              <Image
                 src={user.gambar}
                 alt={user.nama}
                 className="w-32 h-32 object-cover"

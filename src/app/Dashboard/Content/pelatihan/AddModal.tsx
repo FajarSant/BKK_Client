@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { axiosInstance } from '@/lib/axios'; // Import axios instance Anda
+import Image from 'next/image';
 
 interface AddModalProps {
   isOpen: boolean;
@@ -129,10 +130,12 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
           />
           {gambarPreview && (
             <div className="w-full mb-4">
-              <img
+              <Image
                 src={gambarPreview as string}
                 alt="Preview"
-                className="w-full h-auto border border-gray-300 rounded-md"
+                width={160} // Set width as needed
+                height={160} // Set height as needed
+                className="border mx-5 border-gray-300 rounded-md"
               />
             </div>
           )}

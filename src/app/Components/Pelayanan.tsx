@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 import { FaPhone, FaEnvelope, FaUser, FaWhatsapp } from "react-icons/fa";
 
@@ -25,10 +26,12 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
 
   return (
     <div className="max-w-sm mx-auto bg-white shadow-md rounded-lg overflow-hidden mb-4">
-      <img
+      <Image
         className="w-full h-48 object-cover object-center"
         src={user.photo}
-        alt="User Photo"
+        alt={`${user.name}'s photo`}
+        width={400}
+        height={300}
       />
       <div className="p-4">
         <h2 className="text-xl font-semibold flex items-center">
@@ -81,7 +84,7 @@ const UsersList: React.FC = () => {
 
   return (
     <div className="p-4 mt-10 bg-gray-600">
-      <div className="text-center font-semibold text-2xl">Pelayanan Terkait tentang BKK</div>
+      <div className="text-center font-semibold text-2xl text-white">Pelayanan Terkait tentang BKK</div>
       <div className="container mx-auto mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
         {users.map((user, index) => (
           <UserCard key={index} user={user} />

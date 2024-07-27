@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { axiosInstance } from '@/lib/axios';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
 
 interface EditUserModalProps {
   user: {
@@ -179,7 +180,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose, onSave }) 
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-white"
           />
           {formData.gambar && (
-            <img src={formData.gambar} alt="Gambar Pengguna" className="mt-2 w-32 h-32 object-cover" />
+            <Image src={formData.gambar} alt="Gambar Pengguna" className="mt-2 w-32 h-32 object-cover" />
           )}
         </div>
         <div className="flex justify-end space-x-2">

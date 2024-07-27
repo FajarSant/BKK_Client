@@ -5,6 +5,7 @@ import EditModal from "./EditModal";
 import AddModal from "./AddModal";
 import DeleteConfirmModal from "./DeleteModal";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 interface Pelatihan {
   id: string;
@@ -141,11 +142,13 @@ const PelatihanTable: React.FC = () => {
                 <td className="py-4 px-4 text-gray-700">{startIndex + index + 1}</td>
                 <td className="py-4 px-4 text-gray-700">
                   {pelatihan.gambar ? (
-                    <img
-                      src={pelatihan.gambar}
-                      alt={pelatihan.namapelatihan}
-                      className="w-16 h-16 object-cover rounded"
-                    />
+                     <Image
+                     src={pelatihan.gambar}
+                     alt="User Avatar"
+                     width={48} // Set width
+                     height={48} // Set height
+                     className="object-cover rounded-lg"
+                   />
                   ) : (
                     <span className="text-gray-500">Tidak ada gambar</span>
                   )}

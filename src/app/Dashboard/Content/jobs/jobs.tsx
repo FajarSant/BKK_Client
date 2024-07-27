@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { FaPlus, FaEdit, FaTrash, FaSortAlphaDown, FaSortAlphaUp, FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
+import {
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaSortAlphaDown,
+  FaSortAlphaUp,
+  FaSortAmountDown,
+  FaSortAmountUp,
+} from "react-icons/fa";
 import { axiosInstance } from "@/lib/axios";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
 import AddModal from "./AddModal";
-import toast, { Toaster } from "react-hot-toast";
 import { Job } from "./type";
+import Image from "next/image";
 
 const JobList: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -93,8 +101,10 @@ const JobList: React.FC = () => {
         : b.namaPT.localeCompare(a.namaPT);
     } else {
       return sortOrder === "asc"
-        ? new Date(a.tanggalDibuat).getTime() - new Date(b.tanggalDibuat).getTime()
-        : new Date(b.tanggalDibuat).getTime() - new Date(a.tanggalDibuat).getTime();
+        ? new Date(a.tanggalDibuat).getTime() -
+            new Date(b.tanggalDibuat).getTime()
+        : new Date(b.tanggalDibuat).getTime() -
+            new Date(a.tanggalDibuat).getTime();
     }
   });
 
@@ -120,38 +130,47 @@ const JobList: React.FC = () => {
               Telusuri daftar pekerjaan yang tersedia beserta detailnya.
             </p>
             <div className="flex justify-between items-center mb-4">
-          
-          <button
-            className="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm p-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            onClick={openAddModal}
-          >
-            <div className="flex items-center">
-              <FaPlus /> <p className="ml-1">Tambahkan</p>
+              <button
+                className="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm p-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                onClick={openAddModal}
+              >
+                <div className="flex items-center">
+                  <FaPlus /> <p className="ml-1">Tambahkan</p>
+                </div>
+              </button>
+              <div>
+                <button
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-4"
+                  onClick={() => {
+                    setSortBy("tanggalDibuat");
+                    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+                  }}
+                >
+                  Sort by Date
+                  {sortBy === "tanggalDibuat" &&
+                    (sortOrder === "asc" ? (
+                      <FaSortAmountDown className="ml-2" />
+                    ) : (
+                      <FaSortAmountUp className="ml-2" />
+                    ))}
+                </button>
+                <button
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  onClick={() => {
+                    setSortBy("namaPT");
+                    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+                  }}
+                >
+                  Sort by Name
+                  {sortBy === "namaPT" &&
+                    (sortOrder === "asc" ? (
+                      <FaSortAlphaDown className="ml-2" />
+                    ) : (
+                      <FaSortAlphaUp className="ml-2" />
+                    ))}
+                </button>
+              </div>
             </div>
-          </button>
-          <div>
-            <button
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-4"
-              onClick={() => {
-                setSortBy("tanggalDibuat");
-                setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-              }}
-            >
-              Sort by Date
-              {sortBy === "tanggalDibuat" && (sortOrder === "asc" ? <FaSortAmountDown className="ml-2" /> : <FaSortAmountUp className="ml-2" />)}
-            </button>
-            <button
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              onClick={() => {
-                setSortBy("namaPT");
-                setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-              }}
-            >
-              Sort by Name
-              {sortBy === "namaPT" && (sortOrder === "asc" ? <FaSortAlphaDown className="ml-2" /> : <FaSortAlphaUp className="ml-2" />)}
-            </button>
-          </div>
-        </div>
           </caption>
           <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -161,10 +180,16 @@ const JobList: React.FC = () => {
               <th scope="col" className="px-6 py-3">
                 Gambar
               </th>
-              <th scope="col" className="px-6 py-3 flex items-center cursor-pointer">
+              <th
+                scope="col"
+                className="px-6 py-3 flex items-center cursor-pointer"
+              >
                 Nama PT
               </th>
-              <th scope="col" className="px-6 py-3 flex items-center cursor-pointer">
+              <th
+                scope="col"
+                className="px-6 py-3 flex items-center cursor-pointer"
+              >
                 Tanggal
               </th>
               <th scope="col" className="px-6 py-3">
@@ -193,20 +218,28 @@ const JobList: React.FC = () => {
                 <td className="px-6 py-4">{indexOfFirstRow + index + 1}</td>
                 <td className="px-6 py-4">
                   {job.gambar ? (
-                    <img
-                      src={job.gambar}
-                      alt={job.namaPT}
-                      className="w-16 h-16 object-cover"
-                    />
+                    <div className="relative w-24 h-24">
+                      {" "}
+                      {/* Set the size using Tailwind classes */}
+                      <Image
+                        src={job.gambar}
+                        alt={job.namaPT}
+                        layout="fill" // Fills the container
+                        objectFit="cover" // Ensures the image covers the container
+                        className="rounded-md"
+                      />
+                    </div>
                   ) : (
-                    "No Image"
+                    <p>No image available</p>
                   )}
                 </td>
                 <td className="px-6 py-4">{job.namaPT}</td>
                 <td className="px-6 py-4">{job.alamat}</td>
                 <td className="px-6 py-4">{job.nomorTelepon}</td>
                 <td className="px-6 py-4">{job.email}</td>
-                <td className="px-6 py-4">{new Date(job.tanggalDibuat).toLocaleDateString()}</td>
+                <td className="px-6 py-4">
+                  {new Date(job.tanggalDibuat).toLocaleDateString()}
+                </td>
                 <td className="px-6 py-4">
                   <button
                     className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

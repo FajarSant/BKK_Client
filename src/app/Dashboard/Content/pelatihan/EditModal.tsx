@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { axiosInstance } from "@/lib/axios";
 import { toast } from "react-hot-toast";
 import { FaTimes } from "react-icons/fa";
+import Image from "next/image";
 
 interface Pelatihan {
   id: string;
@@ -127,7 +128,14 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, pelatihan, onEdi
             className="w-full p-2 border border-gray-300 rounded-md bg-white"
           />
           {imagePreview && (
-            <img src={imagePreview as string} alt="Preview" className="w-32 h-32 object-cover mb-4" />
+           <Image
+           src={imagePreview as string}
+           alt="Preview"
+           width={128} // 32 * 4, since 1 unit in Tailwind is 4px by default
+           height={128} // 32 * 4
+           className="object-cover mb-4"
+         />
+         
           )}
           <textarea
             name="alamat"

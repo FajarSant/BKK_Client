@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Job } from './type'; // Pastikan import dari lokasi yang benar
 import { axiosInstance } from '@/lib/axios';
 import { toast } from 'react-hot-toast';
+import Image from 'next/image';
 
 interface EditModalProps {
   isOpen: boolean;
@@ -11,7 +12,8 @@ interface EditModalProps {
 }
 
 const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) => {
-  const initialEditedJob: Partial<Job> = {
+  // Mem-memo-kan initialEditedJob
+  const initialEditedJob: Partial<Job> = useMemo(() => ({
     berkas: '',
     namaPT: '',
     deskripsi: '',
@@ -22,8 +24,8 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
     alamat: '',
     email: '',
     nomorTelepon: '',
-    Link: '' // Pastikan Link ada dalam definisi tipe data Partial<Job> atau Job jika diperlukan
-  };
+    Link: ''
+  }), []);
 
   const [editedJob, setEditedJob] = useState<Partial<Job>>(initialEditedJob);
   const [error, setError] = useState<string>('');
@@ -41,12 +43,12 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
         email: job.email || '',
         jenis: job.jenis || '',
         nomorTelepon: job.nomorTelepon || '',
-        Link: job.Link || '' // Pastikan properti Link ada di objek job jika diperlukan
+        Link: job.Link || ''
       });
     } else {
       setEditedJob(initialEditedJob);
     }
-  }, [job]);
+  }, [job, initialEditedJob]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -110,21 +112,21 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
       if (!job) return;
       await axiosInstance.put(`/jobs/${job.id}`, editedJob as Job);
       onEdit();
-      toast.success(`Job "${job.namaPT}" updated successfully`,{position:"top-center"});
+      toast.success(`Job "${job.namaPT}" updated successfully`, { position: "top-center" });
       onClose(); // Menutup modal setelah berhasil
     } catch (error) {
       console.error('Error updating job:', error);
       setError('Error updating job. Please try again.');
-      toast.error('Failed to update job. Please try again.',{position:"top-center"}); // Toast error jika gagal
+      toast.error('Failed to update job. Please try again.', { position: "top-center" }); // Toast error jika gagal
     }
   };
 
   const handleClose = () => {
     onClose();
     if (job) {
-      toast('Edit job canceled: ' + job.namaPT, { icon: '❌',position:"top-center" }); // Toast ketika modal dibatalkan
+      toast('Edit job canceled: ' + job.namaPT, { icon: '❌', position: "top-center" }); // Toast ketika modal dibatalkan
     } else {
-      toast('Edit job canceled', { icon: '❌',position:"top-center" }); // Jika job tidak tersedia, hanya tampilkan pesan umum
+      toast('Edit job canceled', { icon: '❌', position: "top-center" }); // Jika job tidak tersedia, hanya tampilkan pesan umum
     }
   };
 
@@ -217,24 +219,21 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               type="file"
               id="gambar"
               name="gambar"
+              accept="image/*"
               onChange={handleImageUpload}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full text-sm text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
             {editedJob.gambar && (
-              <img src={editedJob.gambar} alt="Uploaded" className="mt-2 w-32 h-32 object-cover" />
+              <div className="mt-2">
+                <Image
+                  src={editedJob.gambar}
+                  alt="Preview"
+                  width={200}
+                  height={200}
+                  className="object-cover"
+                />
+              </div>
             )}
-          </div>
-          <div>
-            <label htmlFor="jenis" className="block text-sm font-medium text-gray-700">jenis</label>
-            <input
-              type="text"
-              id="jenis"
-              name="jenis"
-              value={editedJob.jenis || ''}
-              onChange={handleInputChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
           </div>
           <div>
             <label htmlFor="alamat" className="block text-sm font-medium text-gray-700">Alamat</label>
@@ -244,7 +243,6 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               name="alamat"
               value={editedJob.alamat || ''}
               onChange={handleInputChange}
-              required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
@@ -263,31 +261,18 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
           <div>
             <label htmlFor="nomorTelepon" className="block text-sm font-medium text-gray-700">Nomor Telepon</label>
             <input
-              type="tel"
+              type="text"
               id="nomorTelepon"
               name="nomorTelepon"
               value={editedJob.nomorTelepon || ''}
               onChange={handleInputChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
-          </div>
-          <div>
-            <label htmlFor="berkas" className="block text-sm font-medium text-gray-700">Berkas</label>
-            <input
-              type="text"
-              id="berkas"
-              name="berkas"
-              value={editedJob.berkas || ''}
-              onChange={handleInputChange}
-              required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
           <div>
             <label htmlFor="Link" className="block text-sm font-medium text-gray-700">Link</label>
             <input
-              type="text"
+              type="url"
               id="Link"
               name="Link"
               value={editedJob.Link || ''}
@@ -296,21 +281,20 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
             />
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          <div className="flex justify-end gap-2">
-            <button
-              type="submit"
-              className="btn btn-success"
-            >
-              Save
-            </button>
+          <div className="flex justify-end gap-4">
             <button
               type="button"
               onClick={handleClose}
-              className="btn btn-error"
+              className="px-4 py-2 bg-gray-500 text-white rounded-md shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
               Cancel
             </button>
-            
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Save
+            </button>
           </div>
         </form>
       </div>
