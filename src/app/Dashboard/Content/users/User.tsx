@@ -40,7 +40,6 @@ const UserManagementTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
   const [file, setFile] = useState<File | null>(null);
-  
 
   useEffect(() => {
     fetchUsers();
@@ -81,7 +80,9 @@ const UserManagementTable: React.FC = () => {
   };
 
   const handleCancelDelete = () => {
-    toast("Penghapusan pengguna " + deleteUserName + " dibatalkan",{position:"top-center"});
+    toast("Penghapusan pengguna " + deleteUserName + " dibatalkan", {
+      position: "top-center",
+    });
     setDeleteUserId(null);
     setDeleteUserName("");
   };
@@ -90,13 +91,17 @@ const UserManagementTable: React.FC = () => {
     if (deleteUserId !== null) {
       try {
         await axiosInstance.delete(`/users/${deleteUserId}`);
-        toast.success("Pengguna " + deleteUserName + " berhasil dihapus",{position:"top-center"});
+        toast.success("Pengguna " + deleteUserName + " berhasil dihapus", {
+          position: "top-center",
+        });
         fetchUsers();
         setDeleteUserId(null);
         setDeleteUserName("");
       } catch (error) {
         console.error("Error deleting user:", error);
-        toast.error("Gagal menghapus pengguna " + deleteUserName,{position:"top-center"});
+        toast.error("Gagal menghapus pengguna " + deleteUserName, {
+          position: "top-center",
+        });
         setDeleteUserId(null);
         setDeleteUserName("");
       }
@@ -118,11 +123,13 @@ const UserManagementTable: React.FC = () => {
             "Content-Type": "multipart/form-data",
           },
         });
-        toast.success("File berhasil diupload dan pengguna berhasil diimpor.",{position:"top-center"});
+        toast.success("File berhasil diupload dan pengguna berhasil diimpor.", {
+          position: "top-center",
+        });
         fetchUsers();
       } catch (error) {
         console.error("Error uploading file:", error);
-        toast.error("Gagal mengupload file.",{position:"top-center"});
+        toast.error("Gagal mengupload file.", { position: "top-center" });
       }
     }
   };
@@ -142,11 +149,11 @@ const UserManagementTable: React.FC = () => {
   };
 
   // URL or path to the file to be downloaded
-  const downloadFileUrl = "https://docs.google.com/spreadsheets/d/1fSQh5jT1651ruXcPxOiM3Q77aYt2P_cb/edit?usp=sharing&ouid=102677950529644945883&rtpof=true&sd=true";
+  const downloadFileUrl =
+    "https://docs.google.com/spreadsheets/d/1fSQh5jT1651ruXcPxOiM3Q77aYt2P_cb/edit?usp=sharing&ouid=102677950529644945883&rtpof=true&sd=true";
 
   return (
     <div className="container mx-auto p-4">
-
       <header className="mb-4 flex justify-between items-center border-b pb-2">
         <h1 className="text-2xl font-bold text-center w-full">
           Manajemen Pengguna
@@ -207,7 +214,7 @@ const UserManagementTable: React.FC = () => {
         </div>
       </div>
       <div className="relative bg-slate-400 overflow-x-auto shadow-md sm:rounded-lg">
-      <div className="container p-4">
+        <div className="container p-4">
           <h2 className="text-xl text-red-500 font-sans mb-4">
             Tambahkan Users dengan menambahkan Excel dibawah ini !!!
           </h2>
@@ -224,11 +231,7 @@ const UserManagementTable: React.FC = () => {
           >
             Upload
           </button>
-          <a
-            href={downloadFileUrl}
-            download
-            className="btn btn-primary mx-2"
-          >
+          <a href={downloadFileUrl} download className="btn btn-primary mx-2">
             Download Template
           </a>
         </div>
@@ -277,15 +280,15 @@ const UserManagementTable: React.FC = () => {
                 <td className="px-6 py-4">{user.NIS}</td>
                 <td className="px-6 py-4">
                   {user.gambar ? (
-                     <Image
-                     src={user.gambar}
-                     alt="User Avatar"
-                     width={48} // Set width
-                     height={48} // Set height
-                     className="object-cover rounded-full"
-                   />
+                    <Image
+                      src={user.gambar}
+                      alt="User Avatar"
+                      width={48} // Set width
+                      height={48} // Set height
+                      className="object-cover rounded-sm"
+                    />
                   ) : (
-                    <span className="h-12 w-12 flex items-center justify-center bg-gray-200 rounded-full">
+                    <span className="h-12 w-12 flex items-center justify-center bg-gray-200 rounded-sm">
                       <FaUser className="text-gray-500 text-2xl" />
                     </span>
                   )}

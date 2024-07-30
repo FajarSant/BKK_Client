@@ -224,7 +224,8 @@ const JobList: React.FC = () => {
                       <Image
                         src={job.gambar}
                         alt={job.namaPT}
-                        layout="fill" // Fills the container
+                        width={48}
+                        height={48}
                         objectFit="cover" // Ensures the image covers the container
                         className="rounded-md"
                       />
