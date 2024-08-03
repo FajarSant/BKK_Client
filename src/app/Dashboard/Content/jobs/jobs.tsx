@@ -172,7 +172,7 @@ const JobList: React.FC = () => {
               </div>
             </div>
           </caption>
-          <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 p-6 text-center uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
                 No
@@ -180,17 +180,8 @@ const JobList: React.FC = () => {
               <th scope="col" className="px-6 py-3">
                 Gambar
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 flex items-center cursor-pointer"
-              >
+              <th scope="col" className="px-6 py-3">
                 Nama PT
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 flex items-center cursor-pointer"
-              >
-                Tanggal
               </th>
               <th scope="col" className="px-6 py-3">
                 Alamat
@@ -210,53 +201,53 @@ const JobList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {currentRows.map((job, index) => (
-              <tr
-                key={index}
-                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-              >
-                <td className="px-6 py-4">{indexOfFirstRow + index + 1}</td>
-                <td className="px-6 py-4">
-                  {job.gambar ? (
-                    <div className="relative w-24 h-24">
-                      {" "}
-                      {/* Set the size using Tailwind classes */}
+            {currentRows.map((job, index) => {
+              // Determine row color based on index
+              const rowColor = index % 2 === 0 ? "bg-white" : "bg-gray-100";
+
+              return (
+                <tr
+                  key={index}
+                  className={`${rowColor} border-b dark:border-gray-700`}
+                >
+                  <td className="px-6 py-4">{indexOfFirstRow + index + 1}</td>
+                  <td className="px-6 py-4">
+                    {job.gambar ? (
                       <Image
                         src={job.gambar}
                         alt={job.namaPT}
-                        width={48}
-                        height={48}
-                        objectFit="cover" // Ensures the image covers the container
-                        className="rounded-md"
+                        width={48} // Set width
+                        height={48} // Set height
+                        className="object-cover rounded-sm"
                       />
-                    </div>
-                  ) : (
-                    <p>No image available</p>
-                  )}
-                </td>
-                <td className="px-6 py-4">{job.namaPT}</td>
-                <td className="px-6 py-4">{job.alamat}</td>
-                <td className="px-6 py-4">{job.nomorTelepon}</td>
-                <td className="px-6 py-4">{job.email}</td>
-                <td className="px-6 py-4">
-                  {new Date(job.tanggalDibuat).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-4">
-                  <button
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    onClick={() => openEditModal(job)}
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    className="text-white mt-2 bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm p-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                    onClick={() => openDeleteModal(job)}
-                  >
-                    <FaTrash />
-                  </button>
-                </td>
-              </tr>
-            ))}
+                    ) : (
+                      <p>No image available</p>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">{job.namaPT}</td>
+                  <td className="px-6 py-4">{job.alamat}</td>
+                  <td className="px-6 py-4">{job.nomorTelepon}</td>
+                  <td className="px-6 py-4">{job.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap space-x-2 text-right text-sm font-medium">
+                    {new Date(job.tanggalDibuat).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap space-x-2 text-right text-sm font-medium">
+                    <button
+                      className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      onClick={() => openEditModal(job)}
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      className="text-white mt-2 bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm p-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                      onClick={() => openDeleteModal(job)}
+                    >
+                      <FaTrash />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 

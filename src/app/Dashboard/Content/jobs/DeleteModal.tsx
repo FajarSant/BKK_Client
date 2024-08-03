@@ -41,7 +41,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, job, onDelet
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-4 rounded-lg">
-        <h2 className="text-lg font-semibold mb-4">Konfirmasi Hapus Job</h2>
+        <h2 className="text-lg text-center font-semibold mb-4">Konfirmasi Hapus Job</h2>
         <div className="mb-4">
           <p>Anda yakin ingin menghapus job ini?</p>
           <p>{job.namaPT}</p>

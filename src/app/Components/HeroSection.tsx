@@ -32,8 +32,8 @@ const HeroSection = () => {
               <Image
                 src={slide.src}
                 alt={`Slide ${index + 1}`}
-                layout="fill"
-                objectFit="cover"
+                fill
+                style={{ objectFit: "cover" }}
                 quality={100}
               />
             </div>

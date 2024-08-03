@@ -1,192 +1,209 @@
-import React, { useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
-import { axiosInstance } from '@/lib/axios';
-import toast from 'react-hot-toast';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useState } from "react";
+import { axiosInstance } from "@/lib/axios";
+import toast from "react-hot-toast";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { FaCalendarAlt } from "react-icons/fa";
 
 interface AddUserModalProps {
   onClose: () => void;
+  onSave: () => void;
 }
 
-const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
-  const [nama, setNama] = useState('');
-  const [email, setEmail] = useState('');
-  const [NIS, setNIS] = useState('');
-  const [alamat, setAlamat] = useState('');
-  const [peran, setPeran] = useState('');
-  const [jurusan, setJurusan] = useState('');
-  const [kataSandi, setKataSandi] = useState('');
-  const [tanggalLahir, setTanggalLahir] = useState<Date | null>(null);
-  const [nomorTelepon, setNomorTelepon] = useState('');
+const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSave }) => {
+  const [nama, setNama] = useState("");
+  const [email, setEmail] = useState("");
+  const [NIS, setNIS] = useState("");
+  const [katasandi, setKatasandi] = useState("");
+  const [tanggallahir, setTanggallahir] = useState<Date | null>(null);
+  const [alamat, setAlamat] = useState("");
+  const [nomortelepon, setNomorTelepon] = useState("");
   const [gambar, setGambar] = useState<File | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [peran, setPeran] = useState("PENGGUNA");
+  const [jurusan, setJurusan] = useState("");
 
-  const handleAddUser = () => {
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
     const formData = new FormData();
-    formData.append('nama', nama);
-    formData.append('email', email);
-    formData.append('NIS', NIS);
-    formData.append('alamat', alamat);
-    formData.append('peran', peran);
-    formData.append('jurusan', jurusan);
-    formData.append('kataSandi', kataSandi);
-    formData.append('tanggalLahir', tanggalLahir ? tanggalLahir.toISOString() : '');
-    formData.append('nomorTelepon', nomorTelepon);
-    if (gambar) {
-      formData.append('gambar', gambar);
+    formData.append("nama", nama);
+    formData.append("email", email);
+    formData.append("NIS", NIS);
+    formData.append("katasandi", katasandi);
+    if (tanggallahir) {
+      formData.append("tanggallahir", tanggallahir.toISOString());
     }
+    formData.append("alamat", alamat);
+    formData.append("nomortelepon", nomortelepon);
+    if (gambar) {
+      formData.append("gambar", gambar);
+    }
+    formData.append("peran", peran);
+    formData.append("jurusan", jurusan);
 
-    axiosInstance.post('/users', formData)
-      .then(response => {
-        toast.success('Pengguna berhasil ditambahkan',{position: 'top-center'});
-        onClose();
-      })
-      .catch(error => {
-        setError('Gagal menambahkan pengguna');
-        toast.error('Gagal menambahkan pengguna',{position: 'top-center'});
-      });
+    try {
+      await axiosInstance.post("/users", formData);
+      toast.success("User successfully added!");
+      onSave(); // Call the onSave function to handle post-save actions
+      onClose(); // Close the modal after successful save
+    } catch (error) {
+      console.error("Error adding user:", error);
+      toast.error("Failed to add user.");
+    }
   };
 
-  const handleModalClose = () => {
-    onClose();
-    toast('Operasi pembatalan menambahkan data berhasil', { icon: '👋',position: 'top-center'});
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setGambar(event.target.files[0]);
+    }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white modal-box rounded-xl">
-        <div className="flex justify-between items-center bg-gray-200 px-4 py-2">
-          <h2 className="text-xl font-bold">Tambah Pengguna</h2>
-          <button className="text-gray-600 hover:text-gray-800" onClick={handleModalClose}>
-            <FaTimes />
-          </button>
-        </div>
-        <div className="p-4">
-          {error && <p className="text-red-500 mb-4">{error}</p>}
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white modal-box w-1/2 max-w-lg p-6 rounded-lg shadow-lg">
+        <h2 className="text-xl font-bold mb-4">Add User</h2>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="nama" className="block text-sm font-medium text-gray-700">Nama</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nama
+            </label>
             <input
               type="text"
-              id="nama"
               value={nama}
               onChange={(e) => setNama(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="w-full p-2 border border-gray-300 rounded-lg bg-white"
+              required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="NIS" className="block text-sm font-medium text-gray-700">NIS</label>
-            <input
-              type="text"
-              id="NIS"
-              value={NIS}
-              onChange={(e) => setNIS(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
             <input
               type="email"
-              id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="w-full p-2 border border-gray-300 rounded-lg bg-white"
+              required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="alamat" className="block text-sm font-medium text-gray-700">Alamat</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              NIS
+            </label>
             <input
               type="text"
-              id="alamat"
-              value={alamat}
-              onChange={(e) => setAlamat(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              value={NIS}
+              onChange={(e) => setNIS(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg bg-white"
+              required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="peran" className="block text-sm font-medium text-gray-700">Peran</label>
-            <select
-              id="peran"
-              value={peran}
-              onChange={(e) => setPeran(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option value="">Pilih Peran</option>
-              <option value="ADMIN">ADMIN</option>
-              <option value="PENGGUNA">PENGGUNA</option>
-            </select>
-          </div>
-          <div className="mb-4">
-            <label htmlFor="jurusan" className="block text-sm font-medium text-gray-700">Jurusan</label>
-            <select
-              id="jurusan"
-              value={jurusan}
-              onChange={(e) => setJurusan(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option value="">Pilih Jurusan</option>
-              <option value="PERHOTELAN">PERHOTELAN</option>
-            </select>
-          </div>
-          <div className="mb-4">
-            <label htmlFor="kataSandi" className="block text-sm font-medium text-gray-700">Kata Sandi</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Katasandi
+            </label>
             <input
               type="password"
-              id="kataSandi"
-              value={kataSandi}
-              onChange={(e) => setKataSandi(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              value={katasandi}
+              onChange={(e) => setKatasandi(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg bg-white"
+              required
             />
           </div>
-          <div className="mb-4">
-            <label htmlFor="tanggalLahir" className="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
+          <div className="mb-4 relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Tanggal Lahir
+            </label>
             <DatePicker
-              id="tanggalLahir"
-              selected={tanggalLahir}
-              onChange={(date: Date | null) => setTanggalLahir(date)}
+              selected={tanggallahir}
+              onChange={(date) => setTanggallahir(date)}
               dateFormat="yyyy-MM-dd"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholderText="yyyy-mm-dd"
-              showYearDropdown
-              scrollableYearDropdown
+              className="w-full p-2 border border-gray-300 rounded-lg bg-white"
+              customInput={<input />}
             />
+            <FaCalendarAlt className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
           </div>
           <div className="mb-4">
-            <label htmlFor="nomorTelepon" className="block text-sm font-medium text-gray-700">Nomor Telepon</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Alamat
+            </label>
             <input
-              type="tel"
-              id="nomorTelepon"
-              value={nomorTelepon}
-              onChange={(e) => setNomorTelepon(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              type="text"
+              value={alamat}
+              onChange={(e) => setAlamat(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg bg-white"
+              required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="gambar" className="block text-sm font-medium text-gray-700">Gambar</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nomor Telepon
+            </label>
+            <input
+              type="text"
+              value={nomortelepon}
+              onChange={(e) => setNomorTelepon(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg bg-white"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Gambar
+            </label>
             <input
               type="file"
-              id="gambar"
-              accept="image/*"
-              onChange={(e) => setGambar(e.target.files ? e.target.files[0] : null)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              onChange={handleFileChange}
+              className="w-full border border-gray-300 rounded-lg bg-white"
             />
           </div>
-          <div className="flex justify-end space-x-2">
-            <button
-              onClick={handleModalClose}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Peran
+            </label>
+            <select
+              value={peran}
+              onChange={(e) => setPeran(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg bg-white"
             >
-              Batal
+              <option value="PENGGUNA">PENGGUNA</option>
+              <option value="ADMIN">ADMIN</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Jurusan
+            </label>
+            <select
+              value={jurusan}
+              onChange={(e) => setJurusan(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg bg-white"
+              required
+            >
+              <option value="">Select Jurusan</option>
+              <option value="PERHOTELAN">PERHOTELAN</option>
+              <option value="TBSM">TBSM</option>
+              <option value="TKR">TKR</option>
+            </select>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg mr-2"
+            >
+              Cancel
             </button>
             <button
-              onClick={handleAddUser}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg"
             >
-              Tambah
+              Save
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

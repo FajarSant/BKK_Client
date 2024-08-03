@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IconContext } from 'react-icons';
-import { FaHome, FaUsers, FaSuitcase, FaChartBar, FaSignOutAlt, FaChalkboardTeacher } from 'react-icons/fa'; // Import ikon yang ingin digunakan
+import { FaHome, FaUsers, FaSuitcase, FaChartBar, FaSignOutAlt, FaChalkboardTeacher } from 'react-icons/fa'; // Import icons
 
 interface SidebarProps {
   setActiveItem: (item: string) => void;
@@ -9,13 +9,36 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ setActiveItem }) => {
   const [activeMenu, setActiveMenu] = useState<string>('Home');
 
+  useEffect(() => {
+    // Check if running on the client side
+    if (typeof window !== 'undefined') {
+      // Get the stored active item from localStorage, default to 'Home' if not found
+      const storedItem = localStorage.getItem('activeItem');
+      if (storedItem) {
+        setActiveMenu(storedItem);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    // Check if running on the client side before setting localStorage
+    if (typeof window !== 'undefined') {
+      // Save the active item to localStorage whenever it changes
+      localStorage.setItem('activeItem', activeMenu);
+    }
+  }, [activeMenu]);
+
   const handleMenuClick = (item: string) => {
     setActiveItem(item);
     setActiveMenu(item);
   };
 
   const handleLogout = () => {
-    // Tidak menghapus token dari localStorage, hanya mengarahkan pengguna ke halaman utama
+    // Clear localStorage or any relevant state here if needed
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('activeItem');
+    }
+    // Redirect to the home page or login page
     window.location.href = '/';
   };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Job } from './type'; // Pastikan import dari lokasi yang benar
+import { Job } from './type'; // Ensure import from the correct location
 import { axiosInstance } from '@/lib/axios';
 import { toast } from 'react-hot-toast';
 import Image from 'next/image';
@@ -12,7 +12,7 @@ interface EditModalProps {
 }
 
 const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) => {
-  // Mem-memo-kan initialEditedJob
+  // Memoize initial edited job state
   const initialEditedJob: Partial<Job> = useMemo(() => ({
     berkas: '',
     namaPT: '',
@@ -29,6 +29,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
 
   const [editedJob, setEditedJob] = useState<Partial<Job>>(initialEditedJob);
   const [error, setError] = useState<string>('');
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   useEffect(() => {
     if (job) {
@@ -45,8 +46,10 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
         nomorTelepon: job.nomorTelepon || '',
         Link: job.Link || ''
       });
+      setImagePreview(job.gambar || null); // Display image preview if available
     } else {
       setEditedJob(initialEditedJob);
+      setImagePreview(null); // Reset image preview if no job
     }
   }, [job, initialEditedJob]);
 
@@ -87,18 +90,28 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Update image preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Prepare form data for upload
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('gambar', file);
 
     try {
-      const response = await axiosInstance.post('/upload-image', formData, {
+      // Update the URL to include the actual job ID
+      const response = await axiosInstance.put(`/jobs/${job?.id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
+
       setEditedJob(prevState => ({
         ...prevState,
-        gambar: response.data.imageUrl // Pastikan struktur respons sesuai
+        gambar: response.data.gambar // Ensure response field matches
       }));
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -110,23 +123,30 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
     e.preventDefault();
     try {
       if (!job) return;
-      await axiosInstance.put(`/jobs/${job.id}`, editedJob as Job);
+
+      // If the image field is not set, remove it from the request
+      const updatedJob = { ...editedJob };
+      if (!updatedJob.gambar) {
+        delete updatedJob.gambar;
+      }
+
+      await axiosInstance.put(`/jobs/${job.id}`, updatedJob as Job);
       onEdit();
       toast.success(`Job "${job.namaPT}" updated successfully`, { position: "top-center" });
-      onClose(); // Menutup modal setelah berhasil
+      onClose(); // Close modal after successful update
     } catch (error) {
       console.error('Error updating job:', error);
       setError('Error updating job. Please try again.');
-      toast.error('Failed to update job. Please try again.', { position: "top-center" }); // Toast error jika gagal
+      toast.error('Failed to update job. Please try again.', { position: "top-center" });
     }
   };
 
   const handleClose = () => {
     onClose();
     if (job) {
-      toast('Edit job canceled: ' + job.namaPT, { icon: '❌', position: "top-center" }); // Toast ketika modal dibatalkan
+      toast('Edit job canceled: ' + job.namaPT, { icon: '❌', position: "top-center" });
     } else {
-      toast('Edit job canceled', { icon: '❌', position: "top-center" }); // Jika job tidak tersedia, hanya tampilkan pesan umum
+      toast('Edit job canceled', { icon: '❌', position: "top-center" });
     }
   };
 
@@ -181,9 +201,9 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
             <button
               type="button"
               onClick={() => handleAdd("persyaratan")}
-              className="px-4 py-1 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="px-4 py-1 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              Tambah Persyaratan
+              Add
             </button>
           </div>
           <div>
@@ -208,30 +228,24 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
             <button
               type="button"
               onClick={() => handleAdd("openrekrutmen")}
-              className="px-4 py-1 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="px-4 py-1 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              Tambah Open Rekrutmen
+              Add
             </button>
           </div>
           <div>
-            <label htmlFor="gambar" className="block text-sm font-medium text-gray-700">Upload Image</label>
+            <label htmlFor="gambar" className="block text-sm font-medium text-gray-700">Gambar</label>
             <input
               type="file"
               id="gambar"
               name="gambar"
               accept="image/*"
               onChange={handleImageUpload}
-              className="mt-1 block w-full text-sm text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
-            {editedJob.gambar && (
+            {imagePreview && (
               <div className="mt-2">
-                <Image
-                  src={editedJob.gambar}
-                  alt="Preview"
-                  width={200}
-                  height={200}
-                  className="object-cover"
-                />
+                <Image src={imagePreview} alt="Preview" width={100} height={100} />
               </div>
             )}
           </div>
@@ -254,7 +268,6 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               name="email"
               value={editedJob.email || ''}
               onChange={handleInputChange}
-              required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
@@ -272,7 +285,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
           <div>
             <label htmlFor="Link" className="block text-sm font-medium text-gray-700">Link</label>
             <input
-              type="url"
+              type="text"
               id="Link"
               name="Link"
               value={editedJob.Link || ''}
@@ -280,8 +293,8 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onEdit, job }) =
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          <div className="flex justify-end gap-4">
+          {error && <p className="text-red-600">{error}</p>}
+          <div className="flex justify-end gap-4 mt-4">
             <button
               type="button"
               onClick={handleClose}

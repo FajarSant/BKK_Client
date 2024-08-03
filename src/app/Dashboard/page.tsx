@@ -1,11 +1,30 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './Components/Sidebar';
 import MainContent from './Components/Maincontent';
 import Topbar from '../Components/TopBar';
 
 const Dashboard: React.FC = () => {
-  const [activeItem, setActiveItem] = useState<string>('Dashboard');
+  const [activeItem, setActiveItem] = useState<string>('Home');
+
+  useEffect(() => {
+    // Check if running on the client side
+    if (typeof window !== 'undefined') {
+      // Get the stored active item from localStorage, default to 'Home' if not found
+      const storedItem = localStorage.getItem('activeItem');
+      if (storedItem) {
+        setActiveItem(storedItem);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    // Check if running on the client side before setting localStorage
+    if (typeof window !== 'undefined') {
+      // Save the active item to localStorage whenever it changes
+      localStorage.setItem('activeItem', activeItem);
+    }
+  }, [activeItem]);
 
   return (
     <div className="flex h-screen bg-slate-400">
@@ -15,7 +34,7 @@ const Dashboard: React.FC = () => {
       </div>
       
       {/* Main Content */}
-      <div className="w-5/6 ml-auto bg-white overflow-y-auto h-screen">
+      <div className="w-5/6 ml-auto bg-slate-200 overflow-y-auto h-screen">
         <Topbar />
         <MainContent activeItem={activeItem} />
       </div>
