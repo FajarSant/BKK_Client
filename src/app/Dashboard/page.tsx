@@ -86,7 +86,9 @@ const Dashboard: React.FC = () => {
           <div className="w-full lg:flex lg:justify-end lg:w-1/2 mx-5 my-12">
             <Image
               src="https://user-images.githubusercontent.com/43953425/166269493-acd08ccb-4df3-4474-95c7-ad1034d3c070.svg"
-              alt="Page not found"
+              alt="Description of image"
+              width={700} // Ganti dengan lebar gambar yang sesuai
+              height={300} // Ganti dengan tinggi gambar yang sesuai
             />
           </div>
         </div>
@@ -104,7 +106,6 @@ const Dashboard: React.FC = () => {
               <p className="text-sm">Akses ditolak ❌</p>
             </div>
             <p className="text-2xl md:text-3xl font-light leading-normal mb-8">
-              
               Halaman ini hanya untuk admin
             </p>
             <button
@@ -117,7 +118,9 @@ const Dashboard: React.FC = () => {
           <div className="w-full lg:flex lg:justify-end lg:w-1/2 mx-5 my-12">
             <Image
               src="https://user-images.githubusercontent.com/43953425/166269493-acd08ccb-4df3-4474-95c7-ad1034d3c070.svg"
-              alt="Page not found"
+              alt="Description of image"
+              width={700} // Ganti dengan lebar gambar yang sesuai
+              height={300} // Ganti dengan tinggi gambar yang sesuai
             />
           </div>
         </div>

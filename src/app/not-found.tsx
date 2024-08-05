@@ -268,13 +268,13 @@ export default function Custom404() {
           </div>
           <div>
           <p className="text-sm md:text-base text-yellow-300 p-2 mb-4">
-            The stuff you were looking for doesnt exist
+           Mohon Maaf Halaman Belum Tersedia / <br />  Halaman Tidak Ditemukan
           </p>
           <a
             href="/"
             className="bg-transparent hover:bg-yellow-300 text-yellow-300 hover:text-white rounded shadow hover:shadow-lg py-2 px-4 border border-yellow-300 hover:border-transparent"
           >
-            Retry
+            Kembali
           </a>
           </div>
         </div>
