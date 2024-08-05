@@ -6,6 +6,7 @@ import Topbar from "../Components/TopBar";
 import { useRouter } from "next/navigation";
 import { axiosInstance } from "@/lib/axios";
 import Link from "next/link";
+import Image from "next/image";
 
 // Helper function to get token from localStorage
 const getTokenFromLocalStorage = () => {
@@ -83,7 +84,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className="w-full lg:flex lg:justify-end lg:w-1/2 mx-5 my-12">
-            <img
+            <Image
               src="https://user-images.githubusercontent.com/43953425/166269493-acd08ccb-4df3-4474-95c7-ad1034d3c070.svg"
               alt="Page not found"
             />
@@ -114,7 +115,7 @@ const Dashboard: React.FC = () => {
             </button>
           </div>
           <div className="w-full lg:flex lg:justify-end lg:w-1/2 mx-5 my-12">
-            <img
+            <Image
               src="https://user-images.githubusercontent.com/43953425/166269493-acd08ccb-4df3-4474-95c7-ad1034d3c070.svg"
               alt="Page not found"
             />
