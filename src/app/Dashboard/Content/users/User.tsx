@@ -13,7 +13,7 @@ import { TbEngine } from "react-icons/tb";
 import AddUserModal from "./AddModal";
 import EditUserModal from "./EditModal";
 import DeleteConfirmModal from "./DeleteConfirmasiModal";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { axiosInstance } from "@/lib/axios";
 import Image from "next/image";
 

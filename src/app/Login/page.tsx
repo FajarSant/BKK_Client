@@ -1,10 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { axiosInstance } from "@/lib/axios";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 const LoginForm: React.FC = () => {
   const [nis, setNis] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -14,7 +16,7 @@ const LoginForm: React.FC = () => {
         katasandi: password,
       });
 
-      const { token, user } = response.data;
+      const { token } = response.data;
       localStorage.setItem("token", token);
 
       alert("Login successful");
@@ -40,23 +42,36 @@ const LoginForm: React.FC = () => {
             type="text"
             value={nis}
             onChange={(e) => setNis(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter your NIS"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white"
+            placeholder="Masukan NIS Anda"
             required
           />
         </div>
-        <div className="mb-6">
+        <div className="mb-6 relative">
           <label className="block text-gray-700 text-sm font-semibold mb-2">
             Password
           </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter your password"
-            required
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white pr-10"
+              placeholder="Masukan Kata Sandi"
+              required
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <AiOutlineEyeInvisible className="text-xl" />
+              ) : (
+                <AiOutlineEye className="text-xl" />
+              )}
+            </button>
+          </div>
         </div>
         <button
           type="submit"
