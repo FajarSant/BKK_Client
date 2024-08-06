@@ -217,9 +217,6 @@ const UserManagementTable: React.FC = () => {
         </div>
       </div>
       <div className="relative overflow-x-auto bg-white shadow-2xl rounded-lg p-4">
-        <h2 className="text-xl text-red-500  text-center font-sans mb-6">
-          Tambahkan Users dengan menambahkan Excel dibawah ini !!!
-        </h2>
         <div className="flex flex-nowrap space-x-4 mb-4">
           <input
             type="file"
@@ -351,8 +348,7 @@ const UserManagementTable: React.FC = () => {
       {showAddModal && (
         <AddUserModal
           onClose={handleCloseAddModal}
-          onSave={function (): void {
-          }}
+          onSave={function (): void {}}
         />
       )}
       {showEditModal && editUser && (

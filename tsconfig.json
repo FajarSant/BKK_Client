@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/Components/ui/theme-provider.tsx", "src/app/Profile/page.tsx", "src/app/Components/CardPekerjaantsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/Components/ui/theme-provider.tsx", "src/app/Profile/page.tsx", "src/app/Components/CardPekerjaantsx", ".next/_middleware.ts"],
   "exclude": ["node_modules"]
 }

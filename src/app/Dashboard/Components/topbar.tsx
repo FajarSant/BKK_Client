@@ -1,17 +1,12 @@
 "use client";
 import React from "react";
 import { FaUser } from "react-icons/fa";
-import { useRouter } from "next/router";
+import { useRouter } from "next/router"; // Assuming you're using Next.js
 import Image from "next/image";
 
-interface User {
-  gambar?: string;
-  // Tambahkan properti lain sesuai kebutuhan
-}
-
 interface TopbarProps {
-  user: User | null; // Mengizinkan user untuk null
-  onLogout: () => Promise<void>; // Fungsi logout harus mengembalikan Promise
+  user: any; // Replace `any` with your user data type
+  onLogout: () => void; // Function to handle logout
 }
 
 const Topbar: React.FC<TopbarProps> = ({ user, onLogout }) => {
@@ -19,10 +14,13 @@ const Topbar: React.FC<TopbarProps> = ({ user, onLogout }) => {
 
   const handleLogout = async () => {
     try {
-      await onLogout(); // Pastikan onLogout adalah fungsi async
-      router.push("/"); // Redirect setelah logout
+      // Call the logout function passed as a prop
+      await onLogout();
+
+      // Redirect to the homepage
+      router.push("/");
     } catch (error) {
-      console.error("Error logging out:", error); // Tangani error jika terjadi
+      console.error("Error logging out:", error);
     }
   };
 
@@ -45,9 +43,9 @@ const Topbar: React.FC<TopbarProps> = ({ user, onLogout }) => {
                   src={
                     user.gambar ||
                     "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                  }
-                  width={40}
-                  height={40}
+                  } // Default image if user.gambar is not available
+                  width={40} // Width of the image
+                  height={40} // Height of the image
                   className="object-cover"
                 />
               </div>

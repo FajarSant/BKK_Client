@@ -104,9 +104,10 @@ const Home = () => {
   };
 
   return (
-    <div className="container mt-20">
+    <div className="container mt-20 mx-auto p-4 overflow-x-auto">
       <h1 className="mt-10 font-bold text-center mb-5">Validasi Data Lamaran Pengguna</h1>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 mx-10">
+      <div className="overflow-x-auto shadow-md mb-6 p-4 bg-slate-300 rounded-xl mt-5">
+      <div className="min-w-max grid grid-cols-3 gap-4 mb-4">
         <div className="bg-blue-100 p-4 rounded shadow">
           <h2 className="text-lg text-center font-semibold">Total Lamaran</h2>
           <p className="text-2xl text-center">{stats.total}</p>
@@ -127,6 +128,7 @@ const Home = () => {
           <h2 className="text-lg text-center font-semibold">Diterima</h2>
           <p className="text-2xl text-center">{stats.diterima}</p>
         </div>
+      </div>
       </div>
       <div className="overflow-x-auto mx-10">
         {loading ? (

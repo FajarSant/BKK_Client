@@ -16,6 +16,7 @@ const getTokenFromLocalStorage = () => {
 const Dashboard: React.FC = () => {
   const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeItem, setActiveItem] = useState("Home"); // New state to handle active menu item
   const router = useRouter();
 
   useEffect(() => {
@@ -132,13 +133,13 @@ const Dashboard: React.FC = () => {
     <div className="flex h-screen bg-slate-400">
       {/* Sidebar */}
       <div className="w-1/6 bg-gray-100 fixed h-full top-0 left-0 z-10">
-        <Sidebar setActiveItem={() => {}} />
+        <Sidebar setActiveItem={setActiveItem} />
       </div>
 
       {/* Main Content */}
       <div className="w-5/6 ml-auto bg-slate-200 overflow-y-auto h-screen">
         <Topbar />
-        <MainContent activeItem="Home" />
+        <MainContent activeItem={activeItem} />
       </div>
     </div>
   );

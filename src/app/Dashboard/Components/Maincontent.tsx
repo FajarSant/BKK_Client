@@ -16,9 +16,9 @@ interface ContentMap {
 const MainContent: React.FC<MainContentProps> = ({ activeItem }) => {
   const content: ContentMap = {
     Pengguna : <Users />,
-    Home : <Home/>,
-    Lamaran : <JobsTable/>,
-    Pelatihan: <Pelatihan/>,
+    Home : <Home />,
+    Lamaran : <JobsTable />,
+    Pelatihan: <Pelatihan />,
     Settings: <h2>Settings Content</h2>,
   };
 
