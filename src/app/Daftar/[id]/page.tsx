@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import {
   FaUser,
@@ -10,6 +10,7 @@ import {
 import { TiLocationOutline } from "react-icons/ti";
 import { axiosInstance } from "@/lib/axios";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface Jobs {
   id: string;
@@ -28,6 +29,7 @@ interface Jobs {
 const DaftarPage = () => {
   const [jobs, setJobs] = useState<Jobs | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const router = useRouter(); // Hook untuk navigasi
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -38,7 +40,8 @@ const DaftarPage = () => {
         const jobData = jobResponse.data;
         setJobs(jobData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching job data:", error);
+        router.push('/404'); // Arahkan ke halaman not-found jika terjadi kesalahan
       }
     };
 
@@ -58,12 +61,13 @@ const DaftarPage = () => {
         setUserId(userData.id);
       } catch (error) {
         console.error("Error fetching user data:", error);
+        router.push('/404'); // Arahkan ke halaman not-found jika terjadi kesalahan
       }
     };
 
     fetchJobData();
     fetchUserData();
-  }, []);
+  }, [router]);
 
   if (!jobs) {
     return <div>Loading...</div>;
@@ -96,6 +100,8 @@ const DaftarPage = () => {
         console.error("Error posting application data:", error);
         toast.error("Gagal mendaftar. Silakan coba lagi.");
       }
+    } else if (!jobs.Link) {
+      toast.error("Link pendaftaran tidak tersedia.");
     }
   };
 

@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { FaBuilding, FaEnvelope, FaPhone } from "react-icons/fa";
 import { FiFileText } from "react-icons/fi";
 import { TbMapSearch } from "react-icons/tb";
@@ -9,6 +10,7 @@ import defaultImage from "@/app/public/assets/image.png";
 import { Button } from "@/components/ui/button";
 import Topbar from "@/app/Components/TopBar";
 import { FacebookIcon, TwitterIcon, LinkedinIcon, WhatsappIcon } from 'react-share';
+import toast from 'react-hot-toast';
 
 interface Jobs {
   id: string;
@@ -25,6 +27,7 @@ interface Jobs {
 
 const PostinganDetail = () => {
   const [jobs, setJobs] = useState<Jobs | null>(null);
+  const router = useRouter(); // Hook untuk navigasi
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -42,27 +45,39 @@ const PostinganDetail = () => {
     fetchJobData();
   }, []);
 
-  const handleSave = () => {
-    alert("Lowongan Tersimpan");
+  const handleSave = async () => {
+    if (jobs) {
+      try {
+        await axiosInstance.post('/savejobs', { jobId: jobs.id });
+        toast.success("Lowongan Tersimpan");
+      } catch (error) {
+        console.error("Error saving job:", error);
+        toast.error("Gagal menyimpan lowongan");
+      }
+    }
   };
 
   const handleApply = () => {
-    alert("Daftar Lowongan");
+    if (jobs) {
+      router.push(`/Daftar/${jobs.id}`); // Navigasi ke halaman /Daftar dengan ID pekerjaan
+    }
   };
 
   if (!jobs) {
     return <div>Loading...</div>;
   }
 
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : '';
   const shareUrl = encodeURIComponent(window.location.href);
   const shareTitle = encodeURIComponent(`Lowongan Pekerjaan di ${jobs.namaPT}`);
   const shareDescription = encodeURIComponent(`
-Cek lowongan pekerjaan terbaru di ${jobs.namaPT}. Kami mencari kandidat untuk posisi ${jobs.openrekrutmen.join(', ')}.
-Segera apply!
+Mencari Kandidat Di Bagian ${jobs.openrekrutmen.join(', ')}.
+Alamat : ${jobs.alamat} 
+Untuk Informasi Selanjutnya anda bisa Lihat DI halaman dibawah Ini
 `);
 
-  // Encode the image URL
-  const shareImage = encodeURIComponent(jobs.gambar || defaultImage.src);
+  // Gunakan URL gambar dari Cloudinary jika tersedia, atau fallback ke defaultImage
+  const shareImage = encodeURIComponent(jobs.gambar ? jobs.gambar : defaultImage.src);
 
   const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareTitle} - ${shareDescription}&picture=${shareImage}`;
   const twitterShareUrl = `https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareTitle} - ${shareDescription}`;
@@ -75,7 +90,7 @@ Segera apply!
         <Topbar />
         <div className="lg:w-4/5 mx-auto flex flex-wrap mt-4 shadow-xl mb-5">
           <Image
-            src={jobs.gambar || defaultImage.src}
+            src={jobs.gambar ? jobs.gambar : defaultImage.src}
             alt={jobs.namaPT}
             width={480}
             height={240}
