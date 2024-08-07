@@ -14,6 +14,7 @@ import { axiosInstance } from "@/lib/axios";
 import defaultImage from "@/app/public/assets/image.png";
 import { Button } from "@/components/ui/button";
 import Topbar from "@/app/Components/TopBar";
+import Head from "next/head";
 
 interface Jobs {
   id: string;
@@ -83,6 +84,15 @@ const PostinganDetail = () => {
   }
 
   return (
+    <>
+    <Head>
+        <title>Lowongan Pekerjaan di {jobs.namaPT}</title>
+        <meta property="og:title" content={`Lowongan Pekerjaan di ${jobs.namaPT}`} />
+        <meta property="og:description" content={jobs.deskripsi} />
+        <meta property="og:image" content={jobs.gambar || defaultImage.src} />
+        <meta property="og:url" content={shareUrl} />
+        <meta property="og:type" content="website" />
+      </Head>
     <section className="text-gray-700 body-font overflow-hidden bg-white">
       <div className="container px-5 py-24 mx-auto">
         <Topbar />
@@ -182,6 +192,7 @@ const PostinganDetail = () => {
         </div>
       </div>
     </section>
+    </>
   );
 };
 
