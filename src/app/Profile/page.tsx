@@ -148,7 +148,7 @@ const UserProfile: React.FC = () => {
       formData.append("alamat", editFormData.alamat);
       formData.append("email", editFormData.email);
       formData.append("nomortelepon", editFormData.nomortelepon);
-      formData.append("NIS", editFormData.NIS); // Add NIS to FormData
+      formData.append("NIS", editFormData.NIS);
       if (editFormData.gambar)
         formData.append("gambar", editFormData.gambar as File);
 
@@ -228,27 +228,36 @@ const UserProfile: React.FC = () => {
   return (
     <div>
       <Topbar />
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-16">
+      <div className="conttainer max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-16">
         <div className="flex flex-col md:flex-row items-center p-6">
           <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
             {user.gambar ? (
               <Image
                 src={user.gambar}
                 alt={user.nama}
-                className="w-32 h-32 object-cover"
+                width={128}
+                height={128}
+                className="object-cover w-full h-full"
               />
             ) : (
-              "No Image"
+              <div className="w-32 h-32 flex items-center justify-center text-gray-500">
+                No Image
+              </div>
             )}
           </div>
-          <div className="flex-1 ml-6 md:ml-12">
-            <div className="flex flex-col md:flex-row items-center md:items-baseline">
-              <h2 className="text-2xl font-semibold text-gray-700">
+          <div className="flex-1">
+            <div className="flex items-cente mt-4 mb-2">
+              <h5 className="text-gray-900 font-semibold text-xl flex items-center">
                 {user.nama}
-              </h2>
-              <p className="text-sm text-gray-500">{user.peran}</p>
+                <span className="ml-2 inline-block bg-gray-200 text-gray-800 text-xs font-medium py-1 px-2 rounded-full">
+                  {user.peran}
+                </span>
+              </h5>
             </div>
             <div className="flex flex-col md:flex-row mt-4">
+            <p className="mr-4">
+                <span className="font-semibold">NIS:</span> {user.NIS}
+              </p>
               <p className="mr-4">
                 <span className="font-semibold">Alamat:</span> {user.alamat}
               </p>
@@ -262,9 +271,7 @@ const UserProfile: React.FC = () => {
               <p className="mr-4">
                 <span className="font-semibold">Email:</span> {user.email}
               </p>
-              <p className="mr-4">
-                <span className="font-semibold">NIS:</span> {user.NIS}
-              </p>
+              
             </div>
           </div>
         </div>

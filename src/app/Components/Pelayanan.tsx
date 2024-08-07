@@ -1,97 +1,82 @@
-import Image from "next/image";
-import React from "react";
-import { FaPhone, FaEnvelope, FaUser, FaWhatsapp } from "react-icons/fa";
+import React from 'react';
+import { FaWhatsapp } from 'react-icons/fa';
 
-interface User {
+interface Testimonial {
   photo: string;
   name: string;
   email: string;
   phone: string;
   whatsapp: string;
+  role: string; // Added role field
 }
 
-interface UserCardProps {
-  user: User;
-}
+const testimonials: Testimonial[] = [
+  {
+    photo: "https://th.bing.com/th/id/OIP.23JlXzTrsjO3W7DlWEKwlQHaIc?w=868&h=990&rs=1&pid=ImgDetMain",
+    name: "John Doe",
+    email: "john.doe@example.com",
+    phone: "123-456-7890",
+    whatsapp: "1234567890",
+    role: "Developer", // Example role
+  },
+  {
+    photo: "https://th.bing.com/th/id/OIP.23JlXzTrsjO3W7DlWEKwlQHaIc?w=868&h=990&rs=1&pid=ImgDetMain",
+    name: "Jane Smith",
+    email: "jane.smith@example.com",
+    phone: "098-765-4321",
+    whatsapp: "0987654321",
+    role: "Designer", // Example role
+  }
+];
 
-const UserCard: React.FC<UserCardProps> = ({ user }) => {
-  const handleWhatsAppClick = () => {
-    const phoneNumber = `${user.whatsapp}`;
-    const message = `Halo, ${user.name}`;
-    window.open(
-      `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,
-      "_blank"
-    );
+const Pelayanan: React.FC = () => {
+  const handleWhatsAppClick = (number: string) => {
+    window.open(`https://wa.me/${number}`, '_blank');
   };
 
   return (
-    <div className="max-w-sm mx-auto bg-white shadow-md rounded-lg overflow-hidden mb-4">
-      <Image
-        className="w-full h-48 object-cover object-center"
-        src={user.photo}
-        alt={`${user.name}'s photo`}
-        width={400}
-        height={300}
-      />
-      <div className="p-4">
-        <h2 className="text-xl font-semibold flex items-center">
-          <FaUser className="mr-2" />
-          {user.name}
-        </h2>
-        <p className="text-gray-600 mt-2 flex items-center">
-          <FaEnvelope className="mr-2" />
-          {user.email}
-        </p>
-        <p className="text-gray-600 mt-2 flex items-center">
-          <FaPhone className="mr-2" />
-          {user.phone}
-        </p>
-        <button
-          className="mt-4 flex items-center justify-center bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600 focus:outline-none"
-          onClick={handleWhatsAppClick}
-        >
-          <FaWhatsapp className="mr-2" /> Hubungi
-        </button>
+    <section className="py-16 bg-gray-100">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 text-center ">
+          <span className="text-4xl text-gray-800 font-bold block mb-2">PELAYANAN BKK</span>
+          <h2 className="text-xl md:text-2xl  text-gray-600 mb-10"> SMKN Ngargoyoso</h2>
+          <p className="mt-4 text-lg text-gray-600 text-justify  md:text-center">
+            Kami menyediakan berbagai layanan untuk membantu siswa dan alumni SMKN Ngargoyoso dalam mencari pekerjaan dan peluang magang. 
+            Temukan informasi terbaru mengenai lowongan kerja, magang, dan dukungan karir di sini. Hubungi kami untuk bantuan lebih lanjut.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {testimonials.map((testimonial, index) => (
+            <div key={index} className="bg-white border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+              <div className="flex items-center p-6">
+                <img className="rounded-full h-16 w-16 md:h-20 md:w-20 mr-4" src={testimonial.photo} alt={`${testimonial.name}'s photo`} />
+                <div className="flex-1">
+                  <div className="flex items-center mb-2">
+                    <h5 className="text-gray-900 font-semibold text-lg flex items-center">
+                      {testimonial.name}
+                      <span className="ml-2 inline-block bg-gray-200 text-gray-800 text-xs font-medium py-1 px-2 rounded-full">
+                        {testimonial.role}
+                      </span>
+                    </h5>
+                  </div>
+                  <p className="text-gray-700 mb-1">{testimonial.email}</p>
+                  <p className="text-gray-700 mb-1">{testimonial.phone}</p>
+                  <p className="text-gray-700 mb-4">{testimonial.whatsapp}</p>
+                  <button
+                    onClick={() => handleWhatsAppClick(testimonial.whatsapp)}
+                    className="flex items-center text-white bg-green-500 hover:bg-green-600 font-medium py-2 px-4 rounded-lg shadow-md transition-colors duration-300"
+                  >
+                    <FaWhatsapp className="text-xl mr-2" />
+                    <span>Hubungi</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
-const UsersList: React.FC = () => {
-  const users: User[] = [
-    {
-      photo: "https://th.bing.com/th/id/OIP.23JlXzTrsjO3W7DlWEKwlQHaIc?w=868&h=990&rs=1&pid=ImgDetMain",
-      name: "John Doe",
-      email: "john.doe@example.com",
-      phone: "123-456-7890",
-      whatsapp: "1234567890",
-    },
-    {
-      photo: "https://th.bing.com/th/id/OIP.23JlXzTrsjO3W7DlWEKwlQHaIc?w=868&h=990&rs=1&pid=ImgDetMain",
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      phone: "098-765-4321",
-      whatsapp: "0987654321",
-    },
-    {
-      photo: "https://th.bing.com/th/id/OIP.23JlXzTrsjO3W7DlWEKwlQHaIc?w=868&h=990&rs=1&pid=ImgDetMain",
-      name: "Alice Johnson",
-      email: "alice.johnson@example.com",
-      phone: "111-222-3333",
-      whatsapp: "1112223333",
-    },
-  ];
-
-  return (
-    <div className="p-4 mt-10 bg-gray-600">
-      <div className="text-center font-semibold text-2xl text-white">Pelayanan Terkait tentang BKK</div>
-      <div className="container mx-auto mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
-        {users.map((user, index) => (
-          <UserCard key={index} user={user} />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default UsersList;
+export default Pelayanan;
