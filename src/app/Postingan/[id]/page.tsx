@@ -9,8 +9,13 @@ import { axiosInstance } from "@/lib/axios";
 import defaultImage from "@/app/public/assets/image.png";
 import { Button } from "@/components/ui/button";
 import Topbar from "@/app/Components/TopBar";
-import { FacebookIcon, TwitterIcon, LinkedinIcon, WhatsappIcon } from 'react-share';
-import toast from 'react-hot-toast';
+import {
+  FacebookIcon,
+  TwitterIcon,
+  LinkedinIcon,
+  WhatsappIcon,
+} from "react-share";
+import toast from "react-hot-toast";
 
 interface Jobs {
   id: string;
@@ -48,7 +53,7 @@ const PostinganDetail = () => {
   const handleSave = async () => {
     if (jobs) {
       try {
-        await axiosInstance.post('/savejobs', { jobId: jobs.id });
+        await axiosInstance.post("/savejobs", { jobId: jobs.id });
         toast.success("Lowongan Tersimpan");
       } catch (error) {
         console.error("Error saving job:", error);
@@ -64,20 +69,28 @@ const PostinganDetail = () => {
   };
 
   if (!jobs) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <div className="flex justify-center items-center space-x-1 text-sm text-gray-700">
+          <span className="loading loading-spinner text-secondary"></span>
+        </div>
+      </div>
+    );
   }
 
-  const baseUrl = typeof window !== "undefined" ? window.location.origin : '';
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
   const shareUrl = encodeURIComponent(window.location.href);
   const shareTitle = encodeURIComponent(`Lowongan Pekerjaan di ${jobs.namaPT}`);
   const shareDescription = encodeURIComponent(`
-Mencari Kandidat Di Bagian ${jobs.openrekrutmen.join(', ')}.
+Mencari Kandidat Di Bagian ${jobs.openrekrutmen.join(", ")}.
 Alamat : ${jobs.alamat} 
 Untuk Informasi Selanjutnya anda bisa Lihat DI halaman dibawah Ini
 `);
 
   // Gunakan URL gambar dari Cloudinary jika tersedia, atau fallback ke defaultImage
-  const shareImage = encodeURIComponent(jobs.gambar ? jobs.gambar : defaultImage.src);
+  const shareImage = encodeURIComponent(
+    jobs.gambar ? jobs.gambar : defaultImage.src
+  );
 
   const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareTitle} - ${shareDescription}&picture=${shareImage}`;
   const twitterShareUrl = `https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareTitle} - ${shareDescription}`;
@@ -173,16 +186,32 @@ Untuk Informasi Selanjutnya anda bisa Lihat DI halaman dibawah Ini
               </Button>
             </div>
             <div className="flex justify-center space-x-4 mt-6">
-              <a href={facebookShareUrl} target="_blank" rel="noopener noreferrer">
+              <a
+                href={facebookShareUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <FacebookIcon size={32} round />
               </a>
-              <a href={twitterShareUrl} target="_blank" rel="noopener noreferrer">
+              <a
+                href={twitterShareUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <TwitterIcon size={32} round />
               </a>
-              <a href={linkedinShareUrl} target="_blank" rel="noopener noreferrer">
+              <a
+                href={linkedinShareUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <LinkedinIcon size={32} round />
               </a>
-              <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer">
+              <a
+                href={whatsappShareUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <WhatsappIcon size={32} round />
               </a>
             </div>

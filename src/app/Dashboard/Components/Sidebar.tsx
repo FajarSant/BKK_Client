@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IconContext } from 'react-icons';
-import { FaHome, FaUsers, FaSuitcase, FaChartBar, FaSignOutAlt, FaChalkboardTeacher } from 'react-icons/fa';
+import { FaHome, FaUsers, FaSuitcase, FaChartBar, FaSignOutAlt, FaChalkboardTeacher } from 'react-icons/fa'; // Import icons
 
 interface SidebarProps {
   setActiveItem: (item: string) => void;
@@ -10,14 +10,20 @@ const Sidebar: React.FC<SidebarProps> = ({ setActiveItem }) => {
   const [activeMenu, setActiveMenu] = useState<string>('Home');
 
   useEffect(() => {
+    // Check if running on the client side
     if (typeof window !== 'undefined') {
+      // Get the stored active item from localStorage, default to 'Home' if not found
       const storedItem = localStorage.getItem('activeItem');
-      if (storedItem) setActiveMenu(storedItem);
+      if (storedItem) {
+        setActiveMenu(storedItem);
+      }
     }
   }, []);
 
   useEffect(() => {
+    // Check if running on the client side before setting localStorage
     if (typeof window !== 'undefined') {
+      // Save the active item to localStorage whenever it changes
       localStorage.setItem('activeItem', activeMenu);
     }
   }, [activeMenu]);
@@ -28,9 +34,11 @@ const Sidebar: React.FC<SidebarProps> = ({ setActiveItem }) => {
   };
 
   const handleLogout = () => {
+    // Clear localStorage or any relevant state here if needed
     if (typeof window !== 'undefined') {
       localStorage.removeItem('activeItem');
     }
+    // Redirect to the home page or login page
     window.location.href = '/';
   };
 
@@ -38,8 +46,8 @@ const Sidebar: React.FC<SidebarProps> = ({ setActiveItem }) => {
     { label: 'Home', icon: FaHome },
     { label: 'Pengguna', icon: FaUsers },
     { label: 'Lamaran', icon: FaSuitcase },
-    { label: 'Analisis', icon: FaChartBar },
-    { label: 'Pelatihan', icon: FaChalkboardTeacher },
+    // { label: 'Analisis', icon: FaChartBar },
+    // { label: 'Pelatihan', icon: FaChalkboardTeacher },
   ];
 
   return (
