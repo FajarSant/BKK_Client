@@ -5,16 +5,16 @@ import React, { useEffect, useState } from 'react';
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const slides = [
-    { src: "/image/background1.jpg", text: "Selamat Datang di Slide Pertama Kami" },
-    { src: "/image/background2.jpg", text: "Nikmati Slide Kedua Kami" },
-    { src: "/image/background3.jpg", text: "Temukan Slide Ketiga Kami" },
-    { src: "/image/background4.jpeg", text: "Jelajahi Slide Keempat Kami" }
+    { src: "/image/background1.jpg", text: "Selamat Datang di Website BKK SMKN Ngargoyoso" },
+    { src: "/image/background2.jpg", text: "Temukan Peluang Karir Terbaik" },
+    { src: "/image/background3.jpg", text: "Fitur Unggulan untuk Mendukung Karir Anda" },
+    { src: "/image/background4.jpeg", text: "Harapan Kami untuk Masa Depan Anda" }
   ];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
-    }, 5000); // Ganti slide setiap 5 detik
+    }, 10000); // Ganti slide setiap 5 detik
 
     return () => clearInterval(interval);
   }, [slides.length]);
@@ -41,10 +41,10 @@ const HeroSection = () => {
               <div className="text-center text-white px-4">
                 <h1 className="text-4xl md:text-6xl font-bold mb-4">{slide.text}</h1>
                 <p className="text-lg md:text-2xl">
-                  {index === 0 && "Selamat datang di website kami! Temukan berbagai lowongan pekerjaan dengan mudah dan cepat."}
-                  {index === 1 && "Nikmati kemudahan dalam mencari informasi terkait pekerjaan dan pengembangan karir."}
-                  {index === 2 && "Temukan peluang karir yang sesuai dengan minat dan bakat Anda di sini."}
-                  {index === 3 && "Jelajahi informasi terbaru dan relevan untuk mempersiapkan diri menghadapi dunia kerja."}
+                  {index === 0 && " Kami di sini untuk membantu Anda menemukan peluang karir yang sesuai dengan keahlian dan minat Anda."}
+                  {index === 1 && "Jelajahi berbagai lowongan pekerjaan dan magang yang telah kami kurasi untuk mendukung perkembangan karir Anda dan mencapai tujuan profesional."}
+                  {index === 2 && "Fitur unggulan kami meliputi pencarian pekerjaan yang efisien, akses ke pelatihan dan sumber daya, serta dukungan untuk persiapan wawancara dan penulisan CV."}
+                  {index === 3 && "Kami berharap website ini dapat menjadi alat yang berguna untuk mendukung perjalanan karir Anda dan membuka peluang baru untuk masa depan yang sukses."}
                 </p>
               </div>
             </div>

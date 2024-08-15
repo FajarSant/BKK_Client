@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,7 +53,10 @@ const Topbar: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     };
@@ -90,11 +93,17 @@ const Topbar: React.FC = () => {
   return (
     <div className="bg-white shadow-md py-2 px-4 fixed top-0 left-0 w-full z-50">
       <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-4">
-          <a href="/" className="btn btn-ghost text-lg">
-            BKK SMKN <br /> NGARGOYOSO
-          </a>
-        </div>
+      <Link href="/" className="flex items-center space-x-4">
+      <div className="relative w-16 h-16">
+        <Image
+          src="https://res.cloudinary.com/dr01rjws7/image/upload/v1723718668/c61br9rk7ksuzqhsmyxy.png"
+          alt="BKK SMKN Ngargoyoso Logo"
+          fill
+          style={{ objectFit: 'contain' }}
+        />
+      </div>
+      <span className="text-lg font-medium">BKK SMKN <br /> NGARGOYOSO</span>
+    </Link>
 
         <div className="relative" ref={dropdownRef}>
           <button
@@ -138,7 +147,7 @@ const Topbar: React.FC = () => {
                       </span>
                     </Link>
                     {user.peran === "ADMIN" && (
-                      <Link href="/Dashboard">
+                      <Link href="/Admin/Dashboard">
                         <span className="flex items-center px-4 py-2 hover:bg-gray-200 cursor-pointer">
                           <FaTachometerAlt className="mr-2" />
                           Dashboard

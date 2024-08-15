@@ -168,10 +168,10 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             </ul>
           </label>
           <label className="block mb-2">
-            Open Rekrutmen:
+            Pekerjaan: 
             <input
               type="text"
-              placeholder="Tambahkan open rekrutmen"
+              placeholder="Pekerjaan Yang dicari (enter untuk menambahkan)"
               onKeyDown={(e) => handleKeyDown(e, "openrekrutmen")}
               className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
             />
@@ -213,14 +213,6 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             name="alamat"
             placeholder="Alamat"
             value={newJob.alamat}
-            onChange={handleInputChange}
-            className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
-          />
-          <input
-            type="text"
-            name="jenis"
-            placeholder="jenis"
-            value={newJob.jenis}
             onChange={handleInputChange}
             className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
           />

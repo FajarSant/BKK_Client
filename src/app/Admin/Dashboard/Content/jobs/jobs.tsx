@@ -120,11 +120,11 @@ const JobList: React.FC = () => {
   };
 
   return (
-    <div className="container p-4">
+    <div className="container p-4 w-full h-full">
       <h1 className="text-center mb-4 font-bold text-2xl">INFORMASI JOB</h1>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 relative">
-          <caption className="p-5 text-lg font-semibold text-left text-gray-900 bg-gray-200 dark:bg-gray-800">
+          <caption className="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:bg-gray-800">
             Daftar Job
             <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
               Telusuri daftar pekerjaan yang tersedia beserta detailnya.
@@ -172,7 +172,7 @@ const JobList: React.FC = () => {
               </div>
             </div>
           </caption>
-          <thead className="text-xs text-gray-700 p-6 text-center uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 p-6 text-center uppercase bg-white  border border-r-0 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
                 No
