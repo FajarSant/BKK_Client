@@ -31,6 +31,7 @@ const CardPekerjaan: React.FC = () => {
   const [displayedCategories, setDisplayedCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [itemsPerPage] = useState<number>(12);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -40,11 +41,13 @@ const CardPekerjaan: React.FC = () => {
         const response = await axiosInstance.get<Jobs[]>("/jobs");
         setJobs(response.data);
 
-        // Extract unique categories from openrekrutmen
         const allCategories = new Set<string>();
         response.data.forEach((job) => {
-          job.openrekrutmen.forEach((cat) => allCategories.add(cat));
+          job.openrekrutmen.forEach((cat) =>
+            allCategories.add(cat.toLowerCase())
+          );
         });
+
         const categoriesArray = Array.from(allCategories);
         setCategories(categoriesArray);
         setDisplayedCategories(categoriesArray.slice(0, 5));
@@ -60,26 +63,39 @@ const CardPekerjaan: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedCategory === "all") {
-      setFilteredJobs(jobs);
-    } else {
-      setFilteredJobs(
-        jobs.filter((job) => job.openrekrutmen.includes(selectedCategory))
-      );
-    }
-    setCurrentPage(1); // Reset to first page when category changes
-  }, [selectedCategory, jobs]);
+    const filterJobs = () => {
+      let jobsToFilter = jobs;
+
+      if (selectedCategory !== "all") {
+        jobsToFilter = jobsToFilter.filter((job) =>
+          job.openrekrutmen
+            .map((cat) => cat.toLowerCase())
+            .includes(selectedCategory.toLowerCase())
+        );
+      }
+
+      if (searchTerm) {
+        jobsToFilter = jobsToFilter.filter((job) =>
+          job.namaPT.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          job.openrekrutmen.some(cat =>
+            cat.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+        );
+      }
+
+      setFilteredJobs(jobsToFilter);
+    };
+
+    filterJobs();
+    setCurrentPage(1);
+  }, [selectedCategory, searchTerm, jobs]);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
   };
 
-  const handleShowMoreCategories = () => {
-    const newCategories = categories.slice(
-      displayedCategories.length,
-      displayedCategories.length + 5
-    );
-    setDisplayedCategories((prev) => [...prev, ...newCategories]);
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
   };
 
   const truncateDescription = (description: string) => {
@@ -133,9 +149,35 @@ const CardPekerjaan: React.FC = () => {
 
   return (
     <div className="container mt-10 mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-      {/* Category Buttons */}
-      <div className="flex items-center gap-4">
+      <div className="mb-12 text-center">
+        <span className="text-4xl text-gray-800 font-bold block mb-2">
+          Ayo Cari Dan Temukan Pekerjaan
+        </span>
+        <h2 className="text-xl md:text-2xl text-gray-600 mb-10">
+          Sesuai Dengan Keinginan Anda Segera!!!!
+        </h2>
+        <p className="mt-4 text-lg text-gray-600 text-justify md:text-center">
+          "Jangan pernah menyerah dalam mencari pekerjaan yang sesuai dengan passionmu. Setiap penolakan adalah langkah mendekat menuju peluang yang lebih baik."
+        </p>
+      </div>
+      <div className="mb-8 flex items-center justify-end">
+        <div className="relative w-full max-w-md">
+          <input
+            type="text"
+            id="simple-search"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+            placeholder="Temukan Pekerjaan Disini.. "
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          <svg className="absolute top-1/2 left-3 transform -translate-y-1/2 w-5 h-5 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <div className="flex justify-between items-center mb-8">
+        <div className="flex items-center gap-4">
         <button
           onClick={() => handleCategoryChange("all")}
           className={`px-4 py-2 rounded-lg ${
@@ -184,16 +226,20 @@ const CardPekerjaan: React.FC = () => {
           </span>
         </Link>
       )}
-    </div>
-  
-      {loading ? (
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {Array.from({ length: itemsPerPage }).map((_, index) => (
-            <SkeletonLoader key={index} />
-          ))}
         </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        
+        {loading ? (
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: itemsPerPage }).map((_, index) => (
+              <SkeletonLoader key={index} />
+            ))}
+          </div>
+        ) : filteredJobs.length === 0 ? (
+          <div className="text-center text-xl text-gray-600">
+            Pekerjaan Tidak Ditemukan
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {currentJobs.map((job) => (
             <div
               key={job.id}
@@ -276,26 +322,44 @@ const CardPekerjaan: React.FC = () => {
             </div>
           ))}
         </div>
-      )}
-      {/* Pagination */}
-      <div className="flex justify-center mt-6">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-400"
-        >
-          Previous
-        </button>
-        <span className="mx-4 text-lg">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-400"
-        >
-          Next
-        </button>
+        )}
+        
+        <div className="flex justify-center mt-8">
+          <nav aria-label="Page navigation">
+            <ul className="inline-flex items-center -space-x-px">
+              <li>
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100"
+                >
+                  Previous
+                </button>
+              </li>
+              {Array.from({ length: totalPages }, (_, index) => (
+                <li key={index}>
+                  <button
+                    onClick={() => setCurrentPage(index + 1)}
+                    className={`px-3 py-2 text-sm font-medium border border-gray-300 hover:bg-gray-100 ${
+                      currentPage === index + 1
+                        ? "bg-gray-200 text-gray-700"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+              <li>
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100"
+                >
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
   );

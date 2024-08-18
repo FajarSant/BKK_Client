@@ -11,6 +11,20 @@ interface User {
   peran: string; // Add role field
 }
 
+const SkeletonLoader: React.FC = () => (
+  <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6 animate-pulse">
+    <div className="flex items-center mb-4">
+      <div className="w-24 h-24 bg-gray-200 rounded-full mr-6"></div>
+      <div className="flex-1">
+        <div className="h-6 bg-gray-200 rounded mb-2"></div>
+        <div className="h-4 bg-gray-200 rounded mb-1"></div>
+        <div className="h-4 bg-gray-200 rounded mb-4"></div>
+        <div className="w-24 h-8 bg-gray-200 rounded"></div>
+      </div>
+    </div>
+  </div>
+);
+
 const Pelayanan: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,11 +51,43 @@ const Pelayanan: React.FC = () => {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <section className="py-16 bg-gray-100">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <span className="text-4xl text-gray-800 font-bold block mb-2">
+              PELAYANAN BKK
+            </span>
+            <h2 className="text-xl md:text-2xl text-gray-600 mb-10">
+              SMKN Ngargoyoso
+            </h2>
+            <p className="mt-4 text-lg text-gray-600 text-justify md:text-center">
+              Kami menyediakan berbagai layanan untuk membantu siswa dan alumni
+              SMKN Ngargoyoso dalam mencari pekerjaan dan peluang magang. Temukan
+              informasi terbaru mengenai lowongan kerja, magang, dan dukungan
+              karir di sini. Hubungi kami untuk bantuan lebih lanjut.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <SkeletonLoader key={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return (
+      <section className="py-16 bg-gray-100">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-red-600">{error}</p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
