@@ -8,7 +8,6 @@ import { axiosInstance } from "@/lib/axios";
 import Image from "next/image";
 import Link from "next/link";
 
-// Define User interface
 interface User {
   id: string;
   email: string;
@@ -18,7 +17,7 @@ interface User {
   gambar: string | null;
   peran: string;
   jurusan: string;
-  NIS: string; // Added NIS field
+  NIS: string;
   lamaran: {
     id: string;
     pekerjaan: {
@@ -40,7 +39,6 @@ interface User {
   }[];
 }
 
-// UserProfile component
 const UserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
@@ -299,7 +297,7 @@ const UserProfile: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="border-t border-gray-200 mt-6">
+        {/* <div className="border-t border-gray-200 mt-6">
           <div className="font-bold text-center mt-4 underline">LAMARAN</div>
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {user.lamaran?.map((item) => (
@@ -341,7 +339,7 @@ const UserProfile: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Confirmation Modal */}
