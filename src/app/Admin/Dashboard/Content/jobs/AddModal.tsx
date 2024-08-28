@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css"; // Import styles for DatePicker
+import { FaCalendarAlt } from "react-icons/fa"; // Import the calendar icon from react-icons
 import { axiosInstance } from "@/lib/axios";
-import Image from "next/image";
 
 interface AddModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: () => void;
 }
-
+// Define the AddModal component
 const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
   const [newJob, setNewJob] = useState({
     berkas: "",
@@ -18,10 +20,10 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
     openrekrutmen: [] as string[],
     gambar: null as File | null,
     alamat: "",
-    jenis: "",
     email: "",
     nomorTelepon: "",
     Link: "",
+    deadline: new Date(), // Initialize with a date object
   });
 
   const [error, setError] = useState("");
@@ -69,12 +71,17 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validasi input yang wajib diisi
+    if (!newJob.namaPT || !newJob.deskripsi || !newJob.alamat || !newJob.email || !newJob.nomorTelepon) {
+      toast.error("Harap isi semua input yang wajib diisi.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("namaPT", newJob.namaPT);
     formData.append("deskripsi", newJob.deskripsi);
     formData.append("berkas", newJob.berkas);
     formData.append("alamat", newJob.alamat);
-    formData.append("jenis", newJob.jenis);
     formData.append("email", newJob.email);
     formData.append("nomorTelepon", newJob.nomorTelepon);
     formData.append("Link", newJob.Link);
@@ -84,6 +91,9 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
     formData.append("openrekrutmen", JSON.stringify(newJob.openrekrutmen));
 
     if (newJob.gambar) formData.append("gambar", newJob.gambar);
+
+    // Append deadline
+    formData.append("deadline", newJob.deadline.toISOString());
 
     try {
       await axiosInstance.post("/jobs", formData, {
@@ -100,10 +110,10 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
         openrekrutmen: [],
         gambar: null,
         alamat: "",
-        jenis: "",
         email: "",
         nomorTelepon: "",
         Link: "",
+        deadline: new Date(), // Reset deadline
       }); // Clear inputs
     } catch (error) {
       toast.error("Failed to add job.");
@@ -120,6 +130,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
         <h2 className="text-lg font-semibold mb-4">Tambahkan Job</h2>
         {error && <p className="text-red-500 mb-2">{error}</p>}
         <form onSubmit={handleSubmit}>
+          {/* Existing input fields */}
           <input
             type="text"
             name="namaPT"
@@ -168,7 +179,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             </ul>
           </label>
           <label className="block mb-2">
-            Pekerjaan: 
+            Pekerjaan:
             <input
               type="text"
               placeholder="Pekerjaan Yang dicari (enter untuk menambahkan)"
@@ -216,6 +227,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             onChange={handleInputChange}
             className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
           />
+          
           <input
             type="text"
             name="email"
@@ -240,19 +252,39 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             onChange={handleInputChange}
             className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
           />
-          <button
-            type="submit"
-            className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-300"
-          >
-            Tambahkan
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-white bg-gray-500 hover:bg-gray-600 mt-2 font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
-          >
-            Batal
-          </button>
+          <div className="relative mb-4">
+            <DatePicker
+              selected={newJob.deadline}
+              dateFormat="dd/MM/yyyy"
+              placeholderText="Pilih Tanggal"
+              onChange={(date: Date | null) => {
+                if (date) {
+                  setNewJob((prevState) => ({ ...prevState, deadline: date }));
+                }
+              }}
+
+             
+              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white pl-10"
+            />
+            <FaCalendarAlt
+              className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500"
+            />
+          </div>
+          <div className="flex justify-end mt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="mr-2 px-4 py-2 bg-gray-300 rounded text-white"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded"
+            >
+              Add Job
+            </button>
+          </div>
         </form>
       </div>
     </div>

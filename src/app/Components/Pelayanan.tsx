@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { axiosInstance } from "@/lib/axios";
+import Image from "next/image";
 
 interface User {
   gambar: string;
@@ -8,7 +9,7 @@ interface User {
   email: string;
   nomortelepon: string;
   jurusan: string;
-  peran: string; // Add role field
+  peran: string;
 }
 
 const SkeletonLoader: React.FC = () => (
@@ -34,7 +35,9 @@ const Pelayanan: React.FC = () => {
     const fetchUsers = async () => {
       try {
         const response = await axiosInstance.get("/users");
-        const filteredUsers = response.data.filter((user: User) => user.peran === "ADMIN"); // Filter by ADMIN role
+        const filteredUsers = response.data.filter(
+          (user: User) => user.peran === "ADMIN"
+        );
         setUsers(filteredUsers);
       } catch (err) {
         setError("Failed to fetch users");
@@ -63,9 +66,9 @@ const Pelayanan: React.FC = () => {
             </h2>
             <p className="mt-4 text-lg text-gray-600 text-justify md:text-center">
               Kami menyediakan berbagai layanan untuk membantu siswa dan alumni
-              SMKN Ngargoyoso dalam mencari pekerjaan dan peluang magang. Temukan
-              informasi terbaru mengenai lowongan kerja, magang, dan dukungan
-              karir di sini. Hubungi kami untuk bantuan lebih lanjut.
+              SMKN Ngargoyoso dalam mencari pekerjaan dan peluang magang.
+              Temukan informasi terbaru mengenai lowongan kerja, magang, dan
+              dukungan karir di sini. Hubungi kami untuk bantuan lebih lanjut.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -114,11 +117,14 @@ const Pelayanan: React.FC = () => {
               className="bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:scale-105"
             >
               <div className="flex items-center p-6">
-                <img
-                  className="rounded-md h-20 w-20 md:h-24 md:w-24 mr-6 object-cover"
-                  src={user.gambar}
+                <Image
+                  className="rounded-md mr-6 object-cover"
+                  src={user.gambar || "/fallback-image.png"} // Fallback image if gambar is null
                   alt={`${user.nama}'s photo`}
+                  width={96}
+                  height={96}
                 />
+
                 <div className="flex-1">
                   <div className="flex items-center mb-2">
                     <h5 className="text-gray-900 font-bold text-xl flex items-center">

@@ -13,6 +13,7 @@ interface Jobs {
   deskripsi: string;
   openrekrutmen: string[];
   gambar?: string;
+  deadline?: string;
 }
 
 const SkeletonLoader: React.FC = () => (
@@ -75,11 +76,12 @@ const CardPekerjaan: React.FC = () => {
       }
 
       if (searchTerm) {
-        jobsToFilter = jobsToFilter.filter((job) =>
-          job.namaPT.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          job.openrekrutmen.some(cat =>
-            cat.toLowerCase().includes(searchTerm.toLowerCase())
-          )
+        jobsToFilter = jobsToFilter.filter(
+          (job) =>
+            job.namaPT.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            job.openrekrutmen.some((cat) =>
+              cat.toLowerCase().includes(searchTerm.toLowerCase())
+            )
         );
       }
 
@@ -147,6 +149,15 @@ const CardPekerjaan: React.FC = () => {
 
   const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
 
+  const calculateDaysRemaining = (deadline?: string) => {
+    if (!deadline) return "N/A";
+    const deadlineDate = new Date(deadline);
+    const today = new Date();
+    const timeDiff = deadlineDate.getTime() - today.getTime();
+    const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    return daysRemaining > 0 ? `${daysRemaining} hari lagi` : "Expired";
+  };
+
   return (
     <div className="container mt-10 mx-auto px-4 py-8">
       <div className="mb-12 text-center">
@@ -157,7 +168,9 @@ const CardPekerjaan: React.FC = () => {
           Sesuai Dengan Keinginan Anda Segera!!!!
         </h2>
         <p className="mt-4 text-lg text-gray-600 text-justify md:text-center">
-          "Jangan pernah menyerah dalam mencari pekerjaan yang sesuai dengan passionmu. Setiap penolakan adalah langkah mendekat menuju peluang yang lebih baik."
+          &quot;Jangan pernah menyerah dalam mencari pekerjaan yang sesuai
+          dengan passionmu. Setiap penolakan adalah langkah mendekat menuju
+          peluang yang lebih baik.&quot;
         </p>
       </div>
       <div className="mb-8 flex items-center justify-end">
@@ -170,64 +183,76 @@ const CardPekerjaan: React.FC = () => {
             value={searchTerm}
             onChange={handleSearchChange}
           />
-          <svg className="absolute top-1/2 left-3 transform -translate-y-1/2 w-5 h-5 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+          <svg
+            className="absolute top-1/2 left-3 transform -translate-y-1/2 w-5 h-5 text-gray-500"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 20 20"
+          >
+            <path
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+            />
           </svg>
         </div>
       </div>
       <div>
         <div className="flex justify-between items-center mb-8">
-        <div className="flex items-center gap-4">
-        <button
-          onClick={() => handleCategoryChange("all")}
-          className={`px-4 py-2 rounded-lg ${
-            selectedCategory === "all"
-              ? "bg-blue-700 text-white"
-              : "bg-gray-200 text-gray-800"
-          }`}
-        >
-          All
-        </button>
-        {displayedCategories.map((cat, index) => (
-          <button
-            key={index}
-            onClick={() => handleCategoryChange(cat)}
-            className={`px-4 py-2 rounded-lg ${
-              selectedCategory === cat
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-800"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      {/* Show More Categories Button */}
-      {categories.length > displayedCategories.length && (
-        <Link href="/ListPekerjaan">
-          <span className="px-4 py-2 bg-slate-500 text-white rounded-lg flex items-center">
-            Tampilkan Lainnya
-            <svg
-              className="w-3.5 h-3.5 ms-2"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 14 10"
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => handleCategoryChange("all")}
+              className={`px-4 py-2 rounded-lg ${
+                selectedCategory === "all"
+                  ? "bg-blue-700 text-white"
+                  : "bg-gray-200 text-gray-800"
+              }`}
             >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 5h12m0 0L9 1m4 4L9 9"
-              />
-            </svg>
-          </span>
-        </Link>
-      )}
+              All
+            </button>
+            {displayedCategories.map((cat, index) => (
+              <button
+                key={index}
+                onClick={() => handleCategoryChange(cat)}
+                className={`px-4 py-2 rounded-lg ${
+                  selectedCategory === cat
+                    ? "bg-blue-700 text-white"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Show More Categories Button */}
+          {categories.length > displayedCategories.length && (
+            <Link href="/ListPekerjaan">
+              <span className="px-4 py-2 bg-slate-500 text-white rounded-lg flex items-center">
+                Tampilkan Lainnya
+                <svg
+                  className="w-3.5 h-3.5 ms-2"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 14 10"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M1 5h12m0 0L9 1m4 4L9 9"
+                  />
+                </svg>
+              </span>
+            </Link>
+          )}
         </div>
-        
+
         {loading ? (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: itemsPerPage }).map((_, index) => (
@@ -240,96 +265,101 @@ const CardPekerjaan: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {currentJobs.map((job) => (
-            <div
-              key={job.id}
-              className="bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
-            >
-              <div className="relative mb-4">
-                <Image
-                  src={job.gambar || defaultImage}
-                  alt={job.namaPT}
-                  width={640}
-                  height={360}
-                  className="object-cover rounded-t-lg w-full h-64"
-                />
-                <FaBookmark
-                  className="text-blue-700 text-2xl cursor-pointer absolute top-2 right-2"
-                  onClick={() => handleDaftarClick(job.id)}
-                />
-              </div>
-              <div className="p-5">
-                <p className="text-lg text-gray-700 dark:text-gray-400 mb-2">
-                  {job.openrekrutmen &&
-                    job.openrekrutmen.map((item, index) => (
-                      <span
-                        key={index}
-                        className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium mr-2"
-                      >
-                        {item}
+            {currentJobs.map((job) => (
+              <div
+                key={job.id}
+                className="bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 overflow-hidden"
+              >
+                <div className="relative mb-4">
+                  <Image
+                    src={job.gambar || defaultImage}
+                    alt={job.namaPT}
+                    width={640}
+                    height={360}
+                    className="object-cover rounded-t-lg w-full h-64"
+                  />
+                  <FaBookmark
+                    className="text-blue-700 text-2xl cursor-pointer absolute top-2 right-2"
+                    onClick={() => handleDaftarClick(job.id)}
+                  />
+                </div>
+                <div className="p-5">
+                  <p className="text-lg text-gray-700 dark:text-gray-400 mb-2">
+                    {job.openrekrutmen &&
+                      job.openrekrutmen.map((item, index) => (
+                        <span
+                          key={index}
+                          className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium mr-2"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                  </p>
+                  <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                    {job.namaPT}
+                  </h5>
+                  <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                    {truncateDescription(job.deskripsi)}
+                  </p>
+                  <div className="flex justify-between items-center mt-4">
+                    <Link href={`/Daftar/${job.id}`}>
+                      <span className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Daftar
+                        <svg
+                          className="w-3.5 h-3.5 ms-2"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 14 10"
+                        >
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M1 5h12m0 0L9 1m4 4L9 9"
+                          />
+                        </svg>
                       </span>
-                    ))}
-                </p>
-                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  {job.namaPT}
-                </h5>
-                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                  {truncateDescription(job.deskripsi)}
-                </p>
-                <div className="flex justify-between items-center mt-4">
-                  <Link href={`/Daftar/${job.id}`}>
-                    <span className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                      Daftar
-                      <svg
-                        className="w-3.5 h-3.5 ms-2"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 14 10"
-                      >
-                        <path
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M1 5h12m0 0L9 1m4 4L9 9"
-                        />
-                      </svg>
-                    </span>
-                  </Link>
-                  <Link href={`/Postingan/${job.id}`}>
-                  <span className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-700 rounded-lg hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
-                    Detail
-                    <svg
-                      className="w-3.5 h-3.5 ms-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 14 10"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M1 5h12m0 0L9 1m4 4L9 9"
-                      />
-                    </svg>
-                  </span>
-                </Link>
+                    </Link>
+                    <Link href={`/Postingan/${job.id}`}>
+                      <span className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-700 rounded-lg hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+                        Detail
+                        <svg
+                          className="w-3.5 h-3.5 ms-2"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 14 10"
+                        >
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M1 5h12m0 0L9 1m4 4L9 9"
+                          />
+                        </svg>
+                      </span>
+                    </Link>
+                  </div>
+                    <p className="mt-2 text-sm text-gray-500">
+                    Berakhir Dalam: {calculateDaysRemaining(job.deadline)}
+                  </p>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
         )}
-        
+
         <div className="flex justify-center mt-8">
           <nav aria-label="Page navigation">
             <ul className="inline-flex items-center -space-x-px">
               <li>
                 <button
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100"
                 >
                   Previous
@@ -351,7 +381,9 @@ const CardPekerjaan: React.FC = () => {
               ))}
               <li>
                 <button
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
                   className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100"
                 >
                   Next

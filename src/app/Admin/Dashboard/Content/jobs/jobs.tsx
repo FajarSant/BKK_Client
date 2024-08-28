@@ -14,6 +14,7 @@ import DeleteModal from "./DeleteModal";
 import AddModal from "./AddModal";
 import { Job } from "./type";
 import Image from "next/image";
+import toast, { Toaster } from "react-hot-toast";
 
 const JobList: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -121,6 +122,7 @@ const JobList: React.FC = () => {
 
   return (
     <div className="container p-4 w-full h-full">
+      <Toaster></Toaster>
       <h1 className="text-center mb-4 font-bold text-2xl">INFORMASI JOB</h1>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 relative">
@@ -249,7 +251,28 @@ const JobList: React.FC = () => {
               );
             })}
           </tbody>
+          
         </table>
+         {/* Pagination */}
+      <div className="flex bg-white justify-between items-center">
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300"
+          onClick={handlePrevPage}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span className="text-sm font-medium">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300"
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
 
         {/* Edit Modal */}
         <EditModal
@@ -274,27 +297,6 @@ const JobList: React.FC = () => {
           onClose={() => setAddModalOpen(false)}
           onAdd={handleAdd}
         />
-      </div>
-
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-4">
-        <button
-          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
-          onClick={handlePrevPage}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
       </div>
     </div>
   );

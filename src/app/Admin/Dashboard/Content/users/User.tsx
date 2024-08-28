@@ -5,7 +5,7 @@ import Image from "next/image";
 import AddUserModal from "./AddModal";
 import EditUserModal from "./EditModal";
 import DeleteConfirmModal from "./DeleteConfirmasiModal";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 interface User {
   id: number;
@@ -143,6 +143,7 @@ const UserManagementTable: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <Toaster position="top-center" />
       <header className="flex justify-between items-center border-b pb-2 mt-10 mb-6">
         <h1 className="text-2xl font-bold text-center">Manajemen Pengguna</h1>
       </header>
@@ -181,25 +182,37 @@ const UserManagementTable: React.FC = () => {
             </caption>
             <thead className="text-xs text-black uppercase bg-blue-800 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                <th scope="col" className="px-4 py-3">NIS</th>
-                <th scope="col" className="px-4 py-3">Gambar</th>
-                <th scope="col" className="px-4 py-3">Nama</th>
-                <th scope="col" className="px-4 py-3">Email</th>
-                <th scope="col" className="px-4 py-3">Alamat</th>
-                <th scope="col" className="px-4 py-3">Peran</th>
-                <th scope="col" className="px-4 py-3">Jurusan</th>
-                <th scope="col" className="px-4 py-3">Aksi</th>
+                <th scope="col" className="px-4 py-3">
+                  NIS
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Gambar
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Nama
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Email
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Alamat
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Peran
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Jurusan
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Aksi
+                </th>
               </tr>
             </thead>
             <tbody>
               {currentRows.map((user, index) => (
                 <tr
                   key={user.id}
-                  className={`${
-                    index % 2 === 0
-                      ? "bg-white"
-                      : "bg-gray-100"
-                  }`}
+                  className={`${index % 2 === 0 ? "bg-white" : "bg-gray-100"}`}
                 >
                   <td className="px-4 py-4">{user.NIS}</td>
                   <td className="px-4 py-4">
@@ -222,15 +235,15 @@ const UserManagementTable: React.FC = () => {
                   <td className="px-4 py-4">{user.alamat}</td>
                   <td className="px-4 py-4">{user.peran}</td>
                   <td className="px-4 py-4">{user.jurusan}</td>
-                  <td className="px-4 py-4 whitespace-nowrap space-x-2 text-right text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap space-x-2 text-right text-sm font-medium">
                     <button
-                      className="text-blue-600 hover:text-blue-900"
+                      className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                       onClick={() => handleShowEditModal(user)}
                     >
                       <FaEdit />
                     </button>
                     <button
-                      className="text-red-600 hover:text-red-900"
+                      className="text-white mt-2 bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm p-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                       onClick={() => handleConfirmDelete(user.id, user.nama)}
                     >
                       <FaTrash />
@@ -241,28 +254,28 @@ const UserManagementTable: React.FC = () => {
             </tbody>
           </table>
           <div className="flex justify-between mt-4">
-            <button
-              onClick={handlePrevPage}
-              className="btn btn-primary btn-sm"
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            <span className="text-sm font-medium">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={handleNextPage}
-              className="btn btn-primary btn-sm"
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
+  <button
+    onClick={handlePrevPage}
+    className="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    disabled={currentPage === 1}
+  >
+    Previous
+  </button>
+  <span className="text-sm font-medium">
+    Page {currentPage} of {totalPages}
+  </span>
+  <button
+    onClick={handleNextPage}
+    className="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    disabled={currentPage === totalPages}
+  >
+    Next
+  </button>
+</div>
+
         </div>
       </div>
 
-      
       {showAddModal && (
         <AddUserModal
           onClose={handleCloseAddModal}

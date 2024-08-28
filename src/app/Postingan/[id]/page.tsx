@@ -185,35 +185,40 @@ Untuk Informasi Selanjutnya anda bisa Lihat DI halaman dibawah Ini
                 Simpan
               </Button>
             </div>
-            <div className="flex justify-center space-x-4 mt-6">
-              <a
-                href={facebookShareUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FacebookIcon size={32} round />
-              </a>
-              <a
-                href={twitterShareUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <TwitterIcon size={32} round />
-              </a>
-              <a
-                href={linkedinShareUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <LinkedinIcon size={32} round />
-              </a>
-              <a
-                href={whatsappShareUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <WhatsappIcon size={32} round />
-              </a>
+            <div className="flex flex-col justify-between h-full">
+              <div className="justify-center mt-5">
+                <h1 className="text-center mb-2">Bagikan Lamaran ini</h1>
+                <div className="flex justify-center space-x-4">
+                  <a
+                    href={facebookShareUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FacebookIcon size={32} round />
+                  </a>
+                  <a
+                    href={twitterShareUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <TwitterIcon size={32} round />
+                  </a>
+                  <a
+                    href={linkedinShareUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <LinkedinIcon size={32} round />
+                  </a>
+                  <a
+                    href={whatsappShareUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <WhatsappIcon size={32} round />
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
