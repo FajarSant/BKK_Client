@@ -202,7 +202,7 @@ const CardPekerjaan: React.FC = () => {
       </div>
       <div>
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 overflow-auto">
             <button
               onClick={() => handleCategoryChange("all")}
               className={`px-4 py-2 rounded-lg ${
@@ -344,7 +344,7 @@ const CardPekerjaan: React.FC = () => {
                     </Link>
                   </div>
                     <p className="mt-2 text-sm text-gray-500">
-                    Berakhir Dalam: {calculateDaysRemaining(job.deadline)}
+                     {calculateDaysRemaining(job.deadline)}
                   </p>
                 </div>
               </div>

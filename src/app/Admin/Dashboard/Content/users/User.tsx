@@ -254,25 +254,24 @@ const UserManagementTable: React.FC = () => {
             </tbody>
           </table>
           <div className="flex justify-between mt-4">
-  <button
-    onClick={handlePrevPage}
-    className="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    disabled={currentPage === 1}
-  >
-    Previous
-  </button>
-  <span className="text-sm font-medium">
-    Page {currentPage} of {totalPages}
-  </span>
-  <button
-    onClick={handleNextPage}
-    className="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    disabled={currentPage === totalPages}
-  >
-    Next
-  </button>
-</div>
-
+            <button
+              onClick={handlePrevPage}
+              className="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span className="text-sm font-medium">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={handleNextPage}
+              className="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
 

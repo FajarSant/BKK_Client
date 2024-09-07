@@ -23,6 +23,7 @@ interface User {
     pekerjaan: {
       id: string;
       namaPT: string;
+      deadline?: string;
     };
     status: string;
     tanggalDibuat: string;
@@ -35,6 +36,7 @@ interface User {
     pekerjaan: {
       id: string;
       namaPT: string;
+      deadline?: string;
     };
   }[];
 }
@@ -197,14 +199,22 @@ const UserProfile: React.FC = () => {
       [name]: files ? files[0] : value,
     }));
   };
+  const calculateDaysRemaining = (deadline?: string) => {
+    if (!deadline) return "N/A";
+    const deadlineDate = new Date(deadline);
+    const today = new Date();
+    const timeDiff = deadlineDate.getTime() - today.getTime();
+    const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    return daysRemaining > 0 ? `${daysRemaining} hari lagi` : "Expired";
+  };
 
   if (!user) {
     return (
       <div className="flex items-center justify-center h-screen w-full">
-      <div className="flex justify-center items-center space-x-1 text-sm text-gray-700">
-        <span className="loading loading-spinner text-secondary"></span>
+        <div className="flex justify-center items-center space-x-1 text-sm text-gray-700">
+          <span className="loading loading-spinner text-secondary"></span>
+        </div>
       </div>
-    </div>
     );
   }
 
@@ -238,7 +248,7 @@ const UserProfile: React.FC = () => {
               </h5>
             </div>
             <div className="flex flex-col md:flex-row mt-4">
-            <p className="mr-4">
+              <p className="mr-4">
                 <span className="font-semibold">NIS:</span> {user.NIS}
               </p>
               <p className="mr-4">
@@ -254,7 +264,6 @@ const UserProfile: React.FC = () => {
               <p className="mr-4">
                 <span className="font-semibold">Email:</span> {user.email}
               </p>
-              
             </div>
           </div>
         </div>
@@ -278,11 +287,17 @@ const UserProfile: React.FC = () => {
                     {item.pekerjaan.namaPT}
                   </h3>
                   <p className="text-gray-600">Ditambahkan oleh: {user.nama}</p>
+                  <p className="mt-2 text-sm text-gray-500">
+                    {calculateDaysRemaining(item.pekerjaan.deadline)}
+                  </p>
                   <div className="flex justify-end mt-2">
-                    <span className="text-blue-500 hover:underline flex items-center">
+                    <Link
+                      href={`/Postingan/${item.pekerjaan.id}`}
+                      className="text-blue-500 hover:underline flex items-center"
+                    >
                       <FaInfoCircle className="mr-1" />
                       Detail
-                    </span>
+                    </Link>
                     <button
                       onClick={() =>
                         openConfirmationModal(item.id, "lowonganTersimpan")
@@ -354,6 +369,7 @@ const UserProfile: React.FC = () => {
                 : "lamaran"}{" "}
               ini?
             </p>
+
             <div className="flex justify-end mt-4">
               <button
                 className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"

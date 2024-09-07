@@ -16,6 +16,7 @@ import {
   WhatsappIcon,
 } from "react-share";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 interface Jobs {
   id: string;
@@ -28,11 +29,13 @@ interface Jobs {
   berkas: string;
   nomorTelepon?: string;
   email?: string;
+  deadline?: string;
 }
 
 const PostinganDetail = () => {
   const [jobs, setJobs] = useState<Jobs | null>(null);
-  const router = useRouter(); // Hook untuk navigasi
+  const [userId, setUserId] = useState<string | null>(null); // State for storing the user ID
+  const router = useRouter();
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -47,24 +50,56 @@ const PostinganDetail = () => {
       }
     };
 
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Assuming the token is stored with the key 'token'
+        if (token) {
+          const userResponse = await axiosInstance.get("/auth/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setUserId(userResponse.data.id); // Store the user ID
+        } else {
+          console.error("No token found");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
     fetchJobData();
+    fetchUserData();
   }, []);
 
   const handleSave = async () => {
-    if (jobs) {
+    if (jobs && userId) {
       try {
-        await axiosInstance.post("/savejobs", { jobId: jobs.id });
+        await axiosInstance.post("/savejobs", {
+          jobId: jobs.id,
+          userId, // Associate the job with the user
+        });
         toast.success("Lowongan Tersimpan");
       } catch (error) {
         console.error("Error saving job:", error);
         toast.error("Gagal menyimpan lowongan");
       }
+    } else {
+      toast.error("Gagal menyimpan lowongan. Pengguna tidak ditemukan.");
     }
+  };
+  const calculateDaysRemaining = (deadline?: string) => {
+    if (!deadline) return "N/A";
+    const deadlineDate = new Date(deadline);
+    const today = new Date();
+    const timeDiff = deadlineDate.getTime() - today.getTime();
+    const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    return daysRemaining > 0 ? `${daysRemaining} hari lagi` : "Expired";
   };
 
   const handleApply = () => {
     if (jobs) {
-      router.push(`/Daftar/${jobs.id}`); // Navigasi ke halaman /Daftar dengan ID pekerjaan
+      router.push(`/Daftar/${jobs.id}`);
     }
   };
 
@@ -87,7 +122,6 @@ Alamat : ${jobs.alamat}
 Untuk Informasi Selanjutnya anda bisa Lihat DI halaman dibawah Ini
 `);
 
-  // Gunakan URL gambar dari Cloudinary jika tersedia, atau fallback ke defaultImage
   const shareImage = encodeURIComponent(
     jobs.gambar ? jobs.gambar : defaultImage.src
   );
@@ -110,9 +144,16 @@ Untuk Informasi Selanjutnya anda bisa Lihat DI halaman dibawah Ini
             className="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200"
           />
           <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0 p-2">
-            <h2 className="badge badge-primary badge-outline">
-              {jobs.openrekrutmen}
-            </h2>
+            <p className="mt-2 text-lg text-gray-500 mb-5">
+              {calculateDaysRemaining(jobs.deadline)}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {jobs.openrekrutmen.map((item, index) => (
+                <h2 key={index} className="badge badge-primary badge-outline">
+                  {item}
+                </h2>
+              ))}
+            </div>
             <h1 className="text-gray-900 text-3xl text-center title-font font-medium mb-4 mt-4">
               {jobs.namaPT}
             </h1>
@@ -189,34 +230,34 @@ Untuk Informasi Selanjutnya anda bisa Lihat DI halaman dibawah Ini
               <div className="justify-center mt-5">
                 <h1 className="text-center mb-2">Bagikan Lamaran ini</h1>
                 <div className="flex justify-center space-x-4">
-                  <a
+                  <Link
                     href={facebookShareUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <FacebookIcon size={32} round />
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href={twitterShareUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <TwitterIcon size={32} round />
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href={linkedinShareUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <LinkedinIcon size={32} round />
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <WhatsappIcon size={32} round />
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

@@ -82,28 +82,35 @@ const Topbar: React.FC = () => {
     localStorage.removeItem("user_id");
     localStorage.removeItem("user_nama");
     setShowModal(false);
-    toast.success("Logout berhasil!");
+    toast.success("Logout berhasil!", {
+      position: "top-center",
+    });
   };
 
   const closeModal = () => {
     setShowModal(false);
-    toast.error("Logout dibatalkan!");
+    toast.error("Logout dibatalkan!", {position: "top-center",});
   };
 
   return (
     <div className="bg-white shadow-md py-2 px-4 fixed top-0 left-0 w-full z-50">
+       <Toaster position="top-center" />
       <div className="flex justify-between items-center">
-      <Link href="/" className="flex items-center space-x-4">
-      <div className="relative w-16 h-16">
-        <Image
-          src="https://res.cloudinary.com/dr01rjws7/image/upload/v1723718668/c61br9rk7ksuzqhsmyxy.png"
-          alt="BKK SMKN Ngargoyoso Logo"
-          fill
-          style={{ objectFit: 'contain' }}
-        />
-      </div>
-      <span className="text-lg font-medium">BKK SMKN <br /> NGARGOYOSO</span>
-    </Link>
+        <Link href="/" className="flex items-center space-x-4">
+          <div className=" relative">
+            <Image
+              src="https://res.cloudinary.com/dr01rjws7/image/upload/v1723718668/c61br9rk7ksuzqhsmyxy.png"
+              alt="BKK SMKN Ngargoyoso Logo"
+              width={42}
+              height={42}
+              style={{ objectFit: "contain" }}
+              className="rounded-md"
+            />
+          </div>
+          <span className="text-xl font-medium">
+            BKK SMKN <br /> NGARGOYOSO
+          </span>
+        </Link>
 
         <div className="relative" ref={dropdownRef}>
           <button
@@ -177,7 +184,7 @@ const Topbar: React.FC = () => {
       </div>
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-          <div className="relative bg-white p-6 rounded-xl shadow-lg w-96">
+          <div className="modal-box bg-white p-6 rounded-xl shadow-lg w-96">
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
               onClick={closeModal}
@@ -207,7 +214,7 @@ const Topbar: React.FC = () => {
           </div>
         </div>
       )}
-      <Toaster position="bottom-right" reverseOrder={false} />
+      
     </div>
   );
 };
