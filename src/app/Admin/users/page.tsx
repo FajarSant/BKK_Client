@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect } from "react";
 import { FaUsers, FaEdit, FaTrash, FaPlus, FaUser } from "react-icons/fa";
 import { axiosInstance } from "@/lib/axios";
@@ -6,6 +7,7 @@ import AddUserModal from "./AddModal";
 import EditUserModal from "./EditModal";
 import DeleteConfirmModal from "./DeleteConfirmasiModal";
 import toast, { Toaster } from "react-hot-toast";
+import DashboardLayout from "@/app/Admin/layouts";
 
 interface User {
   id: number;
@@ -142,6 +144,7 @@ const UserManagementTable: React.FC = () => {
     "https://docs.google.com/spreadsheets/d/1fSQh5jT1651ruXcPxOiM3Q77aYt2P_cb/edit?usp=sharing&ouid=102677950529644945883&rtpof=true&sd=true";
 
   return (
+    <DashboardLayout>
     <div className="container mx-auto p-4">
       <Toaster position="top-center" />
       <header className="flex justify-between items-center border-b pb-2 mt-10 mb-6">
@@ -296,6 +299,7 @@ const UserManagementTable: React.FC = () => {
         />
       )}
     </div>
+    </DashboardLayout>
   );
 };
 

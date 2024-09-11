@@ -1,8 +1,8 @@
 "use client"
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { axiosInstance } from "@/lib/axios";
+import DashboardLayout from "@/app/Admin/layouts";
 
 // Tipe data untuk pekerjaan dan pengguna
 interface Job {
@@ -214,10 +214,11 @@ const Settings = () => {
   );
 
   return (
-    <div className="p-4 ">
+    <DashboardLayout>
+    <div className="p-4 w-full ">
       <div className="bg-white p-4 rounded-lg shadow-lg mb-5">
         <h1 className="text-2xl text-center font-bold mb-4">Pengaturan</h1>
-        <div className="mb-4">
+        <div className="mb-4 flex">
           <button
             onClick={() => setView("pekerjaan")}
             className="mr-2 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
@@ -295,6 +296,7 @@ const Settings = () => {
         </div>
       )}
     </div>
+    </DashboardLayout>
   );
 };
 
