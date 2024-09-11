@@ -1,191 +1,117 @@
-"use client";
-
-import { useState, useEffect } from 'react';
-import Sidebar from './Components/Sidebar';
-import Home from './Content/home/home';
-import Jobs from './Content/jobs/jobs';
-import Users from './Content/users/User';
-import { FaBars, FaTimes } from 'react-icons/fa';
-import Link from 'next/link';
-import Image from 'next/image';
+"use client"
+import React, { useEffect, useState } from 'react';
+import { FaUsers, FaBriefcase, FaUserShield, FaHotel } from 'react-icons/fa';
+import { MdEngineering } from 'react-icons/md';
+import { TbEngine } from 'react-icons/tb';
 import { axiosInstance } from '@/lib/axios';
+import DashboardLayout from '@/app/Admin/layouts';
 
-// Function to get token from localStorage
-const getTokenFromLocalStorage = () => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('token');
-  }
-  return null;
-};
-
-const Page: React.FC = () => {
-  const [activeMenu, setActiveMenu] = useState<string>('Home');
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [role, setRole] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+const DashoardPage = () => {
+  const [userCount, setUserCount] = useState<number>(0);
+  const [jobCount, setJobCount] = useState<number>(0);
+  const [users, setUsers] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchUserRole = async () => {
+    // Fetch the number of users and user details
+    const fetchUsers = async () => {
       try {
-        const token = getTokenFromLocalStorage();
-
-        if (!token) {
-          console.log("No token found, redirecting to login.");
-          setLoading(false);
-          return;
-        }
-
-        const response = await axiosInstance.get("/auth/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const userRole = response.data.peran;
-        console.log("User role:", userRole); // Debugging log
-
-        if (userRole === "ADMIN") {
-          setRole("ADMIN");
-        } else {
-          setRole("USER"); // Or any other role if applicable
-        }
-
-        setLoading(false);
+        const response = await axiosInstance.get('/Users'); // Replace with your API endpoint
+        setUsers(response.data); // Assuming the API returns an array of users
+        setUserCount(response.data.length); // Total number of users
       } catch (error) {
-        console.error("Error fetching user role:", error);
-        setRole(null);
-        setLoading(false);
+        console.error('Failed to fetch users:', error);
       }
     };
 
-    fetchUserRole();
+    // Fetch the number of jobs
+    const fetchJobCount = async () => {
+      try {
+        const response = await axiosInstance.get('/Jobs'); // Replace with your API endpoint
+        setJobCount(response.data.length); // Assuming the API returns an array
+      } catch (error) {
+        console.error('Failed to fetch jobs:', error);
+      }
+    };
+
+    fetchUsers();
+    fetchJobCount();
   }, []);
-
-  useEffect(() => {
-    // Access localStorage only in the browser
-    const storedMenu = localStorage.getItem('activeMenu');
-    if (storedMenu) {
-      setActiveMenu(storedMenu);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Update localStorage whenever activeMenu changes
-    localStorage.setItem('activeMenu', activeMenu);
-  }, [activeMenu]);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(prevState => !prevState);
-  };
-
-  const renderContent = () => {
-    switch (activeMenu) {
-      case 'Home':
-        return <Home />;
-      case 'Jobs':
-        return <Jobs />;
-      case 'Users':
-        return <Users />;
-      case 'settings':
-        return <h1 className="text-3xl font-bold">Settings Content</h1>;
-      default:
-        return <h1 className="text-3xl font-bold">Default Content</h1>;
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
-        Loading...
-      </div>
-    ); 
-  }
-
-  if (role === null) {
-    return (
-      <div className="h-screen w-screen bg-gray-50 flex items-center">
-        <div className="container flex flex-col md:flex-row items-center justify-between px-5 text-gray-700">
-          <div className="w-full lg:w-1/2 mx-8">
-            <div className="text-7xl text-green-500 font-bold mb-8">
-              401
-              <p className="text-sm">Pengguna Tidak Ditemukan.</p>
-            </div>
-            <p className="text-2xl md:text-3xl font-light leading-normal mb-8">
-              Akses di tolak. Silakan Login.
-            </p>
-            <Link
-              href="/Login"
-              className="px-5 py-3 text-sm font-medium leading-5 shadow-2xl text-white transition-all duration-400 border border-transparent rounded-lg focus:outline-none bg-green-600 active:bg-red-600 hover:bg-red-700"
-            >
-              Login
-            </Link>
-          </div>
-          <div className="w-full lg:flex lg:justify-end lg:w-1/2 mx-5 my-12">
-            <Image
-              src="https://user-images.githubusercontent.com/43953425/166269493-acd08ccb-4df3-4474-95c7-ad1034d3c070.svg"
-              alt="Description of image"
-              width={700}
-              height={300}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (role !== 'ADMIN') {
-    return (
-      <div className="h-screen w-screen bg-gray-50 flex items-center">
-        <div className="container flex flex-col md:flex-row items-center justify-between px-5 text-gray-700">
-          <div className="w-full lg:w-1/2 mx-8">
-            <div className="text-7xl text-green-500 font-dark font-extrabold mb-8">
-              401
-              <p className="text-sm">Akses ditolak ❌</p>
-            </div>
-            <p className="text-2xl md:text-3xl font-light leading-normal mb-8">
-              Halaman ini hanya untuk admin
-            </p>
-            <button
-              onClick={() => (window.location.href = '/')}
-              className="px-5 inline py-3 text-sm font-medium leading-5 shadow-2xl text-white transition-all duration-400 border border-transparent rounded-lg focus:outline-none bg-green-600 active:bg-red-600 hover:bg-red-700"
-            >
-              Back to homepage
-            </button>
-          </div>
-          <div className="w-full lg:flex lg:justify-end lg:w-1/2 mx-5 my-12">
-            <Image
-              src="https://user-images.githubusercontent.com/43953425/166269493-acd08ccb-4df3-4474-95c7-ad1034d3c070.svg"
-              alt="Description of image"
-              width={700}
-              height={300}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="flex h-screen">
-      <Sidebar 
-        setActiveMenu={setActiveMenu} 
-        activeMenu={activeMenu} 
-        isSidebarOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-      />
-      <div className={`flex-1 flex flex-col bg-gray-200 min-h-screen overflow-auto transition-transform duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
-        <div className="p-6 relative">
-          <button 
-            onClick={toggleSidebar} 
-            className={`absolute top-4 left-4 z-10 p-2 text-xl ${isSidebarOpen ? 'md:hidden' : ''}`}
-          >
-            {isSidebarOpen ? <FaTimes /> : <FaBars />}
-          </button>
-          {renderContent()}
+    <DashboardLayout>
+    <div className="p-4 bg-gray-100 min-h-screen">
+      <div className="space-y-4">
+        {/* Users Section */}
+        <div className="overflow-x-auto shadow-md mb-6 p-4 bg-white rounded-xl mt-5">
+          <h1 className='text-2xl font-semibold text-center p-4'>Data Pengguna</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="bg-blue-100 p-4 rounded shadow flex items-center">
+              <FaUsers className="text-blue-500 text-3xl mr-4" />
+              <div>
+                <h2 className="text-lg font-semibold">Total Pengguna</h2>
+                <p className="text-2xl">{userCount}</p>
+              </div>
+            </div>
+            <div className="bg-green-100 p-4 rounded shadow flex items-center">
+              <FaUserShield className="text-green-500 text-3xl mr-4" />
+              <div>
+                <h2 className="text-lg font-semibold">Total Admin</h2>
+                <p className="text-2xl">
+                  {users.filter((user) => user.peran === "ADMIN").length}
+                </p>
+              </div>
+            </div>
+            <div className="bg-green-100 p-4 rounded shadow flex items-center">
+              <FaUsers className="text-green-500 text-3xl mr-4" />
+              <div>
+                <h2 className="text-lg font-semibold">Total Pengguna</h2>
+                <p className="text-2xl">
+                  {users.filter((user) => user.peran === "PENGGUNA").length}
+                </p>
+              </div>
+            </div>
+            <div className="bg-green-100 p-4 rounded shadow flex items-center">
+              <TbEngine className="text-green-500 text-3xl mr-4" />
+              <div>
+                <h2 className="text-lg font-semibold">Jurusan TBSM</h2>
+                <p className="text-2xl">
+                  {users.filter((user) => user.jurusan === "TBSM").length}
+                </p>
+              </div>
+            </div>
+            <div className="bg-green-100 p-4 rounded shadow flex items-center">
+              <MdEngineering className="text-green-500 text-3xl mr-4" />
+              <div>
+                <h2 className="text-lg font-semibold">Jurusan TKR</h2>
+                <p className="text-2xl">
+                  {users.filter((user) => user.jurusan === "TKR").length}
+                </p>
+              </div>
+            </div>
+            <div className="bg-purple-100 p-4 rounded shadow flex items-center">
+              <FaHotel className="text-purple-500 text-3xl mr-4" />
+              <div>
+                <h2 className="text-base font-semibold">Jurusan Perhotelan</h2>
+                <p className="text-2xl">
+                  {users.filter((user) => user.jurusan === "PERHOTELAN").length}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Jobs Section */}
+        <div className="bg-green-100 p-4 rounded-lg shadow-md">
+          <h2 className="text-lg font-semibold mb-2">Total Jobs</h2>
+          <div className="flex items-center">
+            <FaBriefcase className="text-green-500 text-3xl mr-4" />
+            <p className="text-2xl">{jobCount}</p>
+          </div>
         </div>
       </div>
     </div>
+    </DashboardLayout>
   );
 };
 
-export default Page;
+export default DashoardPage;

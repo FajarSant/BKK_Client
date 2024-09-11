@@ -3,6 +3,7 @@ import { FaUsers, FaBriefcase, FaUserShield, FaHotel } from 'react-icons/fa';
 import { MdEngineering } from 'react-icons/md';
 import { TbEngine } from 'react-icons/tb';
 import { axiosInstance } from '@/lib/axios';
+import DashboardLayout from '@/app/Admin/layouts';
 
 const Home = () => {
   const [userCount, setUserCount] = useState<number>(0);
@@ -36,6 +37,8 @@ const Home = () => {
   }, []);
 
   return (
+    <DashboardLayout>
+
     <div className="p-4 bg-gray-100 min-h-screen">
       <div className="space-y-4">
         {/* Users Section */}
@@ -107,6 +110,7 @@ const Home = () => {
         </div>
       </div>
     </div>
+    </DashboardLayout>
   );
 };
 
