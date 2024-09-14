@@ -254,7 +254,7 @@ const CardPekerjaan: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid mx-4 grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: itemsPerPage }).map((_, index) => (
               <SkeletonLoader key={index} />
             ))}
@@ -264,7 +264,7 @@ const CardPekerjaan: React.FC = () => {
             Pekerjaan Tidak Ditemukan
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid mx-4 grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {currentJobs.map((job) => (
               <div
                 key={job.id}
