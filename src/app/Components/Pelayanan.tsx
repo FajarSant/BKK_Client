@@ -13,7 +13,7 @@ interface User {
 }
 
 const SkeletonLoader: React.FC = () => (
-  <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6 animate-pulse">
+  <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6 animate-pulse ">
     <div className="flex items-center mb-4">
       <div className="w-24 h-24 bg-gray-200 rounded-full mr-6"></div>
       <div className="flex-1">
@@ -55,7 +55,7 @@ const Pelayanan: React.FC = () => {
 
   if (loading) {
     return (
-      <section className="py-16 bg-gray-100">
+      <section className="py-16 bg-gray-100 border-b-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
             <span className="text-4xl text-gray-800 font-bold block mb-2">
@@ -94,7 +94,7 @@ const Pelayanan: React.FC = () => {
   }
 
   return (
-    <section className="py-16 bg-gray-100">
+    <section className="py-16 bg-gray-100 border-b-4 mb-12 mx-4">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <span className="text-4xl text-gray-800 font-bold block mb-2">

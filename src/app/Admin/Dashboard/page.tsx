@@ -39,12 +39,12 @@ const DashoardPage = () => {
 
   return (
     <DashboardLayout>
-    <div className="p-4 bg-gray-100 min-h-screen">
+    <div className="p-4 bg-gray-100 h-screen w-screen">
       <div className="space-y-4">
         {/* Users Section */}
         <div className="overflow-x-auto shadow-md mb-6 p-4 bg-white rounded-xl mt-5">
           <h1 className='text-2xl font-semibold text-center p-4'>Data Pengguna</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <div className="bg-blue-100 p-4 rounded shadow flex items-center">
               <FaUsers className="text-blue-500 text-3xl mr-4" />
               <div>

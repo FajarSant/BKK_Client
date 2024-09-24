@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import defaultImage from "@/app/public/assets/image.png";
+import Topbar from "../Components/TopBar";
 
 interface Jobs {
   id: number;
@@ -138,6 +139,7 @@ const JobList: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Topbar/>
       {/* Search Input */}
       <div className="relative w-full max-w-md mb-5">
         <input

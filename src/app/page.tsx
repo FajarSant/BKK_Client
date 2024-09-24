@@ -1,11 +1,11 @@
 "use client"
 import React, { useState } from "react";
-import Header from "./Components/Header";
 import CardPekerjaan from "./Components/CardPekerjaan";
 import Topbar from "./Components/TopBar";
 import HeroSection from "./Components/HeroSection";
 import Footer from "./Components/Footer";
 import Pelayanan from "./Components/Pelayanan";
+import PartnershipList from "./Components/Partnership";
 
 const Page: React.FC = () => {
   const [activeCard, setActiveCard] = useState<'pekerjaan' | 'pelatihan'>('pekerjaan');
@@ -14,8 +14,8 @@ const Page: React.FC = () => {
     <div>
       <Topbar />
       <div className="bg-white mb-10">
-        <Header />
         <HeroSection />
+        <PartnershipList/>
         <CardPekerjaan/>
         <Pelayanan/>
         <Footer />

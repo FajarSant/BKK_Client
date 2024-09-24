@@ -7,6 +7,7 @@ import {
   FaUser,
   FaTachometerAlt,
   FaSignOutAlt,
+  FaFileAlt,
 } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { axiosInstance } from "@/lib/axios";
@@ -89,15 +90,15 @@ const Topbar: React.FC = () => {
 
   const closeModal = () => {
     setShowModal(false);
-    toast.error("Logout dibatalkan!", {position: "top-center",});
+    toast.error("Logout dibatalkan!", { position: "top-center" });
   };
 
   return (
     <div className="bg-white shadow-md py-2 px-4 fixed top-0 left-0 w-full z-50">
-       <Toaster position="top-center" />
+      <Toaster position="top-center" />
       <div className="flex justify-between items-center">
         <Link href="/" className="flex items-center space-x-4">
-          <div className=" relative">
+          <div className="relative">
             <Image
               src="https://res.cloudinary.com/dr01rjws7/image/upload/v1723718668/c61br9rk7ksuzqhsmyxy.png"
               alt="BKK SMKN Ngargoyoso Logo"
@@ -107,10 +108,14 @@ const Topbar: React.FC = () => {
               className="rounded-md"
             />
           </div>
-          <span className="text-xl font-medium">
+          <span className="hidden justify-center md:block text-xl font-medium">
+            BURSA KERJA KHUSUS SMKN NGARGOYOSO
+          </span>
+          <span className="block md:hidden text-xl font-medium">
             BKK SMKN <br /> NGARGOYOSO
           </span>
         </Link>
+
 
         <div className="relative" ref={dropdownRef}>
           <button
@@ -119,17 +124,13 @@ const Topbar: React.FC = () => {
           >
             {user && user.gambar ? (
               <div className="w-10 h-10 rounded-full overflow-hidden border-4 border-gray-300">
-                {user.gambar ? (
-                  <Image
-                    src={user.gambar}
-                    alt={user.nama}
-                    width={40} // Sesuaikan dengan ukuran yang Anda inginkan
-                    height={40} // Sesuaikan dengan ukuran yang Anda inginkan
-                    className="object-cover"
-                  />
-                ) : (
-                  "No Image"
-                )}
+                <Image
+                  src={user.gambar}
+                  alt={user.nama}
+                  width={40}
+                  height={40}
+                  className="object-cover"
+                />
               </div>
             ) : (
               <FaUserCircle className="text-2xl text-gray-600 rounded-full" />
@@ -151,6 +152,13 @@ const Topbar: React.FC = () => {
                       <span className="flex items-center px-4 py-2 hover:bg-gray-200 cursor-pointer">
                         <FaUser className="mr-2" />
                         Profile
+                      </span>
+                    </Link>
+                    <Link href="/Buat-CV">
+                      <span className="flex items-center px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                        <FaFileAlt className="mr-2" />{" "}
+                        {/* Ikon untuk Buat CV */}
+                        Buat CV
                       </span>
                     </Link>
                     {user.peran === "ADMIN" && (
@@ -214,7 +222,6 @@ const Topbar: React.FC = () => {
           </div>
         </div>
       )}
-      
     </div>
   );
 };
