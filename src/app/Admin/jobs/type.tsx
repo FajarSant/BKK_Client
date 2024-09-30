@@ -9,7 +9,8 @@ export interface Job {
   gambar: string;
   alamat: string;
   email: string;
-  nomorTelepon: string; 
+  nomorTelepon: string;
+  Link: string; 
   deadline?: Date | null; // Ensure this matches the DatePicker usage
   tanggalDibuat: string; // Ensure this line is included
 }

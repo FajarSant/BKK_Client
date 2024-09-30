@@ -14,6 +14,7 @@ interface Jobs {
   openrekrutmen: string[];
   gambar?: string;
   deadline?: string;
+  tanggalDibuat: string;
 }
 
 const SkeletonLoader: React.FC = () => (
@@ -62,11 +63,20 @@ const CardPekerjaan: React.FC = () => {
 
     fetchJobs();
   }, []);
+  console.log("jobs:", jobs);
 
   useEffect(() => {
     const filterJobs = () => {
       let jobsToFilter = jobs;
 
+      // Filter out expired jobs
+      jobsToFilter = jobsToFilter.filter((job) => {
+        const deadlineDate = new Date(job.deadline || "");
+        const now = new Date();
+        return deadlineDate.getTime() > now.getTime(); // Keep only future jobs
+      });
+
+      // Filter by selected category
       if (selectedCategory !== "all") {
         jobsToFilter = jobsToFilter.filter((job) =>
           job.openrekrutmen
@@ -75,6 +85,7 @@ const CardPekerjaan: React.FC = () => {
         );
       }
 
+      // Filter by search term
       if (searchTerm) {
         jobsToFilter = jobsToFilter.filter(
           (job) =>
@@ -84,6 +95,15 @@ const CardPekerjaan: React.FC = () => {
             )
         );
       }
+
+      // Sort by tanggalDibuat
+      // Urutkan berdasarkan tanggalDibuat (terbaru lebih dulu)
+      jobsToFilter.sort((a, b) => {
+        return (
+          new Date(b.tanggalDibuat).getTime() -
+          new Date(a.tanggalDibuat).getTime()
+        );
+      });
 
       setFilteredJobs(jobsToFilter);
     };
@@ -156,6 +176,44 @@ const CardPekerjaan: React.FC = () => {
     const timeDiff = deadlineDate.getTime() - today.getTime();
     const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24));
     return daysRemaining > 0 ? `${daysRemaining} hari lagi` : "Expired";
+  };
+
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+
+    const diffInSeconds: number = Math.floor(
+      (now.getTime() - date.getTime()) / 1000
+    );
+    const diffInMinutes: number = Math.floor(diffInSeconds / 60);
+    const diffInHours: number = Math.floor(diffInMinutes / 60);
+    const diffInDays: number = Math.floor(diffInHours / 24);
+    const diffInWeeks: number = Math.floor(diffInDays / 7);
+    const diffInMonths: number = Math.floor(diffInDays / 30);
+
+    if (diffInSeconds < 60) {
+      return "Baru Saja";
+    } else if (diffInMinutes === 1) {
+      return "1 menit yang lalu";
+    } else if (diffInMinutes < 60) {
+      return `${diffInMinutes} menit yang lalu`;
+    } else if (diffInHours === 1) {
+      return "1 jam yang lalu";
+    } else if (diffInHours < 24) {
+      return `${diffInHours} jam yang lalu`;
+    } else if (diffInDays === 1) {
+      return "1 hari yang lalu";
+    } else if (diffInDays < 7) {
+      return `${diffInDays} hari yang lalu`;
+    } else if (diffInWeeks === 1) {
+      return "1 minggu yang lalu";
+    } else if (diffInWeeks < 4) {
+      return `${diffInWeeks} minggu yang lalu`;
+    } else if (diffInMonths === 1) {
+      return "1 bulan yang lalu";
+    } else {
+      return `${diffInMonths} bulan yang lalu`;
+    }
   };
 
   return (
@@ -283,6 +341,10 @@ const CardPekerjaan: React.FC = () => {
                     onClick={() => handleDaftarClick(job.id)}
                   />
                 </div>
+                <p className="mt-4 mx-4 text-sm text-gray-500">
+                  Dibuat: {formatDate(job.tanggalDibuat)}
+                </p>
+
                 <div className="p-5">
                   <p className="text-lg text-gray-700 dark:text-gray-400 mb-2">
                     {job.openrekrutmen &&
@@ -343,8 +405,9 @@ const CardPekerjaan: React.FC = () => {
                       </span>
                     </Link>
                   </div>
-                    <p className="mt-2 text-sm text-gray-500">
-                     {calculateDaysRemaining(job.deadline)}
+                  <p className="mt-4 text-sm text-gray-500">
+                    {" "}
+                    Berakhir :{calculateDaysRemaining(job.deadline)}
                   </p>
                 </div>
               </div>

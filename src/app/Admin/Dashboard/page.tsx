@@ -39,7 +39,7 @@ const DashoardPage = () => {
 
   return (
     <DashboardLayout>
-    <div className="p-4 bg-gray-100 h-screen w-screen">
+    <div className="p-4 bg-gray-100 h-screen w-screen md:w-screen">
       <div className="space-y-4">
         {/* Users Section */}
         <div className="overflow-x-auto shadow-md mb-6 p-4 bg-white rounded-xl mt-5">

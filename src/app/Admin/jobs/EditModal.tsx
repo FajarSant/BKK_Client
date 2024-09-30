@@ -33,16 +33,14 @@ const EditModal: React.FC<EditModalProps> = ({
       email: "",
       nomorTelepon: "",
       Link: "",
-      deadline: null, // Default value to null if not specified
+      deadline: null,
     }),
     []
   );
 
   const [editedJob, setEditedJob] = useState<Partial<Job>>(initialEditedJob);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [error, setError] = useState<string>("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const datePickerRef = useRef<DatePicker | null>(null);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (job) {
@@ -56,12 +54,13 @@ const EditModal: React.FC<EditModalProps> = ({
         alamat: job.alamat || "",
         email: job.email || "",
         nomorTelepon: job.nomorTelepon || "",
-        deadline: job.deadline ? new Date(job.deadline) : null, // Convert string to Date if necessary
+        Link: job.Link || "",
+        deadline: job.deadline ? new Date(job.deadline) : null,
       });
-      setImagePreview(job.gambar || null); // Display image preview if available
+      setImagePreview(job.gambar || null);
     } else {
       setEditedJob(initialEditedJob);
-      setImagePreview(null); // Reset image preview if no job
+      setImagePreview(null);
     }
   }, [job, initialEditedJob]);
 
@@ -88,10 +87,7 @@ const EditModal: React.FC<EditModalProps> = ({
     }));
   };
 
-  const handleDelete = (
-    field: "persyaratan" | "openrekrutmen",
-    index: number
-  ) => {
+  const handleDelete = (field: "persyaratan" | "openrekrutmen", index: number) => {
     const newArray = [...(editedJob[field] || [])];
     newArray.splice(index, 1);
     setEditedJob((prevState) => ({
@@ -111,19 +107,16 @@ const EditModal: React.FC<EditModalProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Update image preview
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result as string);
     };
     reader.readAsDataURL(file);
 
-    // Prepare form data for upload
     const formData = new FormData();
     formData.append("gambar", file);
 
     try {
-      // Update the URL to include the actual job ID
       const response = await axiosInstance.put(`/jobs/${job?.id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -132,7 +125,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
       setEditedJob((prevState) => ({
         ...prevState,
-        gambar: response.data.gambar, // Ensure response field matches
+        gambar: response.data.gambar,
       }));
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -140,12 +133,18 @@ const EditModal: React.FC<EditModalProps> = ({
     }
   };
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow numbers
+    if (/^\d*$/.test(value)) {
+      setEditedJob((prevState) => ({ ...prevState, nomorTelepon: value }));
+    }
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (!job) return;
 
-      // If the image field is not set, remove it from the request
       const updatedJob = { ...editedJob };
       if (!updatedJob.gambar) {
         delete updatedJob.gambar;
@@ -156,7 +155,7 @@ const EditModal: React.FC<EditModalProps> = ({
       toast.success(`Job "${job.namaPT}" updated successfully`, {
         position: "top-center",
       });
-      onClose(); // Close modal after successful update
+      onClose();
     } catch (error) {
       console.error("Error updating job:", error);
       setError("Error updating job. Please try again.");
@@ -183,30 +182,6 @@ const EditModal: React.FC<EditModalProps> = ({
       ...prevState,
       deadline: date,
     }));
-  };
-
-  const handleTodayClick = () => {
-    const today = new Date();
-    setEditedJob((prevState) => ({
-      ...prevState,
-      deadline: today,
-    }));
-    // Close the calendar
-    if (datePickerRef.current) {
-      (datePickerRef.current as any).setOpen(false);
-    }
-  };
-
-  const handleClear = () => {
-    setSelectedDate(null); // Clear the selected date
-    setEditedJob((prevState) => ({
-      ...prevState,
-      deadline: null,
-    }));
-    // Close the calendar
-    if (datePickerRef.current) {
-      (datePickerRef.current as any).setOpen(false);
-    }
   };
 
   return (
@@ -325,6 +300,70 @@ const EditModal: React.FC<EditModalProps> = ({
           </div>
           <div>
             <label
+              htmlFor="alamat"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Alamat
+            </label>
+            <input
+              type="text"
+              id="alamat"
+              name="alamat"
+              value={editedJob.alamat || ""}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={editedJob.email || ""}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="nomorTelepon"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Nomor Telepon
+            </label>
+            <input
+              type="tel"
+              id="nomorTelepon"
+              name="nomorTelepon"
+              value={editedJob.nomorTelepon || ""}
+              onChange={handlePhoneChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="Link"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Link
+            </label>
+            <input
+              type="url"
+              id="Link"
+              name="Link"
+              value={editedJob.Link || ""}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+          <div>
+            <label
               htmlFor="gambar"
               className="block text-sm font-medium text-gray-700"
             >
@@ -349,6 +388,12 @@ const EditModal: React.FC<EditModalProps> = ({
             )}
           </div>
           <div>
+            <label
+              htmlFor="deadline"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Deadline
+            </label>
             <div className="relative mb-4">
               <DatePicker
                 selected={editedJob.deadline || null}
@@ -358,8 +403,8 @@ const EditModal: React.FC<EditModalProps> = ({
                 className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white pl-10"
               />
               <FaCalendarAlt
-              className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500"
-            />
+                className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500"
+              />
             </div>
           </div>
           <div className="flex justify-end space-x-2">

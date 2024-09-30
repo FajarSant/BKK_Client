@@ -14,7 +14,8 @@ interface Jobs {
   deskripsi: string;
   openrekrutmen: string[];
   gambar?: string;
-  tanggalDibuat: string; // Ensure this field is available for sorting
+  deadline?: string;
+  tanggalDibuat: string;
 }
 
 const JobList: React.FC = () => {
@@ -53,14 +54,21 @@ const JobList: React.FC = () => {
 
   useEffect(() => {
     let sortedJobs = [...jobs];
-
+  
     // Filter by search term
     if (searchTerm) {
       sortedJobs = sortedJobs.filter((job) =>
         job.namaPT.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
+  
+    // Remove jobs with expired deadlines
+    sortedJobs = sortedJobs.filter((job) => {
+      const deadlineDate = new Date(job.deadline || "");
+      const now = new Date();
+      return deadlineDate.getTime() > now.getTime();
+    });
+  
     // Sorting logic
     if (selectedSortOption === "date") {
       sortedJobs.sort(
@@ -69,19 +77,23 @@ const JobList: React.FC = () => {
       );
     } else if (selectedSortOption === "name") {
       sortedJobs.sort((a, b) => a.namaPT.localeCompare(b.namaPT));
+    } else if (selectedSortOption === "deadline") {
+      sortedJobs.sort((a, b) => {
+        const deadlineA = new Date(a.deadline || "").getTime();
+        const deadlineB = new Date(b.deadline || "").getTime();
+        return deadlineA - deadlineB; // Ascending order
+      });
     }
-
+  
     if (selectedCategory === "all") {
       setFilteredJobs(sortedJobs);
     } else {
       setFilteredJobs(
-        sortedJobs.filter((job) =>
-          job.openrekrutmen.includes(selectedCategory)
-        )
+        sortedJobs.filter((job) => job.openrekrutmen.includes(selectedCategory))
       );
     }
   }, [selectedCategory, selectedSortOption, searchTerm, jobs]);
-
+  
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
   };
@@ -137,9 +149,56 @@ const JobList: React.FC = () => {
     }
   };
 
+  const calculateDaysRemaining = (deadline?: string) => {
+    if (!deadline) return "N/A";
+    const deadlineDate = new Date(deadline);
+    const today = new Date();
+    const timeDiff = deadlineDate.getTime() - today.getTime();
+    const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    return daysRemaining > 0 ? `${daysRemaining} hari lagi` : "Expired";
+  };
+
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+
+    const diffInSeconds: number = Math.floor(
+      (now.getTime() - date.getTime()) / 1000
+    );
+    const diffInMinutes: number = Math.floor(diffInSeconds / 60);
+    const diffInHours: number = Math.floor(diffInMinutes / 60);
+    const diffInDays: number = Math.floor(diffInHours / 24);
+    const diffInWeeks: number = Math.floor(diffInDays / 7);
+    const diffInMonths: number = Math.floor(diffInDays / 30);
+
+    if (diffInSeconds < 60) {
+      return "Baru Saja";
+    } else if (diffInMinutes === 1) {
+      return "1 menit yang lalu";
+    } else if (diffInMinutes < 60) {
+      return `${diffInMinutes} menit yang lalu`;
+    } else if (diffInHours === 1) {
+      return "1 jam yang lalu";
+    } else if (diffInHours < 24) {
+      return `${diffInHours} jam yang lalu`;
+    } else if (diffInDays === 1) {
+      return "1 hari yang lalu";
+    } else if (diffInDays < 7) {
+      return `${diffInDays} hari yang lalu`;
+    } else if (diffInWeeks === 1) {
+      return "1 minggu yang lalu";
+    } else if (diffInWeeks < 4) {
+      return `${diffInWeeks} minggu yang lalu`;
+    } else if (diffInMonths === 1) {
+      return "1 bulan yang lalu";
+    } else {
+      return `${diffInMonths} bulan yang lalu`;
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <Topbar/>
+      <Topbar />
       {/* Search Input */}
       <div className="relative w-full max-w-md mb-5">
         <input
@@ -195,14 +254,15 @@ const JobList: React.FC = () => {
 
         {/* Sort Dropdown */}
       </div>
-        <select
-          value={selectedSortOption}
-          onChange={handleSortChange}
-          className="px-4 py-2 mb-5 rounded-lg bg-gray-200 text-gray-800 border border-gray-300"
-        >
-          <option value="date">Sort by Date</option>
-          <option value="name">Sort by Name</option>
-        </select>
+      <select
+        value={selectedSortOption}
+        onChange={handleSortChange}
+        className="px-4 py-2 mb-5 rounded-lg bg-gray-200 text-gray-800 border border-gray-300"
+      >
+        <option value="date">Tanggal</option>
+        <option value="name">Nama</option>
+        <option value="name">deadline</option>
+      </select>
 
       {loading ? (
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -234,6 +294,10 @@ const JobList: React.FC = () => {
                   onClick={() => handleDaftarClick(job.id)}
                 />
               </div>
+              <p className="mt-4 mx-4 text-sm text-gray-500">
+                Dibuat: {formatDate(job.tanggalDibuat)}
+              </p>
+
               <div className="p-5">
                 <p className="text-lg text-gray-700 dark:text-gray-400 mb-2">
                   {job.openrekrutmen &&
@@ -260,6 +324,10 @@ const JobList: React.FC = () => {
                     Daftar
                   </Link>
                 </div>
+                <p className="mt-4 text-sm text-gray-500">
+                  {" "}
+                  Berakhir :{calculateDaysRemaining(job.deadline)}
+                </p>
               </div>
             </div>
           ))}

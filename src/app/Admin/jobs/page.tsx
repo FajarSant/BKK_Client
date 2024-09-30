@@ -151,7 +151,7 @@ const JobList: React.FC = () => {
                       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                     }}
                   >
-                    Sort by Date
+                    Tanggal
                     {sortBy === "tanggalDibuat" &&
                       (sortOrder === "asc" ? (
                         <FaSortAmountDown className="ml-2" />
@@ -166,7 +166,7 @@ const JobList: React.FC = () => {
                       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                     }}
                   >
-                    Sort by Name
+                    Nama
                     {sortBy === "namaPT" &&
                       (sortOrder === "asc" ? (
                         <FaSortAlphaDown className="ml-2" />

@@ -10,7 +10,7 @@ interface AddModalProps {
   onClose: () => void;
   onAdd: () => void;
 }
-// Define the AddModal component
+
 const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
   const [newJob, setNewJob] = useState({
     berkas: "",
@@ -23,7 +23,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
     email: "",
     nomorTelepon: "",
     Link: "",
-    deadline: new Date(), // Initialize with a date object
+    deadline: new Date(),
   });
 
   const [error, setError] = useState("");
@@ -33,6 +33,14 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
   ) => {
     const { name, value } = e.target;
     setNewJob((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow numbers
+    if (/^\d*$/.test(value)) {
+      setNewJob((prevState) => ({ ...prevState, nomorTelepon: value }));
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +80,13 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
     e.preventDefault();
 
     // Validasi input yang wajib diisi
-    if (!newJob.namaPT || !newJob.deskripsi || !newJob.alamat || !newJob.email || !newJob.nomorTelepon) {
+    if (
+      !newJob.namaPT ||
+      !newJob.deskripsi ||
+      !newJob.alamat ||
+      !newJob.email ||
+      !newJob.nomorTelepon
+    ) {
       toast.error("Harap isi semua input yang wajib diisi.");
       return;
     }
@@ -85,14 +99,10 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
     formData.append("email", newJob.email);
     formData.append("nomorTelepon", newJob.nomorTelepon);
     formData.append("Link", newJob.Link);
-
-    // Serialize arrays to JSON strings
     formData.append("persyaratan", JSON.stringify(newJob.persyaratan));
     formData.append("openrekrutmen", JSON.stringify(newJob.openrekrutmen));
 
     if (newJob.gambar) formData.append("gambar", newJob.gambar);
-
-    // Append deadline
     formData.append("deadline", newJob.deadline.toISOString());
 
     try {
@@ -113,8 +123,8 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
         email: "",
         nomorTelepon: "",
         Link: "",
-        deadline: new Date(), // Reset deadline
-      }); // Clear inputs
+        deadline: new Date(),
+      });
     } catch (error) {
       toast.error("Failed to add job.");
       setError("Failed to add job.");
@@ -130,7 +140,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
         <h2 className="text-lg font-semibold mb-4">Tambahkan Job</h2>
         {error && <p className="text-red-500 mb-2">{error}</p>}
         <form onSubmit={handleSubmit}>
-          {/* Existing input fields */}
+          {/* Other input fields */}
           <input
             type="text"
             name="namaPT"
@@ -227,7 +237,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             onChange={handleInputChange}
             className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
           />
-          
+
           <input
             type="text"
             name="email"
@@ -237,11 +247,11 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
           />
           <input
-            type="text"
+            type="tel"
             name="nomorTelepon"
             placeholder="Nomor Telepon"
             value={newJob.nomorTelepon}
-            onChange={handleInputChange}
+            onChange={handlePhoneChange} // Use the new handler
             className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
           />
           <input
@@ -252,7 +262,15 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
             onChange={handleInputChange}
             className="mb-2 w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
           />
-          <div className="relative mb-4">
+          <div className="relative mb-6">
+            <label
+              htmlFor="deadline"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Deadline
+            </label>
+            <div className="relative mb-4">
+
             <DatePicker
               selected={newJob.deadline}
               dateFormat="dd/MM/yyyy"
@@ -262,14 +280,14 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, onClose, onAdd }) => {
                   setNewJob((prevState) => ({ ...prevState, deadline: date }));
                 }
               }}
-
-             
               className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white pl-10"
-            />
-            <FaCalendarAlt
-              className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500"
-            />
+              />
+              <FaCalendarAlt
+                className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500"
+              />
+            </div>
           </div>
+
           <div className="flex justify-end mt-4">
             <button
               type="button"
