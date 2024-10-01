@@ -261,7 +261,6 @@ const JobList: React.FC = () => {
       >
         <option value="date">Tanggal</option>
         <option value="name">Nama</option>
-        <option value="name">deadline</option>
       </select>
 
       {loading ? (
