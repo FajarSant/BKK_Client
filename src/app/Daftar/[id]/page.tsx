@@ -61,7 +61,7 @@ const DaftarPage = () => {
         setUserId(userData.id);
       } catch (error) {
         console.error("Error fetching user data:", error);
-        router.push('/404'); // Arahkan ke halaman not-found jika terjadi kesalahan
+        router.push('/login'); // Arahkan ke halaman not-found jika terjadi kesalahan
       }
     };
 
