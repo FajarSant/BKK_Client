@@ -1,15 +1,17 @@
 "use client";
 import React, { useState } from "react";
 import { axiosInstance } from "@/lib/axios";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"; // Ikon untuk password
 
 const LoginForm: React.FC = () => {
   const [nis, setNis] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // State pesan error
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
+    setErrorMessage(null); // Reset error message sebelum melakukan login
     try {
       const response = await axiosInstance.post("/auth/login", {
         nis,
@@ -19,21 +21,39 @@ const LoginForm: React.FC = () => {
       const { token } = response.data;
       localStorage.setItem("token", token);
 
-      alert("Login successful");
-      window.history.back();
+      window.history.back(); // Navigasi kembali setelah berhasil login
     } catch (error) {
       console.error("Login failed", error);
-      alert("Login failed");
+      setErrorMessage("Login failed, please check your NIS and password."); // Menampilkan pesan error
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div
+      className="flex items-center justify-center min-h-screen bg-gray-100 bg-cover bg-center"
+    >
       <form
         onSubmit={handleLogin}
-        className="bg-white rounded-lg shadow-md p-8 w-full max-w-md"
+        className="bg-white rounded-lg shadow-md p-8 w-full max-w-md opacity-90"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        {/* Bagian Ikon Gambar di atas tulisan "Login" */}
+        <div className="flex justify-center mb-4">
+          <img
+            src="/android-chrome-192x192.png" // Gambar yang berada di folder public/images
+            alt="Login Icon"
+            className="w-16 h-16" // Menyesuaikan ukuran gambar
+          />
+        </div>
+
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">
+          Login
+        </h2>
+
+        {/* Menampilkan pesan error jika ada */}
+        {errorMessage && (
+          <div className="text-red-500 text-sm mb-4 text-center">{errorMessage}</div>
+        )}
+
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-semibold mb-2">
             NIS

@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Anecma - Kehamilan Terpantau, Anemia Tercegah",
-  description: " Kehamilan Terpantau, Anemia Tercegah",
+  title: "Bursa Kerja Khusus SMKN Ngargoyoso",
+  description: " Cari Loker Sesuai Dengan Keingginan Anda",
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png?v=4",

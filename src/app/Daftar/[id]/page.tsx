@@ -70,7 +70,11 @@ const DaftarPage = () => {
   }, [router]);
 
   if (!jobs) {
-    return <div>Loading...</div>;
+    return<div className="flex items-center justify-center h-screen w-full">
+    <div className="flex justify-center items-center space-x-1 text-sm text-gray-700">
+      <span className="loading loading-spinner text-secondary"></span>
+    </div>
+  </div>
   }
 
   const handleDaftarClick = async () => {

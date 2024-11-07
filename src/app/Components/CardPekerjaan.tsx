@@ -231,8 +231,8 @@ const CardPekerjaan: React.FC = () => {
           peluang yang lebih baik.&quot;
         </p>
       </div>
-      <div className="mb-8 flex items-center justify-end">
-        <div className="relative w-full max-w-md">
+      <div className="mb-8 flex items-center justify-end ">
+        <div className="relative w-full max-w-md ">
           <input
             type="text"
             id="simple-search"
@@ -312,7 +312,7 @@ const CardPekerjaan: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center">
             {Array.from({ length: itemsPerPage }).map((_, index) => (
               <SkeletonLoader key={index} />
             ))}
@@ -336,8 +336,9 @@ const CardPekerjaan: React.FC = () => {
                     height={360}
                     className="object-cover rounded-t-lg w-full h-64"
                   />
+                  
                   <FaBookmark
-                    className="text-blue-700 text-2xl cursor-pointer absolute top-2 right-2"
+                    className="text-blue-700 border bg-white text-2xl cursor-pointer absolute top-2 right-2"
                     onClick={() => handleDaftarClick(job.id)}
                   />
                 </div>
